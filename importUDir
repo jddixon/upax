@@ -1,0 +1,123 @@
+#!/usr/bin/python3
+
+# ~/dev/py/upax/importUDir
+
+import os
+import re
+import sys
+import time
+from argparse import ArgumentParser
+
+import u
+from upax import *
+
+
+def main():
+
+    pgmNameAndVersion = "importUDir v%s" % (__version__)
+    timestamp = "%04d%02d%02d-%02d%02d%02d" % time.gmtime()[:6]
+
+    # -- program defaults -------------------------------------------
+    destDir = None
+    srcDir = None
+
+    # -- check for config file --------------------------------------
+
+    # -- parse the command line -------------------------------------
+    # see docs.python.org/library/argparse.html
+    parser = ArgumentParser()
+
+    parser.add_argument('-1', '--usingSHA1', action='store_true',
+                        help='use SHA1, and so 160-bit keys')
+
+    parser.add_argument('-d', '--destDir', type=str,
+                        help='base name of destination U/ directory')
+
+    parser.add_argument('-j', '--justShow', action='store_true',
+                        help='show args and exit')
+
+    parser.add_argument('-s', '--srcDir', type=str,
+                        help='base name of  source U/ directory')
+
+    parser.add_argument('-t', '--showTimestamp', action='store_true',
+                        help='show run timestamp')
+
+    parser.add_argument('-T', '--testing', action='store_true',
+                        help='test run - write to ./testU')
+
+    parser.add_argument('-V', '--showVersion', action='store_true',
+                        help='show version number and date')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='talk a lot')
+
+    args = parser.parse_args()      # a Namespace object
+
+    # -- fixups -----------------------------------------------------
+    args.pgmNameAndVersion = pgmNameAndVersion
+    args.timestamp = timestamp
+
+    # -- sanity checks ----------------------------------------------
+    # given how much trouble an error can cause, there are no defaults
+    # and we require that the source and target exist
+    if (args.srcDir is None):
+        print("you must specify a source U directory")
+        sys.exit(1)
+    if not os.path.exists(args.srcDir):
+        print("directory does not exist: '%s'" % args.srcDir)
+        sys.exit(1)
+    if not os.path.isdir(args.srcDir):
+        print("not a directory: '%s'" % args.srcDir)
+        sys.exit(1)
+
+    if (args.destDir is None):
+        print("you must specify a destination U directory")
+        sys.exit(1)
+    if not os.path.exists(args.destDir):
+        print("directory does not exist: '%s'" % args.destDir)
+        sys.exit(1)
+    if not os.path.isdir(args.destDir):
+        print("not a directory: '%s'" % args.destDir)
+        sys.exit(1)
+
+    # fixups --------------------------------------------------------
+    if args.srcDir and args.srcDir[-1] == '/':
+        args.srcDir = args.srcDir[:-1]              # drop any trailing slash
+    if args.destDir and args.destDir[-1] == '/':
+        args.destDir = args.destDir[:-1]            # drop any trailing slash
+
+    # -- do it ------------------------------------------------------
+    if args.verbose or args.showVersion or args.justShow:
+        print(args.pgmNameAndVersion)
+    if args.showTimestamp:
+        print('run at %s GMT' % timestamp)   # could be prettier
+    else:
+        print()                               # there's a comma up there
+
+    if args.justShow or args.verbose:
+        print('destDir          = ' + str(args.destDir))
+        print('justShow         = ' + str(args.justShow))
+        print('showTimestamp    = ' + str(args.showTimestamp))
+        print('showVersion      = ' + str(args.showVersion))
+        print('srcDir           = ' + str(args.srcDir))
+        print('timestamp        = ' + str(args.timestamp))
+        print('usingSHA1        = ' + str(args.usingSHA1))
+        print('verbose          = ' + str(args.verbose))
+
+    if not args.justShow:
+        lock = u.ULock(args.srcDir)
+        try:
+            if lock.getLock():
+                if args.verbose:
+                    print('have lock on ' + args.srcDir)
+                importer = Importer.createImporter(args)
+                importer.doImportUDir()
+            else:
+                print('could not get lock on %s' % args.srcDir)
+        finally:
+            if args.verbose:
+                print('releasing lock on ' + args.srcDir)
+            lock.releaseLock()
+
+if __name__ == '__main__':
+    main()

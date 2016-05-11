@@ -1,0 +1,104 @@
+~/dev/py/upax/CHANGES
+
+v0.6.2
+    2016-05-10
+        * add .dvcz, projCfg*; correct use of xlattice.u256         SLOC 2545
+        * actually finish conversion to Python3                     SLOC 2557
+v0.6.1
+    2015-05-15
+        * convert to Python3
+    2015-08-10
+        * complete the conversion, do some debugging                SLOC 2848
+v0.6.0
+    2013-01-17
+        * dropped redundant usingSHA1 field from LogEntry           SLOC 2265
+        * checkUConsistency core in upax.consistency.check          SLOC 2270
+        * added property entries to ftlog.Log                       SLOC 2273
+        * addEntry now returns LogEntry object                      SLOC 2303
+        * checkUConsistency --repair works                          SLOC 2324
+
+    2013-01-16
+        * added upax.walker and testUWalker.py                      SLOC 2315
+        * checkUConsistency checks content keys but not L           SLOC 2244
+            - about 6s for 122K elements
+v0.5.1
+    2012-10-30
+        * copied in, fixed upax3 tests; they succeed                SLOC 2005
+            - so we now have test*1.py and test*3.py
+v0.5.0
+    2012-10-30
+        * all SHA1-based tests succeed (also need  to check
+            importUDir, upaxBulkPoster, upaxUpdateNodeID)           SLOC 1421
+    2012-10-29
+        * upax/node.py identical between upax and upax3
+v0.4.4
+    2012-10-13
+        * testUpaxNode.py                                           SLOC 1291
+v0.4.3
+    2012-10-09
+        * added upax/node.py                                        SLOC 1218 
+v0.4.2
+    2012-09-25
+        * corrected typo in upaxBulkPoster                          SLOC 1175
+v0.4.1
+    2012-07-30
+        * fixed bug in Importer.importLeafDir (2-tuple returned 
+            from u.put() interpreted as content hash)
+        * ran importUDir -s /var/Ue.old -d /var/Ue on PA
+v0.4.0
+    2012-07-30
+        * added importUDir script with core logic in package,
+            plus testImporUDir.py; test succeeds after fixes
+        * manual check of importUDir using data generated in 
+            tests also succeeds after some minor fixes
+v0.3.7
+    2012-07-26
+        * added ATEXT and AT_FREE to define acceptable paths for 
+            log entries, specifically to allow RFC2822 message 
+            IDs as paths
+v0.3.5
+    2012-07-25:
+        * added optional path parameter to putData(); this is 
+            useful to xlMFilter
+v0.3.4
+    2012-07-02:
+        * added Server.exists(key) and Server.getData(key)
+
+v0.3.3
+    2012-07-01:
+        * permit embedded slashes in uDir but drop any trailing 
+            slashes
+            - done for upaxUpdateNodeID and upaxBulkPoster
+v0.3.2
+    2012-06-02
+        * corrected import errors hidden by the presence of an
+            XLattice.Core.NodeID package; these errors were in 
+            upax/ftlog.py and in the unit tests
+
+v0.3.1
+    2012-06-02
+        * Added locking using u.ULock to upaxBulkPoster
+            - ALL upax utilities must use u.ULock
+            - ALL such utilities must release the lock in a 
+                finally block.
+        * Added upaxUpdateNodeID, tool for writing current 
+            nodeID = sha1(id_rsa.pub) into /var/UDIR/nodeID, which 
+            becomes a read-only file.  This file must not be 
+            rsync'ed. 
+        
+
+v0.3.0
+    2012-06-01
+        * coded up upax.Server
+        * wrote testUpaxServer; succeeds
+        * dropped upaxClient, upaxDaemon temporarily
+        * dropped testBulkWriter.py (morphed into testUpaxServer)
+        * fixed weird bug: upaxBulkPoster was referencing u's version nbr
+            (u.__version__)
+
+    2012-05-31
+        * moved to now-standard __version__ in upax/upax/__init__.py
+v0.2.1
+    2012-02-24 
+        * fixed xlattice.core.NodeID, then changed this to match
+

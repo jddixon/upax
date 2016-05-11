@@ -1,0 +1,19 @@
+2012-02-24, edited 2013-08-08
+
+Call a sequence of items posted an epoch.  The current epoch consists
+of the hash of the previous epoch plus all files posted during the 
+current epoch.  The epoch is characterized by the SHA1 hash of the 
+first item (the hash of the preceding epoch) plus the SHA1 hashes
+of other items posted during the current epoch in canonical order.
+The current epoch has no index.  All previous epochs are identified
+by the UTC time when the they were frozen.  The then-current master
+sets this timestamp.
+
+When the daemon comes up, it loads the epochs in timestamp order, 
+except that the current epoch is loaded last.
+
+A Paxos variant is used to determine which upax daemon is master.
+
+The current epoch is serialized as an entry whose hash value is ...
+
+Call the mapping from epoch timestamp to epoch ...

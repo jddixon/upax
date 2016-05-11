@@ -1,0 +1,135 @@
+~/dev/py/upax/TODO
+
+2016-05-11
+    * using code must make sure that the BoundLog is closed on
+        program exit
+
+2016-05-10
+    * actually complete conversion to python3                           * DONE
+2015-08-08
+    * rename test*3.py test*2.py                                        * DONE
+2015-05-15
+    * complete conversion to Python3; current errors in junk            * DONE
+2013-01-17
+    * note common use of timestamp = time.time(), where it should
+        be cast to int
+2013-01-16
+    * Consider adding list of peers with known nodeIDs; presumably
+        other nodeIDs will be treated differently.
+    * ./checkU -u ../cljutil/myApp/clj/U -1 -L 20 -v works :-)
+        - loads but does not examine L except to get a count
+    * The effects of adding a duplicate key are not quite clear.  The
+        log could be ordered in time and an addEntry call would mask
+        earlier entries.  Alternatively, the addEntry() could destroy
+        an earlier entry with the same key.  The nodeID on an entry
+        should identify its origin.  It would be nice to be able to 
+        assume that we can ask the nodeID's server for an entry, so
+        that it would make sense to have items that we do not have 
+        a copy of to be present in the log.  In this case, the log 
+        is determined as something to help you locate an item.
+        Timestamps are also relevant.  Given a choice of duplicate keys 
+        presented by more than one server, we might choose to prefer
+        the older one (this is a crudely conceived notion I have been
+        assuming so far).
+    * If a file is found in U with no corresponding entry in L,         * DONE
+        checkUConsistency should add an entry with itself as src and
+        the current nodeID.
+
+2012-12-24
+    * client daemon(s) must be configurable to post into ring servers
+        as described in ../cljutil/README.fetchCLJ 
+    * ring server daemons know their position in the ring and are aware
+        of other ring servers
+    * both client and ring server daemons log each and every log entry
+    * the upax daemons are NOT aware of any particula aspect of the 
+        clj protocols
+    * the upax daemons use fieldz to communicate and for logging
+    * add a vuInt64 length field to the logEntry protocol
+    * because of the major change in protocol, the version goes to 1.x.x
+
+2012-10-30
+    * someday: merge and improve test*1.py, test*3.py
+
+    * work in serverutil (log handling, evLoop)
+    * ... and fieldz (logEntry etc protocol)
+    * ... and cnx
+    * ... and daemonization
+
+2012-10-09
+    * upaxNode has data structures
+        - Peer: nodeNdx (uInt32), nodeID (fBytes20), rsaPubkey (lBytes),
+            where nodeNdx may be implicit, indexed by nodeNdx and nodeID
+        - Node: nodeNdx referring to an element in Peer, 
+            rsaPrivkey (lBytes)
+        - PeerAddr: nodeNdx, uInt32+
+        - PeerFQDN: nodeNdx, lString+
+        - LHashes: nodeNdx, timestamp (uInt32), lHash (fBytes), with
+            index on first two fields
+        - LMap: lHash to lBytes
+
+2012-07-30 
+    * BUG: importUDir does not make leaf files read-only
+        We will be using this to import the Westbury
+        data in /var/Ue.old into a new /var/Ue
+    * THIS NEEDS TO BE FIXED IN u, WHERE FILES ARE ACTUALLY WRITTEN
+        - we need L, tmp, and other subdirectories to be writeable
+
+2012-07-26
+    * verify code works correctly after PATH_PAT changed (msgID stuff 
+        has been moved to xlmfilter)
+    * remove DEBUG statements from package          * DONE but not in tarball
+
+2012-06-03
+    * Introduce upaxDaemon whose primary purpose is managin Lupax, that is,
+        the two /var/Upax/L and /var/Upax0/L files.  On receipt of a logEntry,
+        the daemon needs to immediately forward log info to +1,+2 peers 
+        (+1 then forwards to +3,+4); for these purposes servers may be 
+        ordered by nodeID.  upaxDaemon is an extension or variation of 
+        pzog. The daemon is not responsible for /var/Upax{,0} and does not
+        hold a lock on them.
+    * [07-01 note:] THIS DOES NOT MAKE SENSE.  We need a separate L manager
+        for each of Upax and Upax0 - but it should operate as described above.
+
+2012-06-02
+    * Because of a programming error, nodeID was written to /var/Upax/xx
+        but not logged.  Subsequent attempt to run upaxUpdateNodeID
+        failed because the nodeID was present although not present
+        in the log.  Need to add -f/--force switch or otherwise fix.
+
+    * Possibly /var/Upax0 should use nodeID from /var/Upax, given that
+        Upax0 is LRUed.
+
+    * add -s/--source option to upaxBulkPoster; intended use is to
+        allow easy tagging of postings from specific sources, such
+        as scanCLJ or hostmaster
+    
+    * upaxUpdateNodeID works, but doesn't create any sort of log.
+        Figure out an approach and correct the problem.  The solution
+        must take into account the fact that the nodeID on LosAltos
+        is currently wrong.
+        - BUT any such posting leaves a log entry behind!
+        - rightmost field in the logEntry is /home/XXX/.ssh/id_rsa.pub,
+            and the second field is its hash, the nodeID
+        - the problem then is the classic Paxos problem, reconciling
+            log entries between machines
+
+    * upaxUpdateNodeID noChanges option exists but is being ignored.  FIX.
+
+    * Need tool for creating /var/Upax/peers.  This is an append-only 
+        text file with fields timestamp nodeID FQDN port
+
+    * Add serverutil; its event loop must be available
+        - serverutil lock introduces the possibility of deadlock
+
+2012-06-01
+    * eventually implement upaxClient, upaxDaemon, where at least the 
+        latter uses serverutil and its libev loop
+
+2012-05-31
+    * dev*/nodeID should not be writeable
+    * XLattice.Core.NodeID import is uhm suspect
+    * in upax.ftlog 
+        - Add the usual setters and getters (and so @property etc) 
+            * PARTIALLY DONE
+    * BUG: cannot create BoundLog with reader==None
+    * BUG: cannot create FileReader with empty log

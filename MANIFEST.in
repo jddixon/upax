@@ -1,0 +1,13 @@
+# see http://docs.python.org/distutils/sourcedist.html
+
+include netDistrib.conf
+include CHANGES README* TODO MANIFEST.in
+include checkUConsistency importUDir upaxBulkPoster upaxUpdateNodeID
+include test*.py test.all countem installit
+
+recursive-include upax *.py
+
+global-exclude junk* .*swp 
+prune   .svn
+
+

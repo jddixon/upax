@@ -1,0 +1,16 @@
+./testBoundLog1.py
+./testBoundLog2.py
+./testImporter1.py
+./testImporter2.py
+./testLog1.py
+./testLog2.py
+./testLogEntry1.py
+./testLogEntry2.py
+./testLogReader1.py
+./testLogReader2.py
+./testUpaxNode1.py
+./testUpaxNode2.py
+./testUpaxServer1.py
+./testUpaxServer2.py
+./testUWalker.py
+./testZMQ.py

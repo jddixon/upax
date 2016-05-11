@@ -1,0 +1,123 @@
+#!/usr/bin/python3
+
+# ~/dev/py/upax/checkUConsistency
+
+import os
+import random
+import re
+import sys
+import time
+from argparse import ArgumentParser
+from upax import *
+import upax.consistency
+
+
+def dieIfNotFound(s):
+    if not os.path.exists(s):
+        print("cannot continue: %s does not exist" % s)
+        sys.exit(1)
+
+
+def main():
+    """
+    Collects options for upax.consistency.check.  If the --repair
+    argument is present, will locate any content files in U that
+    are not in the log (U/L) and add them with the int time of the
+    run as the timestamp, U/nodeID as the nodeID, this program as the
+    source, and the content key as the path.  By default the program
+    assumes that we are using SHA1 to calculate content keys.
+
+    In this implementation no attempt is made to verify that the
+    content key accurately reflects what is in the file.
+    """
+
+    # -- program defaults -------------------------------------------
+    limit = 1024 * 1024 * 1024    # maximum number of files in U processed
+    uDir = '/var/U'          # root of the U256x256 directory structure
+
+    # -- parse the command line -------------------------------------
+    # see docs.python.org/library/argparse.html
+    parser = ArgumentParser()
+
+    parser.add_argument('-1', '--usingSHA1', action='store_true',
+                        help='set if using SHA1 (40 hex digit keys)')
+
+    parser.add_argument('-a', '--startAt', default='00',
+                        help='start at, default = 00')
+
+    parser.add_argument('-j', '--justShow', action='store_true',
+                        help='show args and exit')
+
+    parser.add_argument('-k', '--justKeys', action='store_true',
+                        help='just collect keys, do not check they are valid content keys')
+
+    parser.add_argument('-L', '--limit', default=limit, type=int,
+                        help='collect up to this many keys, default = %u' % limit)
+
+    parser.add_argument('-R', '--repairing', action='store_true',
+                        help='try to fix errors found (for now, insert missing userBodies into U0)')
+
+    parser.add_argument('-T', '--testing', action='store_true',
+                        help='test run, use default local dirs')
+
+    parser.add_argument('-u', '--uDir', default=uDir,
+                        help='path to U/, default %s' % str(uDir))
+
+    parser.add_argument('-V', '--showVersion', action='store_true',
+                        help='show version number and date')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='talk a lot')
+
+    args = parser.parse_args()      # a Namespace object
+
+    # -- fixups -----------------------------------------------------
+    args.timestamp = int(time.time())
+    if args.testing:
+        args.uDir = 'myU'
+        if not os.path.exists(args.uDir):
+            os.makedirs(args.uDir)
+    if args.uDir:
+        dieIfNotFound(args.uDir)
+
+    # -- sanity checks ----------------------------------------------
+    args.myNodeID = None
+    pathToNodeID = os.path.join(uDir, 'nodeID')
+    if os.path.exists(pathToNodeID):
+        with open(pathToNodeID, 'r') as f:
+            args.myNodeID = f.read().strip()
+        # DEBUG
+        print("MY NODE_ID IS %s" % args.myNodeID)
+        # END
+    # startAt must be a string of two hex characters
+    hexChar = '0123456789abcdef'
+    startAt = args.startAt = args.startAt.lower()
+    if not isinstance(startAt, str) or len(startAt) != 2 \
+            or not startAt[0] in hexChar or not startAt[1] in hexChar:
+        print("startAt must be two hex digits; '%s' isn't" % args.startAt)
+
+    # -- do it ------------------------------------------------------
+    args.appName = 'checkUConsistency v%s' % __version__
+    if args.verbose or args.showVersion or args.justShow:
+        print("%s %s" % (args.appName, __version_date__))
+
+    if args.verbose or args.justShow:
+
+        print('appName         = ' + str(args.appName))
+        print('justKeys        = ' + str(args.justKeys))
+        print('justShow        = ' + str(args.justShow))
+        print('limit           = ' + str(args.limit))
+        print('repairing       = ' + str(args.repairing))
+        print('showVersion     = ' + str(args.showVersion))
+        print('startAt         = ' + str(args.startAt))
+        print('testing         = ' + str(args.testing))
+        print('timestamp       = ' + str(args.timestamp))
+        print('uDir            = ' + str(args.uDir))
+        print('usingSHA1       = ' + str(args.usingSHA1))
+        print('verbose         = ' + str(args.verbose))
+
+    if not args.justShow:
+        upax.consistency.check(args)
+
+if __name__ == '__main__':
+    main()

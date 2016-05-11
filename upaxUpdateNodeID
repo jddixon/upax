@@ -1,0 +1,190 @@
+#!/usr/bin/python3
+
+# ~/dev/py/upax/upaxUpdateNodeID
+
+import binascii
+import os
+import pwd
+import re
+import sys
+import time
+from argparse import ArgumentParser
+
+import u
+import upax
+
+# PATs AND REs ######################################################
+
+
+def doWhatever(args):
+    noChanges = args.noChanges
+    testing = args.testing
+    uDir = args.uDir
+    usingSHA1 = args.usingSHA1
+    verbose = args.verbose
+
+    s = upax.BlockingServer(uDir, usingSHA1)
+    log = s.log
+    if verbose:
+        print("there were %7u files in %s at the beginning of the run" % (
+            len(log), uDir))
+
+    src = args.pgmNameAndVersion
+
+    if testing:
+        login = pwd.getpwuid(os.getuid())[0]
+    else:
+        login = 'upax'
+    pubkeyPath = '/home/%s/.ssh/id_rsa.pub' % login
+    if not os.path.exists(pubkeyPath):
+        print("can't find public key for %s" % login)
+        s.close()
+        return
+
+    if usingSHA1:
+        nodeID = u.fileSHA1(pubkeyPath)
+    else:
+        nodeID = u.fileSHA3(pubkeyPath)
+    if verbose:
+        print("nodeID: " + nodeID)
+
+    pathToNodeID = os.path.join(uDir, 'nodeID')
+    if os.path.exists(pathToNodeID):
+        with open(pathToNodeID, 'r') as f:
+            currentNodeID = f.read()[:-1]
+        if currentNodeID == nodeID:
+            if verbose:
+                print('nodeID in %s is already correct' % uDir)
+                s.close()
+                return
+    with open(pathToNodeID, 'w') as f:
+        f.write(nodeID + '\n')
+        os.chmod(pathToNodeID, 0o444)
+    s.put(pubkeyPath, nodeID, src)
+
+    if verbose:
+        print("there are %7u files in %s at the end of the run" % (
+            len(log), uDir))
+    s.close()
+
+
+def main():
+
+    pgmNameAndVersion = "upaxUpdateNodeID v%s %s" % (
+        upax.__version__, upax.__version_date__)
+    timestamp = "%04d%02d%02d-%02d%02d%02d" % time.gmtime()[:6]
+
+    # -- program defaults -------------------------------------------
+
+    # -- check for config file --------------------------------------
+
+    # -- parse the command line -------------------------------------
+    # see docs.python.org/library/argparse.html
+    parser = ArgumentParser('post new files in a directory into Upax')
+
+    parser.add_argument('-1', '--usingSHA1', action='store_true',
+                        help='use SHA1, and so 160-bit keys')
+
+    parser.add_argument('-e', '--ec2Host', action='store_true',
+                        help='set if machine is in EC2')
+
+    parser.add_argument('-i', '--inDir', default='/home/upax/.ssh',
+                        help='path to .ssh/ (forced to ./ testIn if testing)')
+
+    parser.add_argument('-H', '--hostmaster', action='store_true',
+                        help='set if machine runs bindMgr')
+
+    parser.add_argument('-j', '--justShow', action='store_true',
+                        help='show args and exit')
+
+    parser.add_argument('-N', '--nameserver', action='store_true',
+                        help='set if machine is a name server and so runs bindLocalMgr')
+
+    parser.add_argument('-t', '--showTimestamp', action='store_true',
+                        help='show run timestamp')
+
+    # just the base name (usually Upax or Upax0) we will fix this up below
+    parser.add_argument('-u', '--uDir', default='Upax',
+                        help='base name of  U/ directory, default to Upax')
+
+    parser.add_argument('-T', '--testing', action='store_true',
+                        help='test run - write to ./testU')
+
+    parser.add_argument('-V', '--showVersion', action='store_true',
+                        help='show version number and date')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='talk a lot')
+
+    parser.add_argument('-z', '--noChanges', action='store_true',
+                        help="don't actually write anything to disk")
+
+    args = parser.parse_args()      # a Namespace object
+
+    # -- fixups -----------------------------------------------------
+    args.pgmNameAndVersion = pgmNameAndVersion
+    if args.testing:
+        args.inDir = 'testIn'
+    args.timestamp = timestamp
+
+    # -- sanity checks ----------------------------------------------
+    if not os.path.exists(args.inDir):
+        print("input directory '%s' does not exist" % args.inDir)
+        sys.exit(1)
+
+    # REMOVING THIS RESTRICTION #################
+#   uDirParts = args.uDir.split('/')
+#   if len(uDirParts) > 1:
+#       print "uDir may not contain any slashes: aborting"
+#       sys.exit(1)
+
+    if args.hostmaster and args.nameserver:
+        print('you cannot select both hostmaster and nameserver attributes')
+        sys.exit(1)
+
+    # fixups --------------------------------------------------------
+    args.pgmNameAndVersion = pgmNameAndVersion
+    if args.uDir and args.uDir[-1] == '/':
+        args.uDir = args.uDir[:-1]          # drop any trailing slash
+
+    if args.testing:
+        args.uDir = 'testU'
+    elif args.ec2Host:
+        args.uDir = os.path.join('/vol', args.uDir)
+    else:
+        args.uDir = os.path.join('/var', args.uDir)
+
+    # -- do it ------------------------------------------------------
+    if args.verbose or args.showVersion or args.justShow:
+        print(args.pgmNameAndVersion)
+    if args.showTimestamp:
+        print('run at %s GMT' % timestamp)   # could be prettier
+    else:
+        print()                               # there's a comma up there
+
+    if args.justShow or args.verbose:
+        print('hostmaster       = ' + str(args.hostmaster))
+        print('inDir            = ' + str(args.inDir))
+        print('justShow         = ' + str(args.justShow))
+        print('nameserver       = ' + str(args.nameserver))
+        print('noChanges        = ' + str(args.noChanges))
+        print('showTimestamp    = ' + str(args.showTimestamp))
+        print('showVersion      = ' + str(args.showVersion))
+        print('testing          = ' + str(args.testing))
+        print('timestamp        = ' + str(args.timestamp))
+        print('uDir             = ' + str(args.uDir))
+        print('usingSHA1        = ' + str(args.usingSHA1))
+        print('verbose          = ' + str(args.verbose))
+
+    if not args.justShow:
+        lock = u.ULock(args.uDir)
+        try:
+            if lock.getLock():
+                doWhatever(args)
+            else:
+                print('could not get lock on %s' % args.uDir)
+        finally:
+            lock.releaseLock()
+
+if __name__ == '__main__':
+    main()
