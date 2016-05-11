@@ -91,7 +91,7 @@ class UWalker(object):
 
                             if file != contentKey:
                                 print(('*** HASH MISMATCH: expected %s, actual %s ***'
-                                      % (file, contentKey)))
+                                       % (file, contentKey)))
                             if not walking:
                                 break
                     if not walking:

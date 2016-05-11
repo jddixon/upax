@@ -1,5 +1,8 @@
 ~/dev/py/upax/CHANGES
 
+v0.6.3
+    2016-05-11
+        * clean up initial commit to github                         SLOC 2557
 v0.6.2
     2016-05-10
         * add .dvcz, projCfg*; correct use of xlattice.u256         SLOC 2545
@@ -101,4 +104,5 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
