@@ -8,8 +8,8 @@ import rnglib
 from xlattice import u256 as u
 import upax.ftlog
 
-__version__ = '0.6.2'
-__version_date__ = '2016-05-10'
+__version__ = '0.6.3'
+__version_date__ = '2016-05-11'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
