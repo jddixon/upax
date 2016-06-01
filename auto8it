@@ -1,7 +1,0 @@
-cd /home/jdd/dev/py/upax
-
-autopep8 -air upax *.py \
-    checkUConsistency   \
-    importUDir          \
-    upaxBulkPoster      \
-    upaxUpdateNodeID

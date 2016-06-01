@@ -3,6 +3,7 @@
 2016-05-11
     * using code must make sure that the BoundLog is closed on
         program exit
+    * need some documentation
 
 2016-05-10
     * actually complete conversion to python3                           * DONE
