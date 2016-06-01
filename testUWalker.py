@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # ~/dev/py/upax/testUWalker.py
 

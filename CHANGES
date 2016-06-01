@@ -1,5 +1,8 @@
 ~/dev/py/upax/CHANGES
 
+v0.6.4
+    2016-06-01
+        * add bkp2U, other bash scripts; update .dvcz               SLOC 2607
 v0.6.3
     2016-05-11
         * clean up initial commit to github                         SLOC 2557
@@ -104,5 +107,6 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 

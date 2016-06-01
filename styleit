@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ ! -z "${DEV_BASE// }" ]
+then
+  cd $DEV_BASE/py/upax
+  
+  autopep8 -ai -r upax checkUConsistency importUDir upaxBulkPoster upaxUpdateNodeID *.py
+  echo "not styling dev0/ subdir"
+  echo "not styling dev1/ subdir"
+  echo "not styling dev2/ subdir"
+  echo "not styling dev3/ subdir"
+  echo "not styling ndxPages/ subdir"
+  echo "not styling sequences/ subdir"
+  
+else
+  echo "DEV_BASE is not defined"
+fi
