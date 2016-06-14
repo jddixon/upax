@@ -1,5 +1,11 @@
 ~/dev/py/upax/TODO
 
+2016-06-14
+    * testZMQ is a stub
+
+2016-06-03
+    * modify to use xlattice.u.UDir                                     * DONE
+
 2016-05-11
     * using code must make sure that the BoundLog is closed on
         program exit

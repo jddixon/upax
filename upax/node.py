@@ -17,8 +17,8 @@ def checkNodeID(b, usingSHA1):
 
 NODE_ID_1_PAT = '^[A-Z0-9]{40}$'
 NODE_ID_1_RE = re.compile(NODE_ID_1_PAT, re.I)
-NODE_ID_3_PAT = '^[A-Z0-9]{64}$'
-NODE_ID_3_RE = re.compile(NODE_ID_3_PAT, re.I)
+NODE_ID_2_PAT = '^[A-Z0-9]{64}$'
+NODE_ID_2_RE = re.compile(NODE_ID_2_PAT, re.I)
 
 
 def checkHexNodeID1(s):
@@ -29,10 +29,10 @@ def checkHexNodeID1(s):
         raise ValueError("not a valid 160-bit hex nodeID: ''%s'" % s)
 
 
-def checkHexNodeID3(s):
+def checkHexNodeID2(s):
     if s is None:
         raise ValueError('nodeID may not be None')
-    m = NODE_ID_3_RE.match(s)
+    m = NODE_ID_2_RE.match(s)
     if m is None:
         raise ValueError("not a valid 256-bit hex nodeID: ''%s'" % s)
 

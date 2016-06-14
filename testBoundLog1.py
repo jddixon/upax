@@ -8,15 +8,6 @@ import unittest
 
 from upax.ftlog import BoundLog, FileReader, Log, LogEntry, Reader, StringReader
 
-GOODKEY_1 = '0123456789012345678901234567890123456789'
-GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
-GOODKEY_3 = '1234567890123456789012345678901234567890'
-GOODKEY_4 = 'edcba9876543210fedcba9876543210fedcba98f'
-GOODKEY_5 = '2345678901234567890123456789012345678901'
-GOODKEY_6 = 'dcba9876543210fedcba9876543210fedcba98fe'
-GOODKEY_7 = '3456789012345678901234567890123456789012'
-GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fed'
-
 
 class TestBoundLog (unittest.TestCase):
 
@@ -29,13 +20,42 @@ class TestBoundLog (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testLogWithoutEntries(self):
+    def getGood(self, usingSHA1):
+        if usingSHA1:
+            GOODKEY_1 = '0123456789012345678901234567890123456789'
+            GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
+            GOODKEY_3 = '1234567890123456789012345678901234567890'
+            GOODKEY_4 = 'edcba9876543210fedcba9876543210fedcba98f'
+            GOODKEY_5 = '2345678901234567890123456789012345678901'
+            GOODKEY_6 = 'dcba9876543210fedcba9876543210fedcba98fe'
+            GOODKEY_7 = '3456789012345678901234567890123456789012'
+            GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fed'
+        else:
+            GOODKEY_1 = '0123456789012345678901234567890123456789abcdef3330123456789abcde'
+            GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
+            GOODKEY_3 = '1234567890123456789012345678901234567890abcdef697698768696969696'
+            GOODKEY_4 = 'edcba9876543210fedcba9876543210fedcba98f012345678901234567890123'
+            GOODKEY_5 = '2345678901234567890123456789012345678901654654647645647654754757'
+            GOODKEY_6 = 'dcba9876543210fedcba9876543210fedcba98fe453254323243253274754777'
+            GOODKEY_7 = '3456789012345678901234567890123456789012abcdef696878687686999987'
+            GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fedfedcab698687669676999988'
+        return (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
+                GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,)
+
+    def doTestLogWithoutEntries(self, usingSHA1):
+
+        (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+
         t0 = 1000 * (int(time.time()) - 10000)
         # the first line of an otherwise empty log file
         EMPTY_LOG = "%013u %s %s\n" % (t0, GOODKEY_1, GOODKEY_2)
-        reader = StringReader(EMPTY_LOG, True)
-
-        log = BoundLog(reader, True, self.uDir, 'L')      # will default to 'L'
+        reader = StringReader(EMPTY_LOG, usingSHA1)
+        log = BoundLog(
+            reader,
+            usingSHA1,
+            self.uDir,
+            'L')  # will default to 'L'
 
         assert log is not None
         self.assertEqual(t0, log.timestamp)
@@ -55,8 +75,17 @@ class TestBoundLog (unittest.TestCase):
         with open(pathToLog, "r") as f:
             contents = f.read()
         self.assertEqual(EMPTY_LOG, contents)
+        log.close()
 
-    def setUpTheThree(self):
+    def testLogWithoutEntries(self):
+        self.doTestLogWithoutEntries(True)      # usingSHA1
+        self.doTestLogWithoutEntries(False)     # not usingSHA1
+
+    def setUpTheThree(self, usingSHA1):
+
+        (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+
         t0 = int(time.time()) - 10000
         t1 = t0 + 100
         t2 = t1 + 100
@@ -68,11 +97,15 @@ class TestBoundLog (unittest.TestCase):
         LOG_W_THREE = EMPTY_LOG + str(entry1) + str(entry2) + str(entry3)
         return (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE)
 
-    def testMultiEntryLog(self):
+    def doTestMultiEntryLog(self, usingSHA1):
+
+        (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+
         (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE) = \
-            self.setUpTheThree()
-        reader = StringReader(LOG_W_THREE, True)
-        log = BoundLog(reader, True, self.uDir, 'L')  # True = SHA1
+            self.setUpTheThree(usingSHA1)
+        reader = StringReader(LOG_W_THREE, usingSHA1)
+        log = BoundLog(reader, usingSHA1, self.uDir, 'L')   # XXX FAILS
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
@@ -94,12 +127,21 @@ class TestBoundLog (unittest.TestCase):
         with open(self.pathToLog, 'r') as f:
             logContents = f.read()
         self.assertEqual(LOG_W_THREE, logContents)
+        log.close()
 
-    def testAddEntry(self):
+    def testMultiEntryLog(self):
+        self.doTestMultiEntryLog(True)
+        self.doTestMultiEntryLog(False)
+
+    def doTestAddEntry(self, usingSHA1):
+
+        (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+
         (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE) = \
-            self.setUpTheThree()
-        reader = StringReader(EMPTY_LOG, True)
-        log = BoundLog(reader, True, self.uDir, 'L')
+            self.setUpTheThree(usingSHA1)
+        reader = StringReader(EMPTY_LOG, usingSHA1)
+        log = BoundLog(reader, usingSHA1, self.uDir, 'L')
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
@@ -131,11 +173,19 @@ class TestBoundLog (unittest.TestCase):
             logContents = f.read()
         self.assertEqual(LOG_W_THREE, logContents)
 
-    def testWithOpensAndCloses(self):
+    def testAddEntry(self):
+        self.doTestAddEntry(True)
+        self.doTestAddEntry(False)
+
+    def doTestWithOpensAndCloses(self, usingSHA1):
+
+        (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+
         (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE) = \
-            self.setUpTheThree()
-        reader = StringReader(EMPTY_LOG, True)
-        log = BoundLog(reader, True, self.uDir)
+            self.setUpTheThree(usingSHA1)
+        reader = StringReader(EMPTY_LOG, usingSHA1)
+        log = BoundLog(reader, usingSHA1, self.uDir)
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
@@ -143,8 +193,8 @@ class TestBoundLog (unittest.TestCase):
         self.assertEqual(0, len(log))
         log.close()
 
-        reader = FileReader(self.uDir, True)
-        log = BoundLog(reader, True)
+        reader = FileReader(self.uDir, usingSHA1)
+        log = BoundLog(reader, usingSHA1)
         log.addEntry(t1, GOODKEY_3, GOODKEY_4, 'jdd', 'e@document1')
         self.assertEqual(1, len(log))
         entry = log.getEntry(GOODKEY_3)
@@ -153,8 +203,8 @@ class TestBoundLog (unittest.TestCase):
         self.assertFalse(GOODKEY_5 in log)
         log.close()
 
-        reader = FileReader(self.uDir, True)
-        log = BoundLog(reader, True)
+        reader = FileReader(self.uDir, usingSHA1)
+        log = BoundLog(reader, usingSHA1)
         log.addEntry(t2, GOODKEY_5, GOODKEY_6, 'jdd', 'e@document2')
         self.assertEqual(2, len(log))
         entry = log.getEntry(GOODKEY_5)
@@ -162,8 +212,8 @@ class TestBoundLog (unittest.TestCase):
         self.assertTrue(GOODKEY_5 in log)
         log.close()
 
-        reader = FileReader(self.uDir, True)
-        log = BoundLog(reader, True)
+        reader = FileReader(self.uDir, usingSHA1)
+        log = BoundLog(reader, usingSHA1)
         log.addEntry(t3, GOODKEY_7, GOODKEY_8, 'jdd', 'e@document3')
         self.assertEqual(3, len(log))
         entry = log.getEntry(GOODKEY_7)
@@ -175,5 +225,8 @@ class TestBoundLog (unittest.TestCase):
             logContents = f.read()
         self.assertEqual(LOG_W_THREE, logContents)
 
+    def testWithOpensAndCloses(self):
+        self.doTestWithOpensAndCloses(True)
+        self.doTestWithOpensAndCloses(False)
 if __name__ == '__main__':
     unittest.main()

@@ -19,34 +19,44 @@ class TestUpaxNode (unittest.TestCase):
         pass
 
     # tests both sha1 and sha3 versions of code
-    def testCheckNodeID(self):
+    def doTestCheckNodeID(self, usingSHA1):
         for i in range(15):
             count = i + 18
             nodeID = bytearray(count)
-            if count == 20:
+            if usingSHA1 and count == 20:
                 try:
-                    checkNodeID(nodeID, True)
+                    checkNodeID(nodeID, usingSHA1)
                 except ValueError as ve:
                     self.fail('unexpected value error on %s' % nodeID)
-            elif count == 32:
+
+            elif not usingSHA1 and count == 32:
                 try:
-                    checkNodeID(nodeID, False)
+                    checkNodeID(nodeID, usingSHA1)
                 except ValueError as ve:
                     self.fail('unexpected value error on %s' % nodeID)
             else:
                 try:
-                    checkNodeID(nodeID, True)       # True means sha1 check
+                    checkNodeID(nodeID, usingSHA1)
                     self.fail('expected value error on %s' % nodeID)
                 except ValueError as ve:
                     pass
 
-    def testPeer(self):
+    def testCheckNodeID(self):
+        self.doTestCheckNodeID(True)
+        self.doTestCheckNodeID(False)
+
+    # ---------------------------------------------------------------
+
+    def doTestPeer(self, usingSHA1):
         """ simple integrity checks on Peer type"""
-        nodeID = bytearray(20)
+        if usingSHA1:
+            nodeID = bytearray(20)
+        else:
+            nodeID = bytearray(32)
         rng.nextBytes(nodeID)
         pubKey = bytearray(162)         # number not to be taken seriously
         rng.nextBytes(pubKey)
-        peer = Peer(nodeID, pubKey, True)    # True means using SHA1
+        peer = Peer(nodeID, pubKey, usingSHA1)    # True means using SHA1
         self.assertEqual(nodeID, peer.nodeID)
         self.assertEqual(pubKey, peer.rsaPubKey)
         self.assertIsNone(peer.nodeNdx)
@@ -64,18 +74,24 @@ class TestUpaxNode (unittest.TestCase):
         self.assertEqual(0, len(peer.fqdn))
 
         # verify that nodeNdx must be non-negative integer
-        peer2 = Peer(nodeID, pubKey, True)          # True = sha1
+        peer2 = Peer(nodeID, pubKey, usingSHA1)          # True = sha1
         try:
             peer2.nodeNdx = 'sugar'
             self.fail('successfully set nodeNdx to string value')
         except:
             pass
-        peer3 = Peer(nodeID, pubKey, True)
+        peer3 = Peer(nodeID, pubKey, usingSHA1)
         try:
             peer3.nodeNdx = -19
             self.fail('successfully set nodeNdx to negative number')
         except:
             pass
+
+    def testPeer(self):
+        self.doTestPeer(True)
+        self.doTestPeer(False)
+
+    # ---------------------------------------------------------------
 
     def testUpaxNode(self):
         """

@@ -87,7 +87,7 @@ class UWalker(object):
                             if self._usingSHA1:
                                 contentKey = u.fileSHA1(pathToFile)
                             else:
-                                contentKey = u.fileSHA3(pathToFile)
+                                contentKey = u.fileSHA2(pathToFile)
 
                             if file != contentKey:
                                 print(('*** HASH MISMATCH: expected %s, actual %s ***'

@@ -34,13 +34,19 @@ class TestUWalker (unittest.TestCase):
         self.assertEqual(uDir, w.uDir)
         self.assertEqual(0, w.count)
 
-    def testWalkingRealDir(self):
+    # ---------------------------------------------------------------
+
+    def doTestWalkingRealDir(self, usingSHA1):
         uDir = '/var/U'
         limit = 100              # 1000
         startAt = 'a0'
         if not os.path.exists(uDir):
             os.makedirs(uDir)
-        w = UWalker(uDir=uDir, limit=limit, startAt=startAt, usingSHA1=True)
+        w = UWalker(
+            uDir=uDir,
+            limit=limit,
+            startAt=startAt,
+            usingSHA1=usingSHA1)
         self.assertEqual(uDir, w.uDir)
         self.assertEqual(0, w.count)
         self.assertEqual(limit, w.limit)
@@ -48,13 +54,17 @@ class TestUWalker (unittest.TestCase):
         keys = w.walk()
         count = len(keys)
         self.assertEqual(count, w.count)
-        print(("\nFOUND %u ENTRIES IN RANGE" % count))         # DEBUG
+        # print(("\nFOUND %u ENTRIES IN RANGE" % count))         # DEBUG
 
-        print(("THE FIRST SIXTEEN KEYS IN %s FROM %s" % (uDir, startAt)))
-        for i in range(16):
-            p = w.keys[i]
-            print(('%s' % p))
+        #print(("THE FIRST SIXTEEN KEYS IN %s FROM %s" % (uDir, startAt)))
+        # for i in range(16):
+        #    p = w.keys[i]
+        #    print(('%s' % p))
 
+    def testWalkingRealDir(self):
+        self.doTestWalkingRealDir(True)
+        # the real directory used actually uses SHA1
+        # self.doTestWalkingRealDir(False)
 
 if __name__ == '__main__':
     unittest.main()

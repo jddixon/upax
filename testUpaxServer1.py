@@ -17,37 +17,49 @@ DATA_PATH = 'myData'
 class TestUpaxServer (unittest.TestCase):
 
     def setUp(self):
-        uDir = os.path.join(DATA_PATH, rng.nextFileName(16))
-        while os.path.exists(uDir):
-            uDir = os.path.join(DATA_PATH, rng.nextFileName(16))
-        self.uDir = uDir
+        pass
 
     def tearDown(self):
         pass
 
-    def testConstructFromNothing(self):
-        # we are guaranteed that uDir does _not_ exist
-        s = upax.BlockingServer(self.uDir, True)        # sha1
+    def doTestConstructFromNothing(self, usingSHA1):
+        # SETUP
+        uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+        while os.path.exists(uPath):
+            uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+
+        # we are guaranteed that uPath does _not_ exist
+        s = upax.BlockingServer(uPath, usingSHA1)
         self.assertIsNotNone(s)
-        self.assertTrue(os.path.exists(s.uDir))
+        self.assertTrue(os.path.exists(s.uPath))
 
         # subdirectories
-        self.assertTrue(os.path.exists(os.path.join(self.uDir, 'in')))
-        self.assertTrue(os.path.exists(os.path.join(self.uDir, 'tmp')))
+        self.assertTrue(os.path.exists(os.path.join(uPath, 'in')))
+        self.assertTrue(os.path.exists(os.path.join(uPath, 'tmp')))
 
         # nodeID
-        idPath = os.path.join(self.uDir, 'nodeID')
+        idPath = os.path.join(uPath, 'nodeID')
         self.assertTrue(os.path.exists(idPath))
         with open(idPath, 'rb') as f:
             nodeID = f.read()
-        self.assertEqual(41, len(nodeID))
-        self.assertEqual(ord('\n'), nodeID[40])
+        if usingSHA1:
+            self.assertEqual(41, len(nodeID))
+            self.assertEqual(ord('\n'), nodeID[40])
+        else:
+            self.assertEqual(65, len(nodeID))
+            self.assertEqual(ord('\n'), nodeID[64])
         nodeID = nodeID[:-1]
 
         s.close()
-        self.assertTrue(os.path.exists(os.path.join(self.uDir, 'L')))   # GEEP
+        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
 
-    def makeSomeFiles(self):
+    def testConstructFromNothing(self):
+        self.doTestConstructFromNothing(True)
+        self.doTestConstructFromNothing(False)
+
+    # ---------------------------------------------------------------
+
+    def makeSomeFiles(self, usingSHA1):
         """ return a map: hash=>path """
 
         # create a random number of unique data files of random length
@@ -64,15 +76,25 @@ class TestUpaxServer (unittest.TestCase):
             # perhaps more restrictions needed
             while dPath.endswith('.'):
                 (dLen, dPath) = rng.nextDataFile(DATA_PATH, 16 * 1024, 1)
-            dKey = u.fileSHA1Hex(dPath)
+            if usingSHA1:
+                dKey = u.fileSHA1Hex(dPath)
+            else:
+                dKey = u.fileSHA2Hex(dPath)
             files[dKey] = dPath
 
         self.assertEqual(fileCount, len(files))
         return files
 
-    def testPutToEmpty(self):
-        s = upax.BlockingServer(self.uDir, True)
-        fileMap = self.makeSomeFiles()
+    # ---------------------------------------------------------------
+
+    def doTestPutToEmpty(self, usingSHA1):
+        # SETUP
+        uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+        while os.path.exists(uPath):
+            uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+
+        s = upax.BlockingServer(uPath, usingSHA1)
+        fileMap = self.makeSomeFiles(usingSHA1)
         fileCount = len(fileMap)
 
         for key in list(fileMap.keys()):
@@ -87,24 +109,35 @@ class TestUpaxServer (unittest.TestCase):
         self.assertEqual(fileCount, len(log))
 
         for key in list(fileMap.keys()):
-            u.exists(self.uDir, key)
+            u.exists(uPath, key)
             entry = log.getEntry(key)
             self.assertIsNotNone(entry)
             # STUB: shold examine properties of log entry
 
         s.close()
-        self.assertTrue(os.path.exists(os.path.join(self.uDir, 'L')))   # GEEP
+        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
 
-    def testPutCloseReopenAndPut(self):
-        s = upax.BlockingServer(self.uDir, True)
-        fileMap1 = self.makeSomeFiles()
+    def testPutToEmpty(self):
+        self.doTestPutToEmpty(True)
+        self.doTestPutToEmpty(False)
+
+    # ---------------------------------------------------------------
+
+    def doTestPutCloseReopenAndPut(self, usingSHA1):
+        # SETUP
+        uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+        while os.path.exists(uPath):
+            uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+
+        s = upax.BlockingServer(uPath, usingSHA1)
+        fileMap1 = self.makeSomeFiles(usingSHA1)
         fileCount1 = len(fileMap1)
         for key in list(fileMap1.keys()):
             s.put(fileMap1[key], key, 'testPut ... first phase')
         s.close()
 
-        s = upax.BlockingServer(self.uDir, True)
-        fileMap2 = self.makeSomeFiles()
+        s = upax.BlockingServer(uPath, usingSHA1)
+        fileMap2 = self.makeSomeFiles(usingSHA1)
         fileCount2 = len(fileMap2)
         for key in list(fileMap2.keys()):
             s.put(fileMap2[key], key, 'testPut ... SECOND PHASE')
@@ -113,17 +146,21 @@ class TestUpaxServer (unittest.TestCase):
         self.assertEqual(fileCount1 + fileCount2, len(log))
 
         for key in list(fileMap1.keys()):
-            u.exists(self.uDir, key)
+            u.exists(uPath, key)
             entry = log.getEntry(key)
             self.assertIsNotNone(entry)
 
         for key in list(fileMap2.keys()):
-            u.exists(self.uDir, key)
+            u.exists(uPath, key)
             entry = log.getEntry(key)
             self.assertIsNotNone(entry)
 
         s.close()
-        self.assertTrue(os.path.exists(os.path.join(self.uDir, 'L')))   # GEEP
+        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
+
+    def testPutCloseReopenAndPut(self):
+        self.doTestPutCloseReopenAndPut(True)
+        self.doTestPutCloseReopenAndPut(False)
 
 if __name__ == '__main__':
     unittest.main()
