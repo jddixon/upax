@@ -1,5 +1,11 @@
 ~/dev/py/upax/CHANGES
 
+
+v0.6.5
+    2016-06-14
+        * replaced separate tests for usingSHA1 True and False
+            with combined tests (dropped several files)
+        * fixed bugs relating to usingSHA1                          SLOC 2256
 v0.6.4
     2016-06-01
         * add bkp2U, other bash scripts; update .dvcz               SLOC 2607
@@ -107,6 +113,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

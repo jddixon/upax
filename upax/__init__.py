@@ -5,11 +5,13 @@ import os
 import re
 import time
 import rnglib
-from xlattice import u256 as u
+from xlattice.u import (DIR_FLAT, DIR16x16, DIR256x256,
+                        fileSHA1Hex, fileSHA2Hex,
+                        UDir)
 import upax.ftlog
 
-__version__ = '0.6.4'
-__version_date__ = '2016-06-01'
+__version__ = '0.6.5'
+__version_date__ = '2016-06-14'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -118,15 +120,14 @@ class Importer(object):
                         subDir != 'tmp':
                     print(("not a proper subdirectory: " + pathTo))
         finally:
-            print(("processed %u files" % self._count))
             self._server.close()                                       # GEEP
 
 
 class Server(object):
 
-    #   __slots__ = ['_uDir', '_usingSHA1', ]
+    #   __slots__ = ['_uPath', '_usingSHA1', ]
 
-    def __init__(self, uDir, usingSHA1=False):
+    def __init__(self, uPath, usingSHA1):
         """
         We expect uDir to contain two subdirectories, in/ and tmp/, and
         at least two files, L and nodeID.  L is the serialization of a
@@ -145,18 +146,17 @@ class Server(object):
         All files in uDir should be owned by upax.upax and are (at least
         at this time) world-readable but only owner-writeable.
         """
+
         self._usingSHA1 = usingSHA1
-        if not uDir:
-            raise ValueError('uDir must be specified')
+        uDir = UDir.discover(uPath, DIR256x256, usingSHA1)
         self._uDir = uDir
+        self._uPath = uPath
 
-        _inDirPath = os.path.join(uDir, 'in')
-        _logFilePath = os.path.join(uDir, 'L')
-        _idFilePath = os.path.join(uDir, 'nodeID')
-        _tmpDirPath = os.path.join(uDir, 'tmp')
+        _inDirPath = os.path.join(uPath, 'in')
+        _logFilePath = os.path.join(uPath, 'L')
+        _idFilePath = os.path.join(uPath, 'nodeID')
+        _tmpDirPath = os.path.join(uPath, 'tmp')
 
-        if not os.path.exists(uDir):
-            os.makedirs(uDir)
         if not os.path.exists(_inDirPath):
             os.mkdir(_inDirPath)
         if not os.path.exists(_tmpDirPath):
@@ -177,21 +177,37 @@ class Server(object):
             with open(_idFilePath, 'r') as f:
                 self._nodeID = f.read()[:-1]
 
-        if not os.path.exists(_logFilePath):
-            self._log = ftlog.BoundLog(ftlog.Reader([], self._usingSHA1),
-                                       self._usingSHA1, uDir)
+        if os.path.exists(_logFilePath):
+            self._log = ftlog.BoundLog(ftlog.FileReader(uPath, self._usingSHA1),
+                                       self._usingSHA1, uPath)
         else:
-            self._log = ftlog.BoundLog(ftlog.FileReader(uDir, self._usingSHA1),
-                                       self._usingSHA1, uDir)
+            self._log = ftlog.BoundLog(ftlog.Reader([], self._usingSHA1),
+                                       self._usingSHA1, uPath)
+
+    @property
+    def uDir(self):
+        return self._uDir
+
+    @property
+    def uPath(self):
+        return self._uPath
+
+    @property
+    def usingSHA1(self):
+        return self._usingSHA1
+
+    # XXXthis is a reference to the actual log and so a major security risk
+    @property
+    def log(self): return self._log
+
+    @property
+    def nodeID(self): return self._nodeID
 
     def exists(self, key):
-        return u.exists(self._uDir, key)
+        return self._uDir.exists(key)
 
     def get(self, key):
-        if self._usingSHA1:
-            return u.getData1(self._uDir, key)
-        else:
-            return u.getData2(self._uDir, key)
+        return self._uDir.getData(key)
 
     def put(self, pathToFile, key, source, loggedPath=None):
         """
@@ -205,33 +221,26 @@ class Server(object):
             loggedPath = 'z@' + pathToFile
 
         if self._usingSHA1:
-            actualKey = u.fileSHA1Hex(pathToFile)
+            actualKey = fileSHA1Hex(pathToFile)
         else:
-            actualKey = u.fileSHA2Hex(pathToFile)
+            actualKey = fileSHA2Hex(pathToFile)
         if actualKey != key:
             raise ValueError('actual hash %s, claimed hash %s' % (
                 actualKey, key))
 
-        if u.exists(self._uDir, key):
+        if self._uDir.exists(key):
             return (-1, key)
 
         # XXX uses tempfile package, so not secure XXX
-        if self._usingSHA1:
-            (len, hash) = u.copyAndPut1(pathToFile, self._uDir, key)
-        else:
-            (len, hash) = u.copyAndPut2(pathToFile, self._uDir, key)
+        (len, hash) = self._uDir.copyAndPut(pathToFile, key)
 
         # XXX should deal with exceptions
         self._log.addEntry(time.time(), key, self._nodeID, source, loggedPath)
         return (len, hash)
 
-    def putData(self, data, key, source,
-                loggedPath='z@__posted_data__'):
+    def putData(self, data, key, source, loggedPath='z@__posted_data__'):
         """ returns (len, hash) """
-        if self._usingSHA1:
-            (len, hash) = u.putData1(data, self._uDir, key)
-        else:
-            (len, hash) = u.putData2(data, self._uDir, key)
+        (len, hash) = self._uDir.putData(data, self._uDir, key)
         # XXX should deal with exceptions
 
         self._log.addEntry(time.time(), key, self._nodeID, source, loggedPath)
@@ -239,16 +248,6 @@ class Server(object):
 
     def close(self):
         self._log.close()
-
-    # XXXthis is a reference to the actual log and so a major security risk
-    @property
-    def log(self): return self._log
-
-    @property
-    def nodeID(self): return self._nodeID
-
-    @property
-    def uDir(self): return self._uDir
 
 
 class BlockingServer(Server):

@@ -5,7 +5,7 @@ import re
 import sys
 from collections import Container, Sized
 from xlattice import SHA1_HEX_NONE, SHA2_HEX_NONE, u
-from upax.node import checkHexNodeID1, checkHexNodeID3
+from upax.node import checkHexNodeID1, checkHexNodeID2
 
 __all__ = ['ATEXT', 'AT_FREE',
            'PATH_RE',
@@ -45,10 +45,10 @@ IGNORABLE_RE = re.compile(IGNORABLE_PAT)
 class Log(Container, Sized):
     """a fault-tolerant log"""
 
-    __slots__ = ['_entries', '_index', '_timestamp',
-                 '_prevHash', '_prevMaster', '_usingSHA1', ]
+    #__slots__ = ['_entries', '_index', '_timestamp',
+    #              '_prevHash', '_prevMaster', '_usingSHA1', ]
 
-    def __init__(self, reader, usingSHA1=False):
+    def __init__(self, reader, usingSHA1):
         self._usingSHA1 = usingSHA1
         (timestamp, prevLogHash, prevMaster, entries, index) = reader.read()
         self._timestamp = timestamp     # seconds from epoch
@@ -56,12 +56,12 @@ class Log(Container, Sized):
         if usingSHA1:
             checkHexNodeID1(self._prevHash)
         else:
-            checkHexNodeID3(self._prevHash)
+            checkHexNodeID2(self._prevHash)
         self._prevMaster = prevMaster    # nodeID of master writing prev log
         if usingSHA1:
             checkHexNodeID1(self._prevMaster)
         else:
-            checkHexNodeID3(self._prevMaster)
+            checkHexNodeID2(self._prevMaster)
 
         self._entries = entries       # a list
         self._index = index         # a map, hash => entry
@@ -128,24 +128,24 @@ class Log(Container, Sized):
 
 class BoundLog(Log):
 
-    def __init__(self, reader, usingSHA1=False, uDir=None, baseName='L'):
-        super(BoundLog, self). __init__(reader, usingSHA1)
+    def __init__(self, reader, usingSHA1, uPath=None, baseName='L'):
+        super(). __init__(reader, usingSHA1)
         self.fd = -1
         self.isOpen = False     # for appending
         overwriting = False
-        if uDir:
-            self.uDir = uDir
+        if uPath:
+            self.uPath = uPath
             self.baseName = baseName
             overwriting = True
         else:
             if isinstance(reader, FileReader):
-                self.uDir = reader.uDir
+                self.uPath = reader.uPath
                 self.baseName = reader.baseName
                 overwriting = False
             else:
-                msg = "no target uDir/baseName specified"
+                msg = "no target uPath/baseName specified"
                 raise RuntimeError(msg)
-        self.pathToLog = "%s/%s" % (self.uDir, self.baseName)
+        self.pathToLog = "%s/%s" % (self.uPath, self.baseName)
         if overwriting:
             with open(self.pathToLog, 'w') as f:
                 logContents = super(BoundLog, self).__str__()
@@ -189,7 +189,7 @@ class LogEntry():
         if usingSHA1:
             checkHexNodeID1(self._key)
         else:
-            checkHexNodeID3(self._key)
+            checkHexNodeID2(self._key)
 
         if nodeID is None:
             raise ValueError('LogEntry nodeID may not be None')
@@ -199,7 +199,7 @@ class LogEntry():
         if usingSHA1:
             checkHexNodeID1(self._nodeID)
         else:
-            checkHexNodeID3(self._nodeID)
+            checkHexNodeID2(self._nodeID)
 
         self._src = source           # tool or person responsible
         self._path = pathToDoc        # file name
@@ -272,10 +272,10 @@ class LogEntry():
 
 
 class Reader(object):
-    __slots__ = ['_entries', '_index', '_lines', '_usingSHA1',
-                 'FIRST_LINE_RE', ]
+    #__slots__ = ['_entries', '_index', '_lines', '_usingSHA1',
+    #             'FIRST_LINE_RE', ]
 
-    def __init__(self, lines, usingSHA1=False):
+    def __init__(self, lines, usingSHA1):
         self._usingSHA1 = usingSHA1
         if usingSHA1:
             FIRST_LINE_PAT = '^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
@@ -296,6 +296,9 @@ class Reader(object):
         self._entries = []            # the empty list
         self._index = dict()        # mapping hash => entry
 
+    @property
+    def usingSHA1(self): return self._usingSHA1
+
     def read(self):
 
         # The first line contains timestamp, hash, nodeID for previous log.
@@ -311,7 +314,8 @@ class Reader(object):
         if firstLine:
             m = re.match(self.FIRST_LINE_RE, firstLine)
             if not m:
-                print(("FIRST LINE: '%s'" % firstLine))
+                print("NO MATCH, FIRST LINE; usingSHA1 = %s" % self.usingSHA1)
+                print(("  FIRST LINE: '%s'" % firstLine))
                 raise ValueError("no match on first line; giving up")
             timestamp = int(m.group(1))
             prevLogHash = m.group(2)
@@ -346,9 +350,6 @@ class Reader(object):
                 key = m.group(2)
                 nodeID = m.group(3)
                 src = m.group(4)
-                # DEBUG
-                # print "LINE IS: " + line
-                # END
                 path = m.group(5)
                 # constructor should catch invalid fields
                 entry = LogEntry(t, key, nodeID, src, path)
@@ -365,18 +366,18 @@ class Reader(object):
 
 class FileReader(Reader):
     """
-    Accept uDir and optionally log file name, read entire file into
+    Accept uPath and optionally log file name, read entire file into
     a string array, pass to Reader.
     """
-    __slots__ = ['_uDir', '_baseName', '_logFile', ]
+    __slots__ = ['_uPath', '_baseName', '_logFile', ]
 
     # XXX CHECK ORDER OF ARGUMENTS
-    def __init__(self, uDir, usingSHA1=False, baseName="L"):
-        if not os.path.exists(uDir):
-            raise RuntimeError("no such directory %s" % uDir)
-        self._uDir = uDir
+    def __init__(self, uPath, usingSHA1=False, baseName="L"):
+        if not os.path.exists(uPath):
+            raise RuntimeError("no such directory %s" % uPath)
+        self._uPath = uPath
         self._baseName = baseName
-        self._logFile = "%s/%s" % (self._uDir, baseName)
+        self._logFile = "%s/%s" % (self._uPath, baseName)
         with open(self._logFile, 'r') as f:
             contents = f.read()
         lines = contents.split('\n')
@@ -391,8 +392,8 @@ class FileReader(Reader):
         return self._logFile
 
     @property
-    def uDir(self):
-        return self._uDir
+    def uPath(self):
+        return self._uPath
 
 # -------------------------------------------------------------------
 
@@ -407,4 +408,4 @@ class StringReader(Reader):
         # split on newlines
         lines = bigString.split('\n')
 
-        Reader.__init__(self, lines, usingSHA1)
+        super().__init__(lines, usingSHA1)

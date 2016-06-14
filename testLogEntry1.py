@@ -7,9 +7,6 @@ import unittest
 # confuson between module and class
 from upax.ftlog import LogEntry
 
-GOODKEY_1 = '0123456789012345678901234567890123456789'
-GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
-
 
 class TestLogEntry (unittest.TestCase):
 
@@ -19,9 +16,19 @@ class TestLogEntry (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testConstructor(self):
-        """
-        """
+    def getKeys(self, usingSHA1):
+        if usingSHA1:
+            GOODKEY_1 = '0123456789012345678901234567890123456789'
+            GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
+        else:
+            GOODKEY_1 = '0123456789012345678901234567890123456789abcdefghi0123456789abcde'
+            GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
+        return (GOODKEY_1, GOODKEY_2)
+
+    def doTestConstructor(self, usingSHA1):
+
+        (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA1)
+
         entry = LogEntry(time.time(), GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
 
         assert entry is not None
@@ -32,7 +39,13 @@ class TestLogEntry (unittest.TestCase):
         self.assertEqual('jdd', entry.src)
         self.assertEqual('document1', entry.path)
 
-    def test__str__(self):
+    def testConstructor(self):
+        self.doTestConstructor(True)
+        self.doTestConstructor(False)
+
+    def doTest__str__(self, usingSHA1):
+        (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA1)
+
         now = time.time()
         entry = LogEntry(now, GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
 
@@ -41,7 +54,13 @@ class TestLogEntry (unittest.TestCase):
         actual = entry.__str__()
         self.assertEqual(expected, actual)
 
-    def testEquals(self):
+    def test__str__(self):
+        self.doTest__str__(True)
+        self.doTest__str__(False)
+
+    def doTestEquals(self, usingSHA1):
+        (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA1)
+
         time1 = time.time() - 1000
         time2 = time1 + 500
         entry1 = LogEntry(time1, GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
@@ -53,6 +72,10 @@ class TestLogEntry (unittest.TestCase):
         self.assertTrue(entry1.equals(entry1))
         self.assertFalse(entry1.equals(entry2))     # times differ
         self.assertTrue(entry1.equals(entry3))
+
+    def testEquals(self):
+        self.doTestEquals(True)
+        self.doTestEquals(False)
 
 if __name__ == '__main__':
     unittest.main()
