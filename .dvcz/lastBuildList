@@ -7,21 +7,23 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-upax v0.6.4
-2016-06-01 23:07:08
+upax v0.6.6
+2016-06-17 00:52:20
 # START CONTENT #
 upax
  .dvcz
-  projCfg 21f9d57d005e8b30c4f89a8689f160893c67272f
+  builds c525e293c752c3064c3791dec9168bb1d651a6aa
+  lastBuildList 962dc260bc8ca5a0a67d30d90adccf4d39bf7f4c
+  projCfg 62bb26b122eee38bd388efe5d82df49568812dc0
   projCfg.local 40dd2f221ef8045bd09e5cf29a834ff2012186d7
-  version c400d8b9a31d8321cc2e7dbffcec23b0faf498c5
- .gitignore 33fe49ab79f8e577ecd7574833bfcd2cd82459cc
+  version 3e6c7caf950832913c11a225892a91d32a8dba7f
+ .gitignore 1081bfc37c8e0787098530aad7d49c7278cfc0fb
  .gitignore.local c2d10285e0ab23017eda564eb5cdeb1b28cbbee4
- CHANGES e12f8f36bebde592f5c90f7638640c4a3ae6defb
+ CHANGES 7751550db7058cafcb3d77c2d3f82a0781ee2cee
  LICENSE.md 50a6fc1b15e967d1dc37ba7559cf121a66240830
  MANIFEST.in 0af3cac075b23ed9ae22a2b0794ce15fcfefeb76
  README.md 03e5f4648f30bbc0ffab6b36da6fbceeb5bc55e3
- TODO 6ac33f2f53550de7c28728e5e2926836353f52d8
+ TODO 0cb7f607353ea9885e9f8b37e994accbf68e2dcd
  bkp2U abcdf158210f9e96137967209b4ccfe34bb9f886
  checkUConsistency 9647d6da66c8981130b3abfc396bf296a1e9d9ba
  countem c0a372f0fe1dc8cffdd83a2e981ff85693f7e97f
@@ -47,37 +49,32 @@ upax
   upax-0.6.1.tar.gz 8aaada8062d2fa2efbda5ef1d2765e1fe33064ad
   upax-0.6.3.tar.gz eebc7651e1cec69ff8ed5718b19f3d3168f7c6db
   upax-0.6.4.tar.gz 9b1639cdd3877003c41f984c78979b0ab733faee
+  upax-0.6.5.tar.gz 7cba32be03cc397bd72cf10ac1d938276dac1b6b
+  upax-0.6.6.tar.gz c913e816672fb574a9bdf82542e33eff8df8cd40
  ghpDoc
   index.md 58ec6f4a34c459145ccdb9fd98edf2031f653080
  importUDir 964de3d7fa48c36477184cb3c7eb28ec6c12fab2
  installit 68331f91226ca52e7f900e954e1365af57fff53a
  setup.py aff7bff4548d2de76c9f73768dfb831b2afd1881
  styleit d0a2820a5ae01dd2f81c3bcbb0296c79593c70be
- test.all 7d4ae9c01843136e7054fb25168ca62ae43f0f44
- testBoundLog1.py 309817734d3bed3cbf54970b7dc8692d79c349e1
- testBoundLog2.py b16a42f0b116c5d9035a3a9ece57dfa4e520a4c8
- testImporter1.py 151856986f756bf8c7346f82c07398ec19220df7
- testImporter2.py 8292a7138c79cf535794d58a1e9ce5726956bfe8
- testLog1.py 35f337066b5e1a917a16b7a188829b6382b869ca
- testLog2.py 21c8e915231570aaa021cc4bcb4b8daa5239df0a
- testLogEntry1.py 33164f87b3fef9b6dbbe43cb7f36bb0bba60955b
- testLogEntry2.py 697ead823f1afcdcfb1229cf477068d0c6962128
- testLogReader1.py 8afcab0f1ec37f44c43fa02dc3b67485b034e3d5
- testLogReader2.py c8fd300b902e1b7fdd7657889959d5d4a1737974
- testUWalker.py 1326f7a0e4272dc8611affcc4148ecb9544c0370
- testUpaxNode1.py 675335524e61d06873e5f128ee73623e1b993730
- testUpaxNode2.py ac2491f22f1163ad8d18679af1b01e2e19ebb9a1
- testUpaxServer1.py a2172acce5ddce078c336c1e26ef9057fd86d0ed
- testUpaxServer2.py e6802a9708e2be261c5d727843b4dda8754dc548
+ test.all 5d0ce80ef2857f967bfd92d99d888188962c4a59
+ testBoundLog1.py ef56b9506cb2373114db1453a0254aac7c58c00e
+ testImporter1.py 75df4905281b1b4d2bc2ff119299091b31fb86db
+ testLog1.py 7f9b4911cfa662fb95e28e43dd297a49d9230522
+ testLogEntry1.py ea33211fbba97a42939d3b768ecee9ba1edb3949
+ testLogReader1.py f250fce5dfac51cb02d65b38a130f966212aa108
+ testUWalker.py 9c69cb92618b1a9ca029d9ac105f692fd3672eb4
+ testUpaxNode1.py 1bdc878e0c921e71f4bab3664717e30720de4f5c
+ testUpaxServer1.py fbe3dcc096bc2665b040d392f88cb2da1e79193e
  testZMQ.py 2baae02abc7b5e67dea15836f2a99ad8ce43b409
  upax
-  __init__.py 4df9b51644e8d8fcf3f3ec3659ed98d6d9f44997
+  __init__.py 854008cfebea7008fe0d5ea52d9d8fa4f46a25cd
   consistency.py 4df598585da7bf07fc16777f676d09a8375d4100
-  ftlog.py 8f37c10a2554eb29ca3d333c8231411e2dfb1afe
-  node.py 1f9997b52bafddc2bf4afb519043843f5d84e8cb
-  walker.py b00176a687a45b436f2ec97f563944741f66e21e
+  ftlog.py 474c5018856986bb0155964f63e0e032dd9ac7a6
+  node.py f7e37ad11a139728a01aed7f33e47de2bbffde1e
+  walker.py a5f7c265810289ada25b565fafc98a461675f490
  upaxBulkPoster 2ccb2f8a88553c86521e225f4dccd71b35567949
  upaxUpdateNodeID b69ff54128c6506b7f36ffa0d2d037be10efa144
 # END CONTENT #
 
-a3L4fI2TukHFTvtNESi+XorfO7KlrmjoL9ZHuas7Mi1odE2IZ3FZ6Oq9RlG+SZNf99IQhnroiL6fSor3wNHF3rBMw1zFe/d8l85eYVjPnqx9J56s2XVNBxDrMfrmNfFTghpHRVD6VTFjwtw2UTGu7BQtR4HVfUU6+j2BImCx3qyourQxrDbvz7lHjfKDB9Hoi3rLNz60F2CCIZ/MBSqc6EkQAg6ZqWCrwHYtazsV12IefdMagkBJ+00Iss76ehG5OGxDZ4Tn+2iUIwsf8CM7ewUKylHt6mgDdrgkU5mhG0/XZTJ5vIk1Wih6KzokB0hXRLFdVXeczAFFG5M/iuPSYQ==
+AWsaowgft6Q12oKCmm0VaGda5ZFypUvqOG0bbrrY2kBO1qxwP61efBbf4833SAlPYsCTzwYr5GPhhTl8IVUc56UynHZoEZVGlg71Lh21gEpZf89ku9K52+vfeoSycMp/Jo9Khg0lYc4v7uq47fO99ah/u8zCAd0fINlPFYuzAjMiJZOgVnfXzGqsqeYFmr7bsRWrT5F5VAwPJQ41BA8AnBHCBH1GgzTivxMSx4td2SGrY2K3ZPUZS+m9sgaOQAu6lsHLlaQr6yKtr/2M9wNDAJiy0ohAsYr7nMyLl7xavnPOOVuYWjz4TudPyW5z+7mSmEf8s2xSlY3XcEJEFfJBgg==

@@ -10,8 +10,8 @@ from xlattice.u import (DIR_FLAT, DIR16x16, DIR256x256,
                         UDir)
 import upax.ftlog
 
-__version__ = '0.6.5'
-__version_date__ = '2016-06-14'
+__version__ = '0.6.6'
+__version_date__ = '2016-06-16'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -240,7 +240,8 @@ class Server(object):
 
     def putData(self, data, key, source, loggedPath='z@__posted_data__'):
         """ returns (len, hash) """
-        (len, hash) = self._uDir.putData(data, self._uDir, key)
+        (len, hash) = self._uDir.putData(data, key)
+
         # XXX should deal with exceptions
 
         self._log.addEntry(time.time(), key, self._nodeID, source, loggedPath)
