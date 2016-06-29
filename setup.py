@@ -25,5 +25,9 @@ setup(name='upax',
       # following could be in scripts/ subdir; SQuote
       scripts=['checkUConsistency', 'importUDir',
                'upaxBulkPoster', 'upaxUpdateNodeID', ],
-      # MISSING url
+      # MISSING description
+      classifiers=[
+          'License :: OSI Approved :: MIT License',
+          'Programming Language :: Python :: 3',
+      ],
       )

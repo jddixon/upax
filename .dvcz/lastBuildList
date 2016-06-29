@@ -7,19 +7,19 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-upax v0.6.6
-2016-06-17 00:52:20
+upax v0.6.7
+2016-06-29 16:35:02
 # START CONTENT #
 upax
  .dvcz
-  builds c525e293c752c3064c3791dec9168bb1d651a6aa
-  lastBuildList 962dc260bc8ca5a0a67d30d90adccf4d39bf7f4c
-  projCfg 62bb26b122eee38bd388efe5d82df49568812dc0
+  builds e21845874d9040f4a4dbb12909a31cd075bbc00e
+  lastBuildList 02cbbec13e81067c13b0d011bf903345152a802c
+  projCfg 66891fe5a6e591f713b882ec80c06b066e65ef06
   projCfg.local 40dd2f221ef8045bd09e5cf29a834ff2012186d7
-  version 3e6c7caf950832913c11a225892a91d32a8dba7f
+  version ef8554c4cf6e5fd0c0f3cfa41926e363eee5ef10
  .gitignore 1081bfc37c8e0787098530aad7d49c7278cfc0fb
  .gitignore.local c2d10285e0ab23017eda564eb5cdeb1b28cbbee4
- CHANGES 7751550db7058cafcb3d77c2d3f82a0781ee2cee
+ CHANGES 51d5b08b5eca3e688a81fafa6ccf798a07a93d99
  LICENSE.md 50a6fc1b15e967d1dc37ba7559cf121a66240830
  MANIFEST.in 0af3cac075b23ed9ae22a2b0794ce15fcfefeb76
  README.md 03e5f4648f30bbc0ffab6b36da6fbceeb5bc55e3
@@ -51,11 +51,25 @@ upax
   upax-0.6.4.tar.gz 9b1639cdd3877003c41f984c78979b0ab733faee
   upax-0.6.5.tar.gz 7cba32be03cc397bd72cf10ac1d938276dac1b6b
   upax-0.6.6.tar.gz c913e816672fb574a9bdf82542e33eff8df8cd40
+  upax-0.6.7.tar.gz 3be5c77f5d6ef50b9506053ab49e519a35a816d2
  ghpDoc
+  css
+   LICENSE.html5-boilerplate.md ded771b3245b190da0e81c76de5a80d41392c0a6
+   ghp.css 1d6ebe8a6cf8f61f4645a793cb087dfae2420f33
+   main.css 018ed80b8a6e6607bc7c08595fa5a7fa56853885
+   normalize.css cba40c7ce3d558d00ff79d7505ac3d348015ec9c
+  img
+   GitHub-Mark-32px.png fabe53eb72f9b6d3d47cd95aff31ffc45c2fdbf8
+   chunk.jpg de2b27e41f1547fc14b13399f5906b4303b49657
+   chunk2.jpg d0593d312dbb8ea837c17b28cb639726e29ea93b
+   cluster-with-clients.jpg c167d04c0c6b5736ef9fe4cdc3fcce1956fdea78
+   simple-cluster.jpg 6b223ddd25937c1ef75ef328f36fc3436f10bd62
+   xl-registration.jpg 15cbf951f9db173a45428b32dcec87aca83bbdf0
+   xlattice-2014.jpg f185aaad06db71acd9454f31054c62c56d36f37f
   index.md 58ec6f4a34c459145ccdb9fd98edf2031f653080
  importUDir 964de3d7fa48c36477184cb3c7eb28ec6c12fab2
  installit 68331f91226ca52e7f900e954e1365af57fff53a
- setup.py aff7bff4548d2de76c9f73768dfb831b2afd1881
+ setup.py e489d76d057bf91cca518ab88e121a68f35cd954
  styleit d0a2820a5ae01dd2f81c3bcbb0296c79593c70be
  test.all 5d0ce80ef2857f967bfd92d99d888188962c4a59
  testBoundLog1.py ef56b9506cb2373114db1453a0254aac7c58c00e
@@ -68,7 +82,7 @@ upax
  testUpaxServer1.py fbe3dcc096bc2665b040d392f88cb2da1e79193e
  testZMQ.py 2baae02abc7b5e67dea15836f2a99ad8ce43b409
  upax
-  __init__.py 854008cfebea7008fe0d5ea52d9d8fa4f46a25cd
+  __init__.py f6b3d345aa74190d69886a5c5d40e85ddf67e494
   consistency.py 4df598585da7bf07fc16777f676d09a8375d4100
   ftlog.py 474c5018856986bb0155964f63e0e032dd9ac7a6
   node.py f7e37ad11a139728a01aed7f33e47de2bbffde1e
@@ -77,4 +91,4 @@ upax
  upaxUpdateNodeID b69ff54128c6506b7f36ffa0d2d037be10efa144
 # END CONTENT #
 
-AWsaowgft6Q12oKCmm0VaGda5ZFypUvqOG0bbrrY2kBO1qxwP61efBbf4833SAlPYsCTzwYr5GPhhTl8IVUc56UynHZoEZVGlg71Lh21gEpZf89ku9K52+vfeoSycMp/Jo9Khg0lYc4v7uq47fO99ah/u8zCAd0fINlPFYuzAjMiJZOgVnfXzGqsqeYFmr7bsRWrT5F5VAwPJQ41BA8AnBHCBH1GgzTivxMSx4td2SGrY2K3ZPUZS+m9sgaOQAu6lsHLlaQr6yKtr/2M9wNDAJiy0ohAsYr7nMyLl7xavnPOOVuYWjz4TudPyW5z+7mSmEf8s2xSlY3XcEJEFfJBgg==
+GWoxLlB+JvzzYhjVopgLqnFcnnKex5Y8Bfh7daDhNgyqhJMj1w7MencNO2LrbNiM8RYMwEgDWhJn/VM1D4znDriJykpQ4fmOEh6KGs3DswadrYchl3CEdMU8OJBLEDiGXFbzjGfuUhpVWzjFTswniOEbCq3NPfx818kqV5R6EQKDN1NRVw/95C9Njk1pWcP9/7otyTgzmcLZCP2V45jIefF/9P16z04wa27BMyKg8TfyLrnd3ttDcble3ltNEWaByi7HbrXZUZrWpSkVKxbpm5qKuDRAgA//k6Tb88D4Xqb+Ognk1yGutRiBMNO2Ah6EDlq5nI+iPejpQJVPFRj3Kw==
