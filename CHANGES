@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.6.8
+    2016-08-16
+        * update docs, referencing xlattice/upax                    SLOC 2711
 v0.6.7
     2016-06-29
         * add ghpDoc/{css,img}/                                     SLOC 2697
@@ -119,6 +122,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 
