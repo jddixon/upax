@@ -5,13 +5,12 @@ import os
 import re
 import time
 import rnglib
-from xlattice.u import (DIR_FLAT, DIR16x16, DIR256x256,
-                        fileSHA1Hex, fileSHA2Hex,
+from xlattice.u import (fileSHA1Hex, fileSHA2Hex,
                         UDir)
 import upax.ftlog
 
-__version__ = '0.6.7'
-__version_date__ = '2016-06-29'
+__version__ = '0.6.8'
+__version_date__ = '2016-08-16'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -148,7 +147,7 @@ class Server(object):
         """
 
         self._usingSHA1 = usingSHA1
-        uDir = UDir.discover(uPath, DIR256x256, usingSHA1)
+        uDir = UDir.discover(uPath, UDir.DIR256x256, usingSHA1)
         self._uDir = uDir
         self._uPath = uPath
 

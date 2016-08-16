@@ -1,5 +1,10 @@
 ~/dev/py/upax/TODO
 
+2016-06-29
+    * gh-pages was apparently corrupt, cloned from github (old version
+        saved as upax.orig); need to add some web content, verify 
+        gh-pages 
+
 2016-06-16
     * putData() needs testing                                           * DONE
 
