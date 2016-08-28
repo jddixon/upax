@@ -1,4 +1,4 @@
-<h1 class="libTop">upax</h1>
+<h1 class="libTop">upax_py</h1>
 
 This is a Python 3 implementation of the
 [Upax](https://jddixon.github.io/xlattice/upax.html)
@@ -10,11 +10,12 @@ A Upax implementation consists of at least
 
 * a [fault-tolerant log](https://jddixon.github.io/xlattice/ftLog.html)
 * a [Upax server](https://jddixon.github.io/xlattice/upaxServer.html)
-* a [Upax client](https://jddixon.github.io/xlattice/upaxClient.html)
+* a [Upax client](https://jddixon.github.io/xlattice/upaxClient.html) and optionally
+* a [Upax mirror](https://jddixon.github.io/xlattice/upaxMirror.html)
 
 
 Servers involved use a
-[consensus algorithm](https://en.wikipedia.org/wiki/Consensus_(computer_science))
+[consensus algorithm](https://en.wikipedia.org/wiki/Consensus_%28computer_science%29)
 to ensure that their pictures of the state of the distributed file system
 are consistent.
 
@@ -75,7 +76,7 @@ distributd file system.
 
 ### upaxUpdateNodeID
 
-The content-keyed store on a Upax system needs a unique ID, its nodeID.
+The content-keyed store on a Upax system needs a unique ID, its **nodeID**.
 This utility writes a randomly chosen 20- or 32-byte value into a file
 called *nodeID** at the top level of uDir, so at `uDir/nodeID`.  This is
 written as a 40- or 64-character hexadecimal value.

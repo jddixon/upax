@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.6.9
+    2016-08-27
+        * fix setup.py, license                                     SLOC 2747
 v0.6.8
     2016-08-16
         * update docs, referencing xlattice/upax                    SLOC 2711
@@ -122,6 +125,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

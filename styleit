@@ -2,7 +2,7 @@
 
 if [ ! -z "${DEV_BASE// }" ]
 then
-  cd $DEV_BASE/py/upax
+  cd $DEV_BASE/py/upax_py
   
   autopep8 -ai -r upax checkUConsistency importUDir upaxBulkPoster upaxUpdateNodeID *.py
   echo "not styling dev0/ subdir"

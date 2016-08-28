@@ -2,11 +2,11 @@
 
 if [ ! -z "${DEV_BASE// }" ]
 then
-  cd $DEV_BASE/py/upax
+  cd $DEV_BASE/py/upax_py
   
   rm -rf build/* myApp/* myData/* myU/* uDir/* 
   
-  pySloc -L py  -X dist -v $@
+  pySloc -L py checkUConsistency importUDir upaxBulkPoster upaxUpdateNodeID  -X dist -v $@
 else
   echo "DEV_BASE is not defined"
 fi
