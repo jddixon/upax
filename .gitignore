@@ -4,6 +4,7 @@
 *.swp
 *ZZZ
 .committed
+.coverage
 .dvczignore*
 .merkle
 .posted
@@ -17,6 +18,7 @@ README.jdd
 THIS.IS.A.GIT*
 __pycache__
 build
+cover
 dev0
 dev1
 dev2

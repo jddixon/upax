@@ -6,7 +6,7 @@ import os
 import time
 import unittest
 import rnglib
-from xlattice.u import UDir, DIR256x256, fileSHA1Hex, fileSHA2Hex
+from xlattice.u import UDir, fileSHA1Hex, fileSHA2Hex
 from upax import *
 
 rng = rnglib.SimpleRNG(time.time())

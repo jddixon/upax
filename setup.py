@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# ~/dev/py/upax/setup.py
+# ~/dev/py/upax_py/setup.py
 
 import re
 from distutils.core import setup
@@ -9,7 +9,7 @@ __version__ = re.search("__version__\s*=\s*'(.*)'",
 
 # see http://docs.python.org/distutils/setupscript.html
 
-setup(name='upax',
+setup(name='upax_py',
       version=__version__,
       author='Jim Dixon',
       author_email='jddixon@gmail.com',
@@ -25,9 +25,16 @@ setup(name='upax',
       # following could be in scripts/ subdir; SQuote
       scripts=['checkUConsistency', 'importUDir',
                'upaxBulkPoster', 'upaxUpdateNodeID', ],
-      # MISSING description
+      description='full-mesh ring of U store servers',
+      url='https://jddixon/github.io/upax_py',
       classifiers=[
+          'Development Status :: 2 - Pre-Alpha',
+          'Development Status :: 3 - Alpha',
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
-          'Programming Language :: Python :: 3',
+          'Natural Language :: English',
+          'Programming Language :: Python 3',
+          'Topic :: Software Development :: Libraries :: Python Modules',
       ],
       )

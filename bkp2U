@@ -2,10 +2,10 @@
 
 if [ ! -z "${DEV_BASE// }" ]
 then
-  cd $DEV_BASE/py/upax
+  cd $DEV_BASE/py/upax_py
   
   blListGen \
-    -d ../upax \
+    -d ../upax_py \
     -1L  \
     -u $DVCZ_UDIR \
     -X .ssh \
