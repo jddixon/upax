@@ -6,6 +6,7 @@ import unittest
 from rnglib import SimpleRNG
 from upax.node import *
 from upax.ftlog import LogEntry
+from xlattice import Q
 
 rng = SimpleRNG(int(time.time()))
 
@@ -19,24 +20,25 @@ class TestUpaxNode (unittest.TestCase):
         pass
 
     # tests both sha1 and sha3 versions of code
-    def doTestCheckNodeID(self, usingSHA1):
+    def doTestCheckNodeID(self, usingSHA):
         for i in range(15):
             count = i + 18
             nodeID = bytearray(count)
-            if usingSHA1 and count == 20:
+            if usingSHA == Q.USING_SHA1 and count == 20:
                 try:
-                    checkNodeID(nodeID, usingSHA1)
+                    checkNodeID(nodeID, usingSHA)
                 except ValueError as ve:
                     self.fail('unexpected value error on %s' % nodeID)
 
-            elif not usingSHA1 and count == 32:
+            elif not usingSHA and count == 32:
+                # FIX ME FIX ME FIX ME
                 try:
-                    checkNodeID(nodeID, usingSHA1)
+                    checkNodeID(nodeID, usingSHA)
                 except ValueError as ve:
                     self.fail('unexpected value error on %s' % nodeID)
             else:
                 try:
-                    checkNodeID(nodeID, usingSHA1)
+                    checkNodeID(nodeID, usingSHA)
                     self.fail('expected value error on %s' % nodeID)
                 except ValueError as ve:
                     pass
@@ -47,16 +49,17 @@ class TestUpaxNode (unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def doTestPeer(self, usingSHA1):
+    def doTestPeer(self, usingSHA):
         """ simple integrity checks on Peer type"""
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
             nodeID = bytearray(20)
         else:
+            # FIX ME FIX ME FIX ME
             nodeID = bytearray(32)
         rng.nextBytes(nodeID)
         pubKey = bytearray(162)         # number not to be taken seriously
         rng.nextBytes(pubKey)
-        peer = Peer(nodeID, pubKey, usingSHA1)    # True means using SHA1
+        peer = Peer(nodeID, pubKey, usingSHA)    # True means using SHA1
         self.assertEqual(nodeID, peer.nodeID)
         self.assertEqual(pubKey, peer.rsaPubKey)
         self.assertIsNone(peer.nodeNdx)
@@ -74,13 +77,13 @@ class TestUpaxNode (unittest.TestCase):
         self.assertEqual(0, len(peer.fqdn))
 
         # verify that nodeNdx must be non-negative integer
-        peer2 = Peer(nodeID, pubKey, usingSHA1)          # True = sha1
+        peer2 = Peer(nodeID, pubKey, usingSHA)          # True = sha1
         try:
             peer2.nodeNdx = 'sugar'
             self.fail('successfully set nodeNdx to string value')
         except:
             pass
-        peer3 = Peer(nodeID, pubKey, usingSHA1)
+        peer3 = Peer(nodeID, pubKey, usingSHA)
         try:
             peer3.nodeNdx = -19
             self.fail('successfully set nodeNdx to negative number')

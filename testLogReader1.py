@@ -5,6 +5,7 @@ import time
 import unittest
 
 from upax.ftlog import LogEntry, Reader, StringReader, FileReader
+from xlattice import Q
 
 
 class TestLogReader (unittest.TestCase):
@@ -15,8 +16,8 @@ class TestLogReader (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def getGood(self, usingSHA1):
-        if usingSHA1:
+    def getGood(self, usingSHA):
+        if usingSHA == Q.USING_SHA1:
             GOODKEY_1 = '0123456789012345678901234567890123456789'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
             GOODKEY_3 = '1234567890123456789012345678901234567890'
@@ -26,6 +27,7 @@ class TestLogReader (unittest.TestCase):
             GOODKEY_7 = '3456789012345678901234567890123456789012'
             GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fed'
         else:
+            # FIX ME FIX ME FIX ME
             GOODKEY_1 = '0123456789012345678901234567890123456789abcdef3330123456789abcde'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
             GOODKEY_3 = '1234567890123456789012345678901234567890abcdef697698768696969696'
@@ -37,10 +39,10 @@ class TestLogReader (unittest.TestCase):
         return (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
                 GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,)
 
-    def doTestStringReader(self, usingSHA1):
+    def doTestStringReader(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         t0 = int(time.time()) - 10000
         t1 = t0 + 100
@@ -50,7 +52,7 @@ class TestLogReader (unittest.TestCase):
         COMMENT_LINE = "# This is a comment and can be ignored\n"
         EMPTY_LOG = "%013u %s %s\n" % (t0, GOODKEY_1, GOODKEY_2)
         EMPTY_LOG += COMMENT_LINE
-        reader = StringReader(EMPTY_LOG, usingSHA1)
+        reader = StringReader(EMPTY_LOG, usingSHA)
         assert reader is not None
         self.assertTrue(isinstance(reader, Reader))     # inheritance works
         self.assertTrue(isinstance(reader, StringReader))
@@ -68,7 +70,7 @@ class TestLogReader (unittest.TestCase):
         entry3 = LogEntry(t3, GOODKEY_7, GOODKEY_8, 'jdd', 'document1')
 
         TEST_LOG = EMPTY_LOG + str(entry1) + str(entry2) + str(entry3)
-        reader = StringReader(TEST_LOG, usingSHA1)
+        reader = StringReader(TEST_LOG, usingSHA)
         assert reader is not None
         self.assertTrue(isinstance(reader, Reader))
         self.assertTrue(isinstance(reader, StringReader))

@@ -11,6 +11,7 @@ from upax import *
 from upax.ftlog import *
 from upax.walker import UWalker
 from rnglib import SimpleRNG
+from xlattice import Q
 
 rng = SimpleRNG(time.time())
 
@@ -36,7 +37,7 @@ class TestUWalker (unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def doTestWalkingRealDir(self, usingSHA1):
+    def doTestWalkingRealDir(self, usingSHA):
         uDir = '/var/U'
         limit = 100              # 1000
         startAt = 'a0'
@@ -46,7 +47,7 @@ class TestUWalker (unittest.TestCase):
             uDir=uDir,
             limit=limit,
             startAt=startAt,
-            usingSHA1=usingSHA1)
+            usingSHA=usingSHA)
         self.assertEqual(uDir, w.uDir)
         self.assertEqual(0, w.count)
         self.assertEqual(limit, w.limit)

@@ -12,6 +12,7 @@ from argparse import ArgumentParser
 
 import u
 import upax
+from xlattice import Q
 
 # PATs AND REs ######################################################
 
@@ -20,10 +21,10 @@ def doWhatever(args):
     noChanges = args.noChanges
     testing = args.testing
     uDir = args.uDir
-    usingSHA1 = args.usingSHA1
+    usingSHA = args.usingSHA
     verbose = args.verbose
 
-    s = upax.BlockingServer(uDir, usingSHA1)
+    s = upax.BlockingServer(uDir, usingSHA)
     log = s.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (
@@ -41,9 +42,10 @@ def doWhatever(args):
         s.close()
         return
 
-    if usingSHA1:
+    if usingSHA == Q.USING_SHA1:
         nodeID = u.fileSHA1(pubkeyPath)
     else:
+        # FIX ME FIX ME FIX ME
         nodeID = u.fileSHA3(pubkeyPath)
     if verbose:
         print("nodeID: " + nodeID)
@@ -82,7 +84,7 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser('post new files in a directory into Upax')
 
-    parser.add_argument('-1', '--usingSHA1', action='store_true',
+    parser.add_argument('-1', '--usingSHA', action='store_true',
                         help='use SHA1, and so 160-bit keys')
 
     parser.add_argument('-e', '--ec2Host', action='store_true',
@@ -173,7 +175,7 @@ def main():
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
         print('uDir             = ' + str(args.uDir))
-        print('usingSHA1        = ' + str(args.usingSHA1))
+        print('usingSHA        = ' + str(args.usingSHA))
         print('verbose          = ' + str(args.verbose))
 
     if not args.justShow:

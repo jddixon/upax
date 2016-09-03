@@ -5,6 +5,7 @@
 import os
 import time
 import unittest
+from xlattice import Q
 
 from upax.ftlog import BoundLog, FileReader, Log, LogEntry, Reader, StringReader
 
@@ -20,8 +21,8 @@ class TestBoundLog (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def getGood(self, usingSHA1):
-        if usingSHA1:
+    def getGood(self, usingSHA):
+        if usingSHA == Q.USING_SHA1:
             GOODKEY_1 = '0123456789012345678901234567890123456789'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
             GOODKEY_3 = '1234567890123456789012345678901234567890'
@@ -31,6 +32,7 @@ class TestBoundLog (unittest.TestCase):
             GOODKEY_7 = '3456789012345678901234567890123456789012'
             GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fed'
         else:
+            # FIX ME FIX ME FIX ME
             GOODKEY_1 = '0123456789012345678901234567890123456789abcdef3330123456789abcde'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
             GOODKEY_3 = '1234567890123456789012345678901234567890abcdef697698768696969696'
@@ -42,18 +44,18 @@ class TestBoundLog (unittest.TestCase):
         return (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
                 GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,)
 
-    def doTestLogWithoutEntries(self, usingSHA1):
+    def doTestLogWithoutEntries(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         t0 = 1000 * (int(time.time()) - 10000)
         # the first line of an otherwise empty log file
         EMPTY_LOG = "%013u %s %s\n" % (t0, GOODKEY_1, GOODKEY_2)
-        reader = StringReader(EMPTY_LOG, usingSHA1)
+        reader = StringReader(EMPTY_LOG, usingSHA)
         log = BoundLog(
             reader,
-            usingSHA1,
+            usingSHA,
             self.uDir,
             'L')  # will default to 'L'
 
@@ -78,13 +80,13 @@ class TestBoundLog (unittest.TestCase):
         log.close()
 
     def testLogWithoutEntries(self):
-        self.doTestLogWithoutEntries(True)      # usingSHA1
-        self.doTestLogWithoutEntries(False)     # not usingSHA1
+        self.doTestLogWithoutEntries(True)      # usingSHA
+        self.doTestLogWithoutEntries(False)     # not usingSHA
 
-    def setUpTheThree(self, usingSHA1):
+    def setUpTheThree(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         t0 = int(time.time()) - 10000
         t1 = t0 + 100
@@ -97,15 +99,15 @@ class TestBoundLog (unittest.TestCase):
         LOG_W_THREE = EMPTY_LOG + str(entry1) + str(entry2) + str(entry3)
         return (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE)
 
-    def doTestMultiEntryLog(self, usingSHA1):
+    def doTestMultiEntryLog(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE) = \
-            self.setUpTheThree(usingSHA1)
-        reader = StringReader(LOG_W_THREE, usingSHA1)
-        log = BoundLog(reader, usingSHA1, self.uDir, 'L')   # XXX FAILS
+            self.setUpTheThree(usingSHA)
+        reader = StringReader(LOG_W_THREE, usingSHA)
+        log = BoundLog(reader, usingSHA, self.uDir, 'L')   # XXX FAILS
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
@@ -133,15 +135,15 @@ class TestBoundLog (unittest.TestCase):
         self.doTestMultiEntryLog(True)
         self.doTestMultiEntryLog(False)
 
-    def doTestAddEntry(self, usingSHA1):
+    def doTestAddEntry(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE) = \
-            self.setUpTheThree(usingSHA1)
-        reader = StringReader(EMPTY_LOG, usingSHA1)
-        log = BoundLog(reader, usingSHA1, self.uDir, 'L')
+            self.setUpTheThree(usingSHA)
+        reader = StringReader(EMPTY_LOG, usingSHA)
+        log = BoundLog(reader, usingSHA, self.uDir, 'L')
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
@@ -177,15 +179,15 @@ class TestBoundLog (unittest.TestCase):
         self.doTestAddEntry(True)
         self.doTestAddEntry(False)
 
-    def doTestWithOpensAndCloses(self, usingSHA1):
+    def doTestWithOpensAndCloses(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         (t0, t1, t2, t3, entry1, entry2, entry3, EMPTY_LOG, LOG_W_THREE) = \
-            self.setUpTheThree(usingSHA1)
-        reader = StringReader(EMPTY_LOG, usingSHA1)
-        log = BoundLog(reader, usingSHA1, self.uDir)
+            self.setUpTheThree(usingSHA)
+        reader = StringReader(EMPTY_LOG, usingSHA)
+        log = BoundLog(reader, usingSHA, self.uDir)
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
@@ -193,8 +195,8 @@ class TestBoundLog (unittest.TestCase):
         self.assertEqual(0, len(log))
         log.close()
 
-        reader = FileReader(self.uDir, usingSHA1)
-        log = BoundLog(reader, usingSHA1)
+        reader = FileReader(self.uDir, usingSHA)
+        log = BoundLog(reader, usingSHA)
         log.addEntry(t1, GOODKEY_3, GOODKEY_4, 'jdd', 'e@document1')
         self.assertEqual(1, len(log))
         entry = log.getEntry(GOODKEY_3)
@@ -203,8 +205,8 @@ class TestBoundLog (unittest.TestCase):
         self.assertFalse(GOODKEY_5 in log)
         log.close()
 
-        reader = FileReader(self.uDir, usingSHA1)
-        log = BoundLog(reader, usingSHA1)
+        reader = FileReader(self.uDir, usingSHA)
+        log = BoundLog(reader, usingSHA)
         log.addEntry(t2, GOODKEY_5, GOODKEY_6, 'jdd', 'e@document2')
         self.assertEqual(2, len(log))
         entry = log.getEntry(GOODKEY_5)
@@ -212,8 +214,8 @@ class TestBoundLog (unittest.TestCase):
         self.assertTrue(GOODKEY_5 in log)
         log.close()
 
-        reader = FileReader(self.uDir, usingSHA1)
-        log = BoundLog(reader, usingSHA1)
+        reader = FileReader(self.uDir, usingSHA)
+        log = BoundLog(reader, usingSHA)
         log.addEntry(t3, GOODKEY_7, GOODKEY_8, 'jdd', 'e@document3')
         self.assertEqual(3, len(log))
         entry = log.getEntry(GOODKEY_7)

@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from xlattice import Q    # FIX ME
 
 # ~/dev/py/upax/checkUConsistency
 
@@ -39,7 +40,7 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser()
 
-    parser.add_argument('-1', '--usingSHA1', action='store_true',
+    parser.add_argument('-1', '--usingSHA', action='store_true',
                         help='set if using SHA1 (40 hex digit keys)')
 
     parser.add_argument('-a', '--startAt', default='00',
@@ -113,7 +114,7 @@ def main():
         print('testing         = ' + str(args.testing))
         print('timestamp       = ' + str(args.timestamp))
         print('uDir            = ' + str(args.uDir))
-        print('usingSHA1       = ' + str(args.usingSHA1))
+        print('usingSHA       = ' + str(args.usingSHA))
         print('verbose         = ' + str(args.verbose))
 
     if not args.justShow:

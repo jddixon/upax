@@ -4,7 +4,7 @@ import os
 import re
 import sys
 from collections import Container, Sized
-from xlattice import SHA1_HEX_NONE, SHA2_HEX_NONE, u
+from xlattice import Q, SHA1_HEX_NONE, SHA2_HEX_NONE, u
 from upax.node import checkHexNodeID1, checkHexNodeID2
 
 __all__ = ['ATEXT', 'AT_FREE',
@@ -46,21 +46,23 @@ class Log(Container, Sized):
     """a fault-tolerant log"""
 
     #__slots__ = ['_entries', '_index', '_timestamp',
-    #              '_prevHash', '_prevMaster', '_usingSHA1', ]
+    #              '_prevHash', '_prevMaster', '_usingSHA', ]
 
-    def __init__(self, reader, usingSHA1):
-        self._usingSHA1 = usingSHA1
+    def __init__(self, reader, usingSHA):
+        self._usingSHA = usingSHA
         (timestamp, prevLogHash, prevMaster, entries, index) = reader.read()
         self._timestamp = timestamp     # seconds from epoch
         self._prevHash = prevLogHash   # SHA1/3 hash of previous log
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
             checkHexNodeID1(self._prevHash)
         else:
+            # FIX ME FIX ME FIX ME
             checkHexNodeID2(self._prevHash)
         self._prevMaster = prevMaster    # nodeID of master writing prev log
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
             checkHexNodeID1(self._prevMaster)
         else:
+            # FIX ME FIX ME FIX ME
             checkHexNodeID2(self._prevMaster)
 
         self._entries = entries       # a list
@@ -76,9 +78,10 @@ class Log(Container, Sized):
         """used for serialization, so includes newline"""
 
         # first line
-        if self._usingSHA1:
+        if self._usingSHA:
             fmt = "%013u %40s %40s\n"
         else:
+            # FIX ME FIX ME FIX ME
             fmt = "%013u %64s %64s\n"
         ret = fmt % (self._timestamp, self._prevHash, self._prevMaster)
 
@@ -128,8 +131,8 @@ class Log(Container, Sized):
 
 class BoundLog(Log):
 
-    def __init__(self, reader, usingSHA1, uPath=None, baseName='L'):
-        super(). __init__(reader, usingSHA1)
+    def __init__(self, reader, usingSHA, uPath=None, baseName='L'):
+        super(). __init__(reader, usingSHA)
         self.fd = -1
         self.isOpen = False     # for appending
         overwriting = False
@@ -184,9 +187,10 @@ class LogEntry():
 
         if key is None:
             raise ValueError('LogEntry key may not be None')
-        usingSHA1 = len(key) == 40
+        usingSHA = len(key) == 40
         self._key = key              # 40 or 64 hex digits, content hash
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
+            # FIX ME FIX ME FIX ME
             checkHexNodeID1(self._key)
         else:
             checkHexNodeID2(self._key)
@@ -196,7 +200,8 @@ class LogEntry():
         self._nodeID = nodeID           # 40/64 digits, node providing entry
         # XXX This is questionable.  Why can't a node with a SHA1 id store
         # a datum with a SHA3 key?
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
+            # FIX ME FIX ME FIX ME
             checkHexNodeID1(self._nodeID)
         else:
             checkHexNodeID2(self._nodeID)
@@ -225,14 +230,15 @@ class LogEntry():
         return self._timestamp
 
     @property
-    def usingSHA1(self):
+    def usingSHA(self):
         return len(self._key) == 40
 
     # used in serialization, so newlines are intended
     def __str__(self):
-        if self.usingSHA1:
+        if self.usingSHA:
             fmt = '%013u %40s %40s "%s" %s\n'
         else:
+            # FIX ME FIX ME FIX ME
             fmt = '%013u %64s %64s "%s" %s\n'
         return fmt % (self._timestamp, self._key,
                       self._nodeID, self._src, self._path)
@@ -272,14 +278,15 @@ class LogEntry():
 
 
 class Reader(object):
-    #__slots__ = ['_entries', '_index', '_lines', '_usingSHA1',
+    #__slots__ = ['_entries', '_index', '_lines', '_usingSHA',
     #             'FIRST_LINE_RE', ]
 
-    def __init__(self, lines, usingSHA1):
-        self._usingSHA1 = usingSHA1
-        if usingSHA1:
+    def __init__(self, lines, usingSHA):
+        self._usingSHA = usingSHA
+        if usingSHA == Q.USING_SHA1:
             FIRST_LINE_PAT = '^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
         else:
+            # FIX ME FIX ME FIX ME
             FIRST_LINE_PAT = '^(\d{13}) ([0-9a-f]{64}) ([0-9a-f]{64})$'
         self.FIRST_LINE_RE = re.compile(FIRST_LINE_PAT, re.I)
 
@@ -297,7 +304,7 @@ class Reader(object):
         self._index = dict()        # mapping hash => entry
 
     @property
-    def usingSHA1(self): return self._usingSHA1
+    def usingSHA(self): return self._usingSHA
 
     def read(self):
 
@@ -314,7 +321,7 @@ class Reader(object):
         if firstLine:
             m = re.match(self.FIRST_LINE_RE, firstLine)
             if not m:
-                print("NO MATCH, FIRST LINE; usingSHA1 = %s" % self.usingSHA1)
+                print("NO MATCH, FIRST LINE; usingSHA = %s" % self.usingSHA)
                 print(("  FIRST LINE: '%s'" % firstLine))
                 raise ValueError("no match on first line; giving up")
             timestamp = int(m.group(1))
@@ -324,10 +331,11 @@ class Reader(object):
         else:
             # no first line
             timestamp = 0
-            if self._usingSHA1:
+            if self._usingSHA:
                 prevLogHash = SHA1_HEX_NONE
                 prevMaster = SHA1_HEX_NONE
             else:
+                # FIX ME FIX ME FIX ME
                 prevLogHash = SHA2_HEX_NONE
                 prevMaster = SHA2_HEX_NONE
 
@@ -341,9 +349,10 @@ class Reader(object):
             m = re.match(IGNORABLE_RE, line)
             if m:
                 continue
-            if self._usingSHA1:
+            if self._usingSHA:
                 m = re.match(BODY_LINE_1_RE, line)
             else:
+                # FIX ME FIX ME FIX ME
                 m = re.match(BODY_LINE_3_RE, line)
             if m:
                 t = int(m.group(1))
@@ -372,7 +381,7 @@ class FileReader(Reader):
     __slots__ = ['_uPath', '_baseName', '_logFile', ]
 
     # XXX CHECK ORDER OF ARGUMENTS
-    def __init__(self, uPath, usingSHA1=False, baseName="L"):
+    def __init__(self, uPath, usingSHA=False, baseName="L"):
         if not os.path.exists(uPath):
             raise RuntimeError("no such directory %s" % uPath)
         self._uPath = uPath
@@ -381,7 +390,7 @@ class FileReader(Reader):
         with open(self._logFile, 'r') as f:
             contents = f.read()
         lines = contents.split('\n')
-        super(FileReader, self).__init__(lines, usingSHA1)
+        super(FileReader, self).__init__(lines, usingSHA)
 
     @property
     def baseName(self):
@@ -403,9 +412,9 @@ class StringReader(Reader):
     Accept a (big) string, convert to a string array, pass to Reader
     """
 
-    def __init__(self, bigString, usingSHA1=False):
+    def __init__(self, bigString, usingSHA=False):
 
         # split on newlines
         lines = bigString.split('\n')
 
-        super().__init__(lines, usingSHA1)
+        super().__init__(lines, usingSHA)

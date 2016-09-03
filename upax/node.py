@@ -1,6 +1,7 @@
 # ~/dev/py/upax/upax/node.py
 
 import re
+from xlattice import Q
 
 # Classes in this module should inherit from XLattice classes, but
 # currently the XLattice classes retain less desirable characteristics
@@ -8,11 +9,13 @@ import re
 # byte arrays.  So get it right here and then backport to XLattice
 
 
-def checkNodeID(b, usingSHA1):
+def checkNodeID(b, usingSHA):
     if b is None:
         raise ValueError('nodeID may not be None')
     bLen = len(b)
-    if (usingSHA1 and bLen != 20) or (not usingSHA1 and bLen != 32):
+    if (usingSHA == Q.USING_SHA1 and bLen != 20) or \
+            (usingSHA != Q.USING_SHA1 and bLen != 32):
+        # FIX ME FIX ME FIX ME
         raise ValueError('invalid nodeID length %u' % bLen)
 
 NODE_ID_1_PAT = '^[A-Z0-9]{40}$'
@@ -39,9 +42,9 @@ def checkHexNodeID2(s):
 
 class Peer(object):
 
-    def __init__(self, nodeID, rsaPubKey, usingSHA1=False):
-        self._usingSHA1 = usingSHA1
-        checkNodeID(nodeID, usingSHA1)
+    def __init__(self, nodeID, rsaPubKey, usingSHA=False):
+        self._usingSHA = usingSHA
+        checkNodeID(nodeID, usingSHA)
         self._nodeID = nodeID    # fBytes20 or fBytes32
         # validate ?
         self._rsaPubKey = rsaPubKey
@@ -71,7 +74,7 @@ class Peer(object):
         self._nodeNdx = value
 
     @property
-    def usingSHA1(self): return self._usingSHA1
+    def usingSHA(self): return self._usingSHA
 
     # These all return a reference to a list.  This is quite insecure
     # and nothing prevents users from adding arbitrary trash to a list.

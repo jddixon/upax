@@ -5,12 +5,13 @@ import os
 import re
 import time
 import rnglib
+from xlattice import Q
 from xlattice.u import (fileSHA1Hex, fileSHA2Hex,
                         UDir)
 import upax.ftlog
 
-__version__ = '0.6.9'
-__version_date__ = '2016-08-27'
+__version__ = '0.7.0'
+__version_date__ = '2016-09-02'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -32,12 +33,12 @@ FILE_NAME_2_RE = re.compile(FILE_NAME_2_PAT)
 
 class Importer(object):
 
-    def __init__(self, srcDir, destDir, pgmNameAndVersion, usingSHA1=False,
+    def __init__(self, srcDir, destDir, pgmNameAndVersion, usingSHA=False,
                  verbose=False):
         self._srcDir = srcDir
         self._destDir = destDir
         self._pgmNameAndVersion = pgmNameAndVersion
-        self._usingSHA1 = usingSHA1
+        self._usingSHA = usingSHA
         self._verbose = verbose
 
     @property
@@ -52,7 +53,7 @@ class Importer(object):
     @staticmethod
     def createImporter(args):
         return Importer(args.srcDir, args.destDir,
-                        args.pgmNameAndVersion, args.usingSHA1,
+                        args.pgmNameAndVersion, args.usingSHA,
                         args.verbose)
 
     def importLeafDir(self, subSub):
@@ -64,9 +65,10 @@ class Importer(object):
         for file in files:
             # leaf file names should be the file's SHA hash, its content key
             pathTo = os.path.join(subSub, file)
-            if self._usingSHA1:
+            if self._usingSHA:
                 m = FILE_NAME_1_RE.match(file)
             else:
+                # FIX ME FIX ME FIX ME
                 m = FILE_NAME_2_RE.match(file)
             if m is not None:
                 count += 1
@@ -96,7 +98,7 @@ class Importer(object):
         verbose = self._verbose
         # os.umask(0222)       # CAN'T USE THIS
 
-        self._server = BlockingServer(destDir, self._usingSHA1)
+        self._server = BlockingServer(destDir, self._usingSHA)
         log = self._server.log
         if verbose:
             print(("there were %7u files in %s at the beginning of the run" % (
@@ -124,9 +126,9 @@ class Importer(object):
 
 class Server(object):
 
-    #   __slots__ = ['_uPath', '_usingSHA1', ]
+    #   __slots__ = ['_uPath', '_usingSHA', ]
 
-    def __init__(self, uPath, usingSHA1):
+    def __init__(self, uPath, usingSHA):
         """
         We expect uDir to contain two subdirectories, in/ and tmp/, and
         at least two files, L and nodeID.  L is the serialization of a
@@ -146,8 +148,8 @@ class Server(object):
         at this time) world-readable but only owner-writeable.
         """
 
-        self._usingSHA1 = usingSHA1
-        uDir = UDir.discover(uPath, UDir.DIR256x256, usingSHA1)
+        self._usingSHA = usingSHA
+        uDir = UDir.discover(uPath, UDir.DIR256x256, usingSHA)
         self._uDir = uDir
         self._uPath = uPath
 
@@ -161,9 +163,10 @@ class Server(object):
         if not os.path.exists(_tmpDirPath):
             os.mkdir(_tmpDirPath)
         if not os.path.exists(_idFilePath):
-            if self._usingSHA1:
+            if self._usingSHA:
                 byteID = bytearray(20)
             else:
+                # FIX ME FIX ME FIX ME
                 byteID = bytearray(32)
             rng = rnglib.SimpleRNG(time.time())
             rng.nextBytes(byteID)       # a low-quality quasi-random number
@@ -177,11 +180,11 @@ class Server(object):
                 self._nodeID = f.read()[:-1]
 
         if os.path.exists(_logFilePath):
-            self._log = ftlog.BoundLog(ftlog.FileReader(uPath, self._usingSHA1),
-                                       self._usingSHA1, uPath)
+            self._log = ftlog.BoundLog(ftlog.FileReader(uPath, self._usingSHA),
+                                       self._usingSHA, uPath)
         else:
-            self._log = ftlog.BoundLog(ftlog.Reader([], self._usingSHA1),
-                                       self._usingSHA1, uPath)
+            self._log = ftlog.BoundLog(ftlog.Reader([], self._usingSHA),
+                                       self._usingSHA, uPath)
 
     @property
     def uDir(self):
@@ -192,8 +195,8 @@ class Server(object):
         return self._uPath
 
     @property
-    def usingSHA1(self):
-        return self._usingSHA1
+    def usingSHA(self):
+        return self._usingSHA
 
     # XXXthis is a reference to the actual log and so a major security risk
     @property
@@ -219,9 +222,10 @@ class Server(object):
         if loggedPath is None:
             loggedPath = 'z@' + pathToFile
 
-        if self._usingSHA1:
+        if self._usingSHA:
             actualKey = fileSHA1Hex(pathToFile)
         else:
+            # FIX ME FIX ME FIX ME
             actualKey = fileSHA2Hex(pathToFile)
         if actualKey != key:
             raise ValueError('actual hash %s, claimed hash %s' % (
@@ -252,11 +256,11 @@ class Server(object):
 
 class BlockingServer(Server):
 
-    def __init__(self, uDir, usingSHA1=False):
-        super(BlockingServer, self).__init__(uDir, usingSHA1)
+    def __init__(self, uDir, usingSHA=False):
+        super(BlockingServer, self).__init__(uDir, usingSHA)
 
 
 class NonBlockingServer(Server):
 
-    def __init__(self, uDir, usingSHA1=False):
+    def __init__(self, uDir, usingSHA=False):
         pass
