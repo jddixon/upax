@@ -7,7 +7,7 @@ import time
 import unittest
 import rnglib
 import upax
-from xlattice import u256 as u
+from xlattice import u256 as u, Q
 
 rng = rnglib.SimpleRNG(time.time())
 
@@ -22,14 +22,14 @@ class TestUpaxServer (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def doTestConstructFromNothing(self, usingSHA1):
+    def doTestConstructFromNothing(self, usingSHA):
         # SETUP
         uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
         while os.path.exists(uPath):
             uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
 
         # we are guaranteed that uPath does _not_ exist
-        s = upax.BlockingServer(uPath, usingSHA1)
+        s = upax.BlockingServer(uPath, usingSHA)
         self.assertIsNotNone(s)
         self.assertTrue(os.path.exists(s.uPath))
 
@@ -42,10 +42,11 @@ class TestUpaxServer (unittest.TestCase):
         self.assertTrue(os.path.exists(idPath))
         with open(idPath, 'rb') as f:
             nodeID = f.read()
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
             self.assertEqual(41, len(nodeID))
             self.assertEqual(ord('\n'), nodeID[40])
         else:
+            # FIX ME FIX ME FIX ME
             self.assertEqual(65, len(nodeID))
             self.assertEqual(ord('\n'), nodeID[64])
         nodeID = nodeID[:-1]
@@ -59,7 +60,7 @@ class TestUpaxServer (unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def makeSomeFiles(self, usingSHA1):
+    def makeSomeFiles(self, usingSHA):
         """ return a map: hash=>path """
 
         # create a random number of unique data files of random length
@@ -76,9 +77,10 @@ class TestUpaxServer (unittest.TestCase):
             # perhaps more restrictions needed
             while dPath.endswith('.'):
                 (dLen, dPath) = rng.nextDataFile(DATA_PATH, 16 * 1024, 1)
-            if usingSHA1:
+            if usingSHA == Q.USING_SHA1:
                 dKey = u.fileSHA1Hex(dPath)
             else:
+                # FIX ME FIX ME FIX ME
                 dKey = u.fileSHA2Hex(dPath)
             files[dKey] = dPath
 
@@ -87,14 +89,14 @@ class TestUpaxServer (unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def doTestPutToEmpty(self, usingSHA1):
+    def doTestPutToEmpty(self, usingSHA):
         # SETUP
         uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
         while os.path.exists(uPath):
             uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
 
-        s = upax.BlockingServer(uPath, usingSHA1)
-        fileMap = self.makeSomeFiles(usingSHA1)
+        s = upax.BlockingServer(uPath, usingSHA)
+        fileMap = self.makeSomeFiles(usingSHA)
         fileCount = len(fileMap)
 
         for key in list(fileMap.keys()):
@@ -123,21 +125,21 @@ class TestUpaxServer (unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def doTestPutCloseReopenAndPut(self, usingSHA1):
+    def doTestPutCloseReopenAndPut(self, usingSHA):
         # SETUP
         uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
         while os.path.exists(uPath):
             uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
 
-        s = upax.BlockingServer(uPath, usingSHA1)
-        fileMap1 = self.makeSomeFiles(usingSHA1)
+        s = upax.BlockingServer(uPath, usingSHA)
+        fileMap1 = self.makeSomeFiles(usingSHA)
         fileCount1 = len(fileMap1)
         for key in list(fileMap1.keys()):
             s.put(fileMap1[key], key, 'testPut ... first phase')
         s.close()
 
-        s = upax.BlockingServer(uPath, usingSHA1)
-        fileMap2 = self.makeSomeFiles(usingSHA1)
+        s = upax.BlockingServer(uPath, usingSHA)
+        fileMap2 = self.makeSomeFiles(usingSHA)
         fileCount2 = len(fileMap2)
         for key in list(fileMap2.keys()):
             s.put(fileMap2[key], key, 'testPut ... SECOND PHASE')

@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from xlattice import Q    # FIX ME
 
 # ~/dev/py/upax/importUDir
 
@@ -27,7 +28,7 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser()
 
-    parser.add_argument('-1', '--usingSHA1', action='store_true',
+    parser.add_argument('-1', '--usingSHA', action='store_true',
                         help='use SHA1, and so 160-bit keys')
 
     parser.add_argument('-d', '--destDir', type=str,
@@ -101,7 +102,7 @@ def main():
         print('showVersion      = ' + str(args.showVersion))
         print('srcDir           = ' + str(args.srcDir))
         print('timestamp        = ' + str(args.timestamp))
-        print('usingSHA1        = ' + str(args.usingSHA1))
+        print('usingSHA        = ' + str(args.usingSHA))
         print('verbose          = ' + str(args.verbose))
 
     if not args.justShow:

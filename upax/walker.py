@@ -7,6 +7,7 @@ import re
 import u
 from upax import *
 from upax.ftlog import *
+from xlattice import Q
 
 HEX_DIR_PAT = '^[0-9a-fA-F]{2}$'
 HEX_DIR_RE = re.compile(HEX_DIR_PAT)
@@ -18,7 +19,7 @@ TWO_HEX_RE = re.compile('[0-9a-f]{2}')
 class UWalker(object):
 
     def __init__(self, uDir='/var/U', limit=64, startAt='00',
-                 justKeys=False, usingSHA1=False, verbose=False):
+                 justKeys=False, usingSHA=False, verbose=False):
         if not os.path.exists(uDir):
             raise ValueError("directory '%s' does not exist" % str(uDir))
         self._uDir = uDir
@@ -34,7 +35,7 @@ class UWalker(object):
             sys.exit(-1)
         self._justKeys = justKeys
         self._startAt = startAt
-        self._usingSHA1 = usingSHA1
+        self._usingSHA = usingSHA
         self._verbose = verbose
 
         self._keys = []
@@ -84,9 +85,10 @@ class UWalker(object):
                                 continue
 
                             pathToFile = os.path.join(midDirPath, file)
-                            if self._usingSHA1:
+                            if self._usingSHA:
                                 contentKey = u.fileSHA1(pathToFile)
                             else:
+                                # FIX ME FIX ME FIX ME
                                 contentKey = u.fileSHA2(pathToFile)
 
                             if file != contentKey:

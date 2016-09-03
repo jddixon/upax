@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from xlattice import Q    # FIX ME
 
 # ~/dev/py/upax/upax/consistency.py
 
@@ -21,7 +22,7 @@ __all__ = ['check', ]
 
 
 def setupServer(options):
-    options.uServer = upax.BlockingServer(options.uDir, options.usingSHA1)
+    options.uServer = upax.BlockingServer(options.uDir, options.usingSHA)
 
 
 def shutdownServer(options):
@@ -39,7 +40,7 @@ def walkU(options):
                 limit=options.limit,
                 startAt=options.startAt,
                 uDir=options.uDir,
-                usingSHA1=options.usingSHA1,
+                usingSHA=options.usingSHA,
                 verbose=options.verbose)
     keys = w.walk()
     return keys
@@ -76,15 +77,15 @@ def check(options):
         setupServer(options)       # gets locks on U and U0
     except ValueError as v:
         if options.uServer is None:
-            print("have you set usingSHA1 correctly?")
+            print("have you set usingSHA correctly?")
         else:
             raise v
     if options.uServer is not None:
         try:
             # LOG: keyed by hash, later entries with same hash should
             # overwrite earlier
-            options.reader = FileReader(options.uDir, options.usingSHA1)
-            options.log = BoundLog(options.reader, options.usingSHA1)
+            options.reader = FileReader(options.uDir, options.usingSHA)
+            options.log = BoundLog(options.reader, options.usingSHA)
             log = options.log
 
             # U: sorted content keys

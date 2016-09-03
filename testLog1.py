@@ -4,6 +4,7 @@
 
 import time
 import unittest
+from xlattice import Q
 
 from upax.ftlog import Log, LogEntry, Reader, StringReader
 
@@ -16,8 +17,8 @@ class TestLog (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def getGood(self, usingSHA1):
-        if usingSHA1:
+    def getGood(self, usingSHA):
+        if usingSHA == Q.USING_SHA1:
             GOODKEY_1 = '0123456789012345678901234567890123456789'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
             GOODKEY_3 = '1234567890123456789012345678901234567890'
@@ -27,6 +28,7 @@ class TestLog (unittest.TestCase):
             GOODKEY_7 = '3456789012345678901234567890123456789012'
             GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fed'
         else:
+            # FIX ME FIX ME FIX ME
             GOODKEY_1 = '0123456789012345678901234567890123456789abcdef3330123456789abcde'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
             GOODKEY_3 = '1234567890123456789012345678901234567890abcdef697698768696969696'
@@ -38,15 +40,15 @@ class TestLog (unittest.TestCase):
         return (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
                 GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,)
 
-    def doTest__str__WithoutEntries(self, usingSHA1):
+    def doTest__str__WithoutEntries(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         t0 = int(time.time()) - 10000
         EMPTY_LOG = "%013u %s %s\n" % (t0, GOODKEY_1, GOODKEY_2)
-        reader = StringReader(EMPTY_LOG, usingSHA1)
-        log = Log(reader, usingSHA1)
+        reader = StringReader(EMPTY_LOG, usingSHA)
+        log = Log(reader, usingSHA)
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
@@ -64,10 +66,10 @@ class TestLog (unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def doTestMultiEntryLog(self, usingSHA1):
+    def doTestMultiEntryLog(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         t0 = int(time.time()) - 10000
         t1 = t0 + 100
@@ -80,8 +82,8 @@ class TestLog (unittest.TestCase):
         entry3 = LogEntry(t3, GOODKEY_7, GOODKEY_8, 'jdd', 'document3')
         TEST_LOG = EMPTY_LOG + str(entry1) + str(entry2) + str(entry3)
 
-        reader = StringReader(TEST_LOG, usingSHA1)
-        log = Log(reader, usingSHA1)
+        reader = StringReader(TEST_LOG, usingSHA)
+        log = Log(reader, usingSHA)
         assert log is not None
 
         # NOT IN testLog3 ---------------------------------
@@ -141,10 +143,10 @@ class TestLog (unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def doTestAddEntry(self, usingSHA1):
+    def doTestAddEntry(self, usingSHA):
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
-         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA1)
+         GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
 
         t0 = int(time.time()) - 10000
         t1 = t0 + 100
@@ -156,8 +158,8 @@ class TestLog (unittest.TestCase):
         entry2 = LogEntry(t2, GOODKEY_5, GOODKEY_6, 'jdd', 'document2')
         entry3 = LogEntry(t3, GOODKEY_7, GOODKEY_8, 'jdd', 'document3')
         TEST_LOG = EMPTY_LOG + str(entry1) + str(entry2) + str(entry3)
-        reader = StringReader(EMPTY_LOG, usingSHA1)
-        log = Log(reader, usingSHA1)
+        reader = StringReader(EMPTY_LOG, usingSHA)
+        log = Log(reader, usingSHA)
         assert log is not None
         self.assertEqual(t0, log.timestamp)
         self.assertEqual(GOODKEY_1, log.prevHash)
