@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from xlattice import Q    # FIX ME
 
 # ~/dev/py/upax/importUDir
 
@@ -10,6 +9,7 @@ import time
 from argparse import ArgumentParser
 
 import u
+
 from upax import *
 
 

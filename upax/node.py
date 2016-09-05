@@ -42,7 +42,7 @@ def checkHexNodeID2(s):
 
 class Peer(object):
 
-    def __init__(self, nodeID, rsaPubKey, usingSHA=False):
+    def __init__(self, nodeID, rsaPubKey, usingSHA=Q.USING_SHA2):
         self._usingSHA = usingSHA
         checkNodeID(nodeID, usingSHA)
         self._nodeID = nodeID    # fBytes20 or fBytes32

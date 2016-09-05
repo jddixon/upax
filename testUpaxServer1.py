@@ -30,35 +30,37 @@ class TestUpaxServer (unittest.TestCase):
 
         # we are guaranteed that uPath does _not_ exist
         s = upax.BlockingServer(uPath, usingSHA)
-        self.assertIsNotNone(s)
-        self.assertTrue(os.path.exists(s.uPath))
+        try:
+            self.assertIsNotNone(s)
+            self.assertTrue(os.path.exists(s.uPath))
 
-        # subdirectories
-        self.assertTrue(os.path.exists(os.path.join(uPath, 'in')))
-        self.assertTrue(os.path.exists(os.path.join(uPath, 'tmp')))
+            # subdirectories
+            self.assertTrue(os.path.exists(os.path.join(uPath, 'in')))
+            self.assertTrue(os.path.exists(os.path.join(uPath, 'tmp')))
 
-        # nodeID
-        idPath = os.path.join(uPath, 'nodeID')
-        self.assertTrue(os.path.exists(idPath))
-        with open(idPath, 'rb') as f:
-            nodeID = f.read()
-        if usingSHA == Q.USING_SHA1:
-            self.assertEqual(41, len(nodeID))
-            self.assertEqual(ord('\n'), nodeID[40])
-        else:
-            # FIX ME FIX ME FIX ME
-            self.assertEqual(65, len(nodeID))
-            self.assertEqual(ord('\n'), nodeID[64])
-        nodeID = nodeID[:-1]
-
-        s.close()
+            # nodeID
+            idPath = os.path.join(uPath, 'nodeID')
+            self.assertTrue(os.path.exists(idPath))
+            with open(idPath, 'rb') as f:
+                nodeID = f.read()
+            if usingSHA == Q.USING_SHA1:
+                self.assertEqual(41, len(nodeID))
+                self.assertEqual(ord('\n'), nodeID[40])
+            else:
+                # FIX ME FIX ME FIX ME
+                self.assertEqual(65, len(nodeID))
+                self.assertEqual(ord('\n'), nodeID[64])
+            nodeID = nodeID[:-1]
+        finally:
+            s.close()
         self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
 
     def testConstructFromNothing(self):
-        self.doTestConstructFromNothing(True)
-        self.doTestConstructFromNothing(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
+            # FIX ME FIX ME
+            self.doTestConstructFromNothing(using)
 
-    # ---------------------------------------------------------------
+#   # ---------------------------------------------------------------
 
     def makeSomeFiles(self, usingSHA):
         """ return a map: hash=>path """
@@ -96,32 +98,34 @@ class TestUpaxServer (unittest.TestCase):
             uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
 
         s = upax.BlockingServer(uPath, usingSHA)
-        fileMap = self.makeSomeFiles(usingSHA)
-        fileCount = len(fileMap)
+        try:
+            fileMap = self.makeSomeFiles(usingSHA)
+            fileCount = len(fileMap)
 
-        for key in list(fileMap.keys()):
-            s.put(fileMap[key], key, 'testPutToEmpty')
-            self.assertTrue(s.exists(key))
-            with open(fileMap[key], 'rb') as f:
-                dataInFile = f.read()
-            dataInU = s.get(key)
-            self.assertEqual(dataInFile, dataInU)
+            for key in list(fileMap.keys()):
+                s.put(fileMap[key], key, 'testPutToEmpty')
+                self.assertTrue(s.exists(key))
+                with open(fileMap[key], 'rb') as f:
+                    dataInFile = f.read()
+                dataInU = s.get(key)
+                self.assertEqual(dataInFile, dataInU)
 
-        log = s.log
-        self.assertEqual(fileCount, len(log))
+            log = s.log
+            self.assertEqual(fileCount, len(log))
 
-        for key in list(fileMap.keys()):
-            u.exists(uPath, key)
-            entry = log.getEntry(key)
-            self.assertIsNotNone(entry)
-            # STUB: shold examine properties of log entry
-
-        s.close()
+            for key in list(fileMap.keys()):
+                u.exists(uPath, key)
+                entry = log.getEntry(key)
+                self.assertIsNotNone(entry)
+                # STUB: shold examine properties of log entry
+        finally:
+            s.close()
         self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
 
     def testPutToEmpty(self):
-        self.doTestPutToEmpty(True)
-        self.doTestPutToEmpty(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
+            # FIX ME FIX ME
+            self.doTestPutToEmpty(using)
 
     # ---------------------------------------------------------------
 
@@ -132,37 +136,40 @@ class TestUpaxServer (unittest.TestCase):
             uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
 
         s = upax.BlockingServer(uPath, usingSHA)
-        fileMap1 = self.makeSomeFiles(usingSHA)
-        fileCount1 = len(fileMap1)
-        for key in list(fileMap1.keys()):
-            s.put(fileMap1[key], key, 'testPut ... first phase')
-        s.close()
+        try:
+            fileMap1 = self.makeSomeFiles(usingSHA)
+            fileCount1 = len(fileMap1)
+            for key in list(fileMap1.keys()):
+                s.put(fileMap1[key], key, 'testPut ... first phase')
+        finally:
+            s.close()
 
         s = upax.BlockingServer(uPath, usingSHA)
-        fileMap2 = self.makeSomeFiles(usingSHA)
-        fileCount2 = len(fileMap2)
-        for key in list(fileMap2.keys()):
-            s.put(fileMap2[key], key, 'testPut ... SECOND PHASE')
+        try:
+            fileMap2 = self.makeSomeFiles(usingSHA)
+            fileCount2 = len(fileMap2)
+            for key in list(fileMap2.keys()):
+                s.put(fileMap2[key], key, 'testPut ... SECOND PHASE')
 
-        log = s.log
-        self.assertEqual(fileCount1 + fileCount2, len(log))
+            log = s.log
+            self.assertEqual(fileCount1 + fileCount2, len(log))
 
-        for key in list(fileMap1.keys()):
-            u.exists(uPath, key)
-            entry = log.getEntry(key)
-            self.assertIsNotNone(entry)
+            for key in list(fileMap1.keys()):
+                u.exists(uPath, key)
+                entry = log.getEntry(key)
+                self.assertIsNotNone(entry)
 
-        for key in list(fileMap2.keys()):
-            u.exists(uPath, key)
-            entry = log.getEntry(key)
-            self.assertIsNotNone(entry)
-
-        s.close()
-        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
+            for key in list(fileMap2.keys()):
+                u.exists(uPath, key)
+                entry = log.getEntry(key)
+                self.assertIsNotNone(entry)
+        finally:
+            s.close()
+        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))
 
     def testPutCloseReopenAndPut(self):
-        self.doTestPutCloseReopenAndPut(True)
-        self.doTestPutCloseReopenAndPut(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
+            self.doTestPutCloseReopenAndPut(using)          # GEEP
 
 if __name__ == '__main__':
     unittest.main()

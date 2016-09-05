@@ -85,7 +85,7 @@ class UWalker(object):
                                 continue
 
                             pathToFile = os.path.join(midDirPath, file)
-                            if self._usingSHA:
+                            if self._usingSHA == Q.USING_SHA1:
                                 contentKey = u.fileSHA1(pathToFile)
                             else:
                                 # FIX ME FIX ME FIX ME
