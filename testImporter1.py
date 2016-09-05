@@ -145,8 +145,9 @@ class TestImporter (unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(destPath, 'L')))
 
     def testImport(self):
-        self.doTestImport(True)     # usingSHA
-        self.doTestImport(False)    # not usingSHA
+        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
+            # FIX ME FIX ME
+            self.doTestImport(using)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from xlattice import Q    # FIX ME
 
 # ~/dev/py/upax/checkUConsistency
 
@@ -9,6 +8,7 @@ import re
 import sys
 import time
 from argparse import ArgumentParser
+from xlattice import Q
 from upax import *
 import upax.consistency
 

@@ -1,5 +1,4 @@
 #!/usr/bin/python
-from xlattice import Q    # FIX ME
 
 # ~/dev/py/upax/upax/consistency.py
 
@@ -11,6 +10,7 @@ import time
 
 import serverutil
 import u
+
 import upax          # MUST LOCK uDir
 from upax import *
 from upax.ftlog import BoundLog, FileReader, LogEntry

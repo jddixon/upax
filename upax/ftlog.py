@@ -78,7 +78,7 @@ class Log(Container, Sized):
         """used for serialization, so includes newline"""
 
         # first line
-        if self._usingSHA:
+        if self._usingSHA == Q.USING_SHA1:
             fmt = "%013u %40s %40s\n"
         else:
             # FIX ME FIX ME FIX ME
@@ -131,7 +131,8 @@ class Log(Container, Sized):
 
 class BoundLog(Log):
 
-    def __init__(self, reader, usingSHA, uPath=None, baseName='L'):
+    def __init__(self, reader, usingSHA=Q.USING_SHA2,
+                 uPath=None, baseName='L'):
         super(). __init__(reader, usingSHA)
         self.fd = -1
         self.isOpen = False     # for appending
@@ -235,7 +236,7 @@ class LogEntry():
 
     # used in serialization, so newlines are intended
     def __str__(self):
-        if self.usingSHA:
+        if self.usingSHA == Q.USING_SHA1:
             fmt = '%013u %40s %40s "%s" %s\n'
         else:
             # FIX ME FIX ME FIX ME
@@ -331,7 +332,7 @@ class Reader(object):
         else:
             # no first line
             timestamp = 0
-            if self._usingSHA:
+            if self._usingSHA == Q.USING_SHA1:
                 prevLogHash = SHA1_HEX_NONE
                 prevMaster = SHA1_HEX_NONE
             else:
@@ -349,7 +350,7 @@ class Reader(object):
             m = re.match(IGNORABLE_RE, line)
             if m:
                 continue
-            if self._usingSHA:
+            if self._usingSHA == Q.USING_SHA1:
                 m = re.match(BODY_LINE_1_RE, line)
             else:
                 # FIX ME FIX ME FIX ME

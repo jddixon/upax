@@ -10,8 +10,8 @@ from xlattice.u import (fileSHA1Hex, fileSHA2Hex,
                         UDir)
 import upax.ftlog
 
-__version__ = '0.7.0'
-__version_date__ = '2016-09-02'
+__version__ = '0.7.1'
+__version_date__ = '2016-09-05'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -33,8 +33,8 @@ FILE_NAME_2_RE = re.compile(FILE_NAME_2_PAT)
 
 class Importer(object):
 
-    def __init__(self, srcDir, destDir, pgmNameAndVersion, usingSHA=False,
-                 verbose=False):
+    def __init__(self, srcDir, destDir, pgmNameAndVersion,
+                 usingSHA=Q.USING_SHA2, verbose=False):
         self._srcDir = srcDir
         self._destDir = destDir
         self._pgmNameAndVersion = pgmNameAndVersion
@@ -65,7 +65,7 @@ class Importer(object):
         for file in files:
             # leaf file names should be the file's SHA hash, its content key
             pathTo = os.path.join(subSub, file)
-            if self._usingSHA:
+            if self._usingSHA == Q.USING_SHA1:
                 m = FILE_NAME_1_RE.match(file)
             else:
                 # FIX ME FIX ME FIX ME
@@ -128,7 +128,7 @@ class Server(object):
 
     #   __slots__ = ['_uPath', '_usingSHA', ]
 
-    def __init__(self, uPath, usingSHA):
+    def __init__(self, uPath, usingSHA=Q.USING_SHA2):
         """
         We expect uDir to contain two subdirectories, in/ and tmp/, and
         at least two files, L and nodeID.  L is the serialization of a
@@ -148,22 +148,23 @@ class Server(object):
         at this time) world-readable but only owner-writeable.
         """
 
-        self._usingSHA = usingSHA
-        uDir = UDir.discover(uPath, UDir.DIR256x256, usingSHA)
-        self._uDir = uDir
-        self._uPath = uPath
-
         _inDirPath = os.path.join(uPath, 'in')
         _logFilePath = os.path.join(uPath, 'L')
         _idFilePath = os.path.join(uPath, 'nodeID')
         _tmpDirPath = os.path.join(uPath, 'tmp')
+
+        self._usingSHA = usingSHA
+        uDir = UDir.discover(uPath, UDir.DIR256x256, usingSHA)
+
+        self._uDir = uDir
+        self._uPath = uPath
 
         if not os.path.exists(_inDirPath):
             os.mkdir(_inDirPath)
         if not os.path.exists(_tmpDirPath):
             os.mkdir(_tmpDirPath)
         if not os.path.exists(_idFilePath):
-            if self._usingSHA:
+            if self._usingSHA == Q.USING_SHA1:
                 byteID = bytearray(20)
             else:
                 # FIX ME FIX ME FIX ME
@@ -222,7 +223,7 @@ class Server(object):
         if loggedPath is None:
             loggedPath = 'z@' + pathToFile
 
-        if self._usingSHA:
+        if self._usingSHA == Q.USING_SHA1:
             actualKey = fileSHA1Hex(pathToFile)
         else:
             # FIX ME FIX ME FIX ME
@@ -256,11 +257,11 @@ class Server(object):
 
 class BlockingServer(Server):
 
-    def __init__(self, uDir, usingSHA=False):
+    def __init__(self, uDir, usingSHA=Q.USING_SHA2):
         super(BlockingServer, self).__init__(uDir, usingSHA)
 
 
 class NonBlockingServer(Server):
 
-    def __init__(self, uDir, usingSHA=False):
+    def __init__(self, uDir, usingSHA=Q.USING_SHA2):
         pass
