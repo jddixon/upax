@@ -6,7 +6,7 @@ import unittest
 
 # confuson between module and class
 from upax.ftlog import LogEntry
-from xlattice import Q
+from xlattice import Q, checkUsingSHA
 
 
 class TestLogEntry (unittest.TestCase):
@@ -18,16 +18,19 @@ class TestLogEntry (unittest.TestCase):
         pass
 
     def getKeys(self, usingSHA):
+        checkUsingSHA(usingSHA)
+
         if usingSHA == Q.USING_SHA1:
             GOODKEY_1 = '0123456789012345678901234567890123456789'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
         else:
-            # FIX ME FIX ME FIX ME
+            # dummy data good for either SHA2 or SHA3
             GOODKEY_1 = '0123456789012345678901234567890123456789abcdefghi0123456789abcde'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
         return (GOODKEY_1, GOODKEY_2)
 
     def doTestConstructor(self, usingSHA):
+        checkUsingSHA(usingSHA)
 
         (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA)
 
@@ -42,8 +45,8 @@ class TestLogEntry (unittest.TestCase):
         self.assertEqual('document1', entry.path)
 
     def testConstructor(self):
-        self.doTestConstructor(True)
-        self.doTestConstructor(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTestConstructor(using)
 
     def doTest__str__(self, usingSHA):
         (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA)
@@ -57,10 +60,11 @@ class TestLogEntry (unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test__str__(self):
-        self.doTest__str__(True)
-        self.doTest__str__(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTest__str__(using)
 
     def doTestEquals(self, usingSHA):
+        checkUsingSHA(usingSHA)
         (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA)
 
         time1 = time.time() - 1000
@@ -76,8 +80,8 @@ class TestLogEntry (unittest.TestCase):
         self.assertTrue(entry1.equals(entry3))
 
     def testEquals(self):
-        self.doTestEquals(True)
-        self.doTestEquals(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTestEquals(using)
 
 if __name__ == '__main__':
     unittest.main()

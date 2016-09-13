@@ -4,12 +4,13 @@ import os
 import re
 import sys
 from collections import Container, Sized
-from xlattice import Q, SHA1_HEX_NONE, SHA2_HEX_NONE, u
-from upax.node import checkHexNodeID1, checkHexNodeID2
+from xlattice import (Q, checkUsingSHA, u,
+                      SHA1_HEX_NONE, SHA2_HEX_NONE, SHA3_HEX_NONE)
+from upax.node import checkHexNodeID160, checkHexNodeID256
 
 __all__ = ['ATEXT', 'AT_FREE',
            'PATH_RE',
-           'BODY_LINE_1_RE', 'BODY_LINE_3_RE',
+           'BODY_LINE_1_RE', 'BODY_LINE_256_RE',
            'IGNORABLE_RE',
 
            # classes
@@ -33,9 +34,9 @@ BODY_LINE_1_PAT   = \
     '^(\d+) ([0-9a-f]{40}) ([0-9a-f]{40}) "([^"]*)" (%s)$' % PATH_PAT
 BODY_LINE_1_RE = re.compile(BODY_LINE_1_PAT, re.I)
 
-BODY_LINE_3_PAT   = \
+BODY_LINE_256_PAT   = \
     '^(\d+) ([0-9a-f]{64}) ([0-9a-f]{64}) "([^"]*)" (%s)$' % PATH_PAT
-BODY_LINE_3_RE = re.compile(BODY_LINE_3_PAT, re.I)
+BODY_LINE_256_RE = re.compile(BODY_LINE_256_PAT, re.I)
 
 
 IGNORABLE_PAT = '(^ *$)|^ *#'
@@ -54,16 +55,14 @@ class Log(Container, Sized):
         self._timestamp = timestamp     # seconds from epoch
         self._prevHash = prevLogHash   # SHA1/3 hash of previous log
         if usingSHA == Q.USING_SHA1:
-            checkHexNodeID1(self._prevHash)
+            checkHexNodeID160(self._prevHash)
         else:
-            # FIX ME FIX ME FIX ME
-            checkHexNodeID2(self._prevHash)
+            checkHexNodeID256(self._prevHash)
         self._prevMaster = prevMaster    # nodeID of master writing prev log
         if usingSHA == Q.USING_SHA1:
-            checkHexNodeID1(self._prevMaster)
+            checkHexNodeID160(self._prevMaster)
         else:
-            # FIX ME FIX ME FIX ME
-            checkHexNodeID2(self._prevMaster)
+            checkHexNodeID256(self._prevMaster)
 
         self._entries = entries       # a list
         self._index = index         # a map, hash => entry
@@ -81,7 +80,6 @@ class Log(Container, Sized):
         if self._usingSHA == Q.USING_SHA1:
             fmt = "%013u %40s %40s\n"
         else:
-            # FIX ME FIX ME FIX ME
             fmt = "%013u %64s %64s\n"
         ret = fmt % (self._timestamp, self._prevHash, self._prevMaster)
 
@@ -191,10 +189,9 @@ class LogEntry():
         usingSHA = len(key) == 40
         self._key = key              # 40 or 64 hex digits, content hash
         if usingSHA == Q.USING_SHA1:
-            # FIX ME FIX ME FIX ME
-            checkHexNodeID1(self._key)
+            checkHexNodeID160(self._key)
         else:
-            checkHexNodeID2(self._key)
+            checkHexNodeID256(self._key)
 
         if nodeID is None:
             raise ValueError('LogEntry nodeID may not be None')
@@ -202,10 +199,9 @@ class LogEntry():
         # XXX This is questionable.  Why can't a node with a SHA1 id store
         # a datum with a SHA3 key?
         if usingSHA == Q.USING_SHA1:
-            # FIX ME FIX ME FIX ME
-            checkHexNodeID1(self._nodeID)
+            checkHexNodeID160(self._nodeID)
         else:
-            checkHexNodeID2(self._nodeID)
+            checkHexNodeID256(self._nodeID)
 
         self._src = source           # tool or person responsible
         self._path = pathToDoc        # file name
@@ -239,7 +235,6 @@ class LogEntry():
         if self.usingSHA == Q.USING_SHA1:
             fmt = '%013u %40s %40s "%s" %s\n'
         else:
-            # FIX ME FIX ME FIX ME
             fmt = '%013u %64s %64s "%s" %s\n'
         return fmt % (self._timestamp, self._key,
                       self._nodeID, self._src, self._path)
@@ -283,11 +278,11 @@ class Reader(object):
     #             'FIRST_LINE_RE', ]
 
     def __init__(self, lines, usingSHA):
+        checkUsingSHA(usingSHA)
         self._usingSHA = usingSHA
         if usingSHA == Q.USING_SHA1:
             FIRST_LINE_PAT = '^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
         else:
-            # FIX ME FIX ME FIX ME
             FIRST_LINE_PAT = '^(\d{13}) ([0-9a-f]{64}) ([0-9a-f]{64})$'
         self.FIRST_LINE_RE = re.compile(FIRST_LINE_PAT, re.I)
 
@@ -335,10 +330,12 @@ class Reader(object):
             if self._usingSHA == Q.USING_SHA1:
                 prevLogHash = SHA1_HEX_NONE
                 prevMaster = SHA1_HEX_NONE
-            else:
-                # FIX ME FIX ME FIX ME
+            elif self._usingSHA == Q.USING_SHA2:
                 prevLogHash = SHA2_HEX_NONE
                 prevMaster = SHA2_HEX_NONE
+            elif self._usingSHA == Q.USING_SHA3:
+                prevLogHash = SHA3_HEX_NONE
+                prevMaster = SHA3_HEX_NONE
 
         entries = []
         index = dict()
@@ -353,8 +350,7 @@ class Reader(object):
             if self._usingSHA == Q.USING_SHA1:
                 m = re.match(BODY_LINE_1_RE, line)
             else:
-                # FIX ME FIX ME FIX ME
-                m = re.match(BODY_LINE_3_RE, line)
+                m = re.match(BODY_LINE_256_RE, line)
             if m:
                 t = int(m.group(1))
                 key = m.group(2)

@@ -15,7 +15,6 @@ def checkNodeID(b, usingSHA):
     bLen = len(b)
     if (usingSHA == Q.USING_SHA1 and bLen != 20) or \
             (usingSHA != Q.USING_SHA1 and bLen != 32):
-        # FIX ME FIX ME FIX ME
         raise ValueError('invalid nodeID length %u' % bLen)
 
 NODE_ID_1_PAT = '^[A-Z0-9]{40}$'
@@ -24,7 +23,7 @@ NODE_ID_2_PAT = '^[A-Z0-9]{64}$'
 NODE_ID_2_RE = re.compile(NODE_ID_2_PAT, re.I)
 
 
-def checkHexNodeID1(s):
+def checkHexNodeID160(s):
     if s is None:
         raise ValueError('nodeID may not be None')
     m = NODE_ID_1_RE.match(s)
@@ -32,7 +31,7 @@ def checkHexNodeID1(s):
         raise ValueError("not a valid 160-bit hex nodeID: ''%s'" % s)
 
 
-def checkHexNodeID2(s):
+def checkHexNodeID256(s):
     if s is None:
         raise ValueError('nodeID may not be None')
     m = NODE_ID_2_RE.match(s)

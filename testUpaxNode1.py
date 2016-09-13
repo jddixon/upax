@@ -6,7 +6,7 @@ import unittest
 from rnglib import SimpleRNG
 from upax.node import *
 from upax.ftlog import LogEntry
-from xlattice import Q
+from xlattice import Q, checkUsingSHA
 
 rng = SimpleRNG(int(time.time()))
 
@@ -21,6 +21,7 @@ class TestUpaxNode (unittest.TestCase):
 
     # tests both sha1 and sha3 versions of code
     def doTestCheckNodeID(self, usingSHA):
+        checkUsingSHA(usingSHA)
         for i in range(15):
             count = i + 18
             nodeID = bytearray(count)
@@ -30,8 +31,7 @@ class TestUpaxNode (unittest.TestCase):
                 except ValueError as ve:
                     self.fail('unexpected value error on %s' % nodeID)
 
-            elif not usingSHA and count == 32:
-                # FIX ME FIX ME FIX ME
+            elif (usingSHA != Q.USING_SHA1) and count == 32:
                 try:
                     checkNodeID(nodeID, usingSHA)
                 except ValueError as ve:
@@ -44,22 +44,24 @@ class TestUpaxNode (unittest.TestCase):
                     pass
 
     def testCheckNodeID(self):
-        self.doTestCheckNodeID(True)
-        self.doTestCheckNodeID(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTestCheckNodeID(using)
 
     # ---------------------------------------------------------------
 
     def doTestPeer(self, usingSHA):
         """ simple integrity checks on Peer type"""
+
+        checkUsingSHA(usingSHA)
         if usingSHA == Q.USING_SHA1:
             nodeID = bytearray(20)
         else:
-            # FIX ME FIX ME FIX ME
+            # 32-byte key
             nodeID = bytearray(32)
         rng.nextBytes(nodeID)
         pubKey = bytearray(162)         # number not to be taken seriously
         rng.nextBytes(pubKey)
-        peer = Peer(nodeID, pubKey, usingSHA)    # True means using SHA1
+        peer = Peer(nodeID, pubKey, usingSHA)
         self.assertEqual(nodeID, peer.nodeID)
         self.assertEqual(pubKey, peer.rsaPubKey)
         self.assertIsNone(peer.nodeNdx)
@@ -91,8 +93,8 @@ class TestUpaxNode (unittest.TestCase):
             pass
 
     def testPeer(self):
-        self.doTestPeer(True)
-        self.doTestPeer(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTestPeer(using)
 
     # ---------------------------------------------------------------
 

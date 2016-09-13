@@ -4,7 +4,7 @@
 
 import time
 import unittest
-from xlattice import Q
+from xlattice import Q, checkUsingSHA
 
 from upax.ftlog import Log, LogEntry, Reader, StringReader
 
@@ -18,6 +18,7 @@ class TestLog (unittest.TestCase):
         pass
 
     def getGood(self, usingSHA):
+        checkUsingSHA(usingSHA)
         if usingSHA == Q.USING_SHA1:
             GOODKEY_1 = '0123456789012345678901234567890123456789'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
@@ -28,7 +29,6 @@ class TestLog (unittest.TestCase):
             GOODKEY_7 = '3456789012345678901234567890123456789012'
             GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fed'
         else:
-            # FIX ME FIX ME FIX ME
             GOODKEY_1 = '0123456789012345678901234567890123456789abcdef3330123456789abcde'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
             GOODKEY_3 = '1234567890123456789012345678901234567890abcdef697698768696969696'
@@ -41,6 +41,7 @@ class TestLog (unittest.TestCase):
                 GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,)
 
     def doTest__str__WithoutEntries(self, usingSHA):
+        checkUsingSHA(usingSHA)
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
          GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
@@ -61,12 +62,14 @@ class TestLog (unittest.TestCase):
         self.assertEqual(0, len(log))
 
     def test__str__WithoutEntries(self):
-        self.doTest__str__WithoutEntries(True)
-        self.doTest__str__WithoutEntries(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTest__str__WithoutEntries(using)
 
     # ---------------------------------------------------------------
 
     def doTestMultiEntryLog(self, usingSHA):
+
+        checkUsingSHA(usingSHA)
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
          GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
@@ -138,12 +141,13 @@ class TestLog (unittest.TestCase):
         # END NOT IN --------------------------------------
 
     def testMultiEntryLog(self):
-        self.doTestMultiEntryLog(True)
-        self.doTestMultiEntryLog(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTestMultiEntryLog(using)
 
     # ---------------------------------------------------------------
 
     def doTestAddEntry(self, usingSHA):
+        checkUsingSHA(usingSHA)
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
          GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
@@ -186,8 +190,8 @@ class TestLog (unittest.TestCase):
         self.assertTrue(GOODKEY_7 in log)
 
     def testAddEntry(self):
-        self.doTestAddEntry(True)
-        self.doTestAddEntry(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTestAddEntry(using)
 
 if __name__ == '__main__':
     unittest.main()

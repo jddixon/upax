@@ -6,8 +6,8 @@ import os
 import time
 import unittest
 import rnglib
-from xlattice import Q
-from xlattice.u import UDir, fileSHA1Hex, fileSHA2Hex
+from xlattice import Q, checkUsingSHA
+from xlattice.u import UDir, fileSHA1Hex, fileSHA2Hex, fileSHA3Hex
 from upax import *
 
 rng = rnglib.SimpleRNG(time.time())
@@ -30,6 +30,8 @@ class TestImporter (unittest.TestCase):
         #   in myData/; take hash of each as it is created, using
         #   this to verify uniqueness; add hash to list (or use hash
         #   as key to map
+
+        checkUsingSHA(usingSHA)
         fileCount = 17 + rng.nextInt16(128)
         files = {}             # a map hash->path
         for n in range(fileCount):
@@ -41,9 +43,10 @@ class TestImporter (unittest.TestCase):
                 (dLen, dPath) = rng.nextDataFile(DATA_PATH, 16 * 1024, 1)
             if usingSHA == Q.USING_SHA1:
                 dKey = fileSHA1Hex(dPath)
-            else:
-                # FIX ME FIX ME FIX ME
+            elif usingSHA == Q.USING_SHA2:
                 dKey = fileSHA2Hex(dPath)
+            elif usingSHA == Q.USING_SHA3:
+                dKey = fileSHA3Hex(dPath)
             files[dKey] = dPath
 
         self.assertEqual(fileCount, len(files))
@@ -72,7 +75,6 @@ class TestImporter (unittest.TestCase):
             self.assertEqual(41, len(nodeID))
             self.assertEqual('\n', nodeID[40])
         else:
-            # FIX ME FIX ME FIX ME
             self.assertEqual(65, len(nodeID))
             self.assertEqual('\n', nodeID[64])
         nodeID = nodeID[:-1]                    # drop terminating newline
@@ -103,6 +105,8 @@ class TestImporter (unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
 
     def doTestImport(self, usingSHA):
+        checkUsingSHA(usingSHA)
+
         srcPath = os.path.join(DATA_PATH, rng.nextFileName(16))
         while os.path.exists(srcPath):
             srcPath = os.path.join(DATA_PATH, rng.nextFileName(16))
@@ -116,9 +120,11 @@ class TestImporter (unittest.TestCase):
         fileCount = len(fileMap)
 
         # create an empty source directory, populate it, shut down the server
-        s0 = self.constructEmptyUDir(srcPath, usingSHA)
-        self.populateEmpty(s0, fileMap, usingSHA)
-        s0.close()
+        try:
+            s0 = self.constructEmptyUDir(srcPath, usingSHA)
+            self.populateEmpty(s0, fileMap, usingSHA)
+        finally:
+            s0.close()
 
         # create an empty destination dir
         s1 = self.constructEmptyUDir(destPath, usingSHA)
@@ -145,8 +151,7 @@ class TestImporter (unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(destPath, 'L')))
 
     def testImport(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
-            # FIX ME FIX ME
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
             self.doTestImport(using)
 
 if __name__ == '__main__':

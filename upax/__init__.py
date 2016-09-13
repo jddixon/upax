@@ -5,13 +5,13 @@ import os
 import re
 import time
 import rnglib
-from xlattice import Q
-from xlattice.u import (fileSHA1Hex, fileSHA2Hex,
+from xlattice import Q, checkUsingSHA
+from xlattice.u import (fileSHA1Hex, fileSHA2Hex, fileSHA3Hex,
                         UDir)
 import upax.ftlog
 
-__version__ = '0.7.1'
-__version_date__ = '2016-09-05'
+__version__ = '0.7.2'
+__version_date__ = '2016-09-13'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -68,7 +68,6 @@ class Importer(object):
             if self._usingSHA == Q.USING_SHA1:
                 m = FILE_NAME_1_RE.match(file)
             else:
-                # FIX ME FIX ME FIX ME
                 m = FILE_NAME_2_RE.match(file)
             if m is not None:
                 count += 1
@@ -148,6 +147,7 @@ class Server(object):
         at this time) world-readable but only owner-writeable.
         """
 
+        checkUsingSHA(usingSHA)
         _inDirPath = os.path.join(uPath, 'in')
         _logFilePath = os.path.join(uPath, 'L')
         _idFilePath = os.path.join(uPath, 'nodeID')
@@ -167,7 +167,6 @@ class Server(object):
             if self._usingSHA == Q.USING_SHA1:
                 byteID = bytearray(20)
             else:
-                # FIX ME FIX ME FIX ME
                 byteID = bytearray(32)
             rng = rnglib.SimpleRNG(time.time())
             rng.nextBytes(byteID)       # a low-quality quasi-random number
@@ -225,9 +224,10 @@ class Server(object):
 
         if self._usingSHA == Q.USING_SHA1:
             actualKey = fileSHA1Hex(pathToFile)
-        else:
-            # FIX ME FIX ME FIX ME
+        elif self._usingSHA == Q.USING_SHA2:
             actualKey = fileSHA2Hex(pathToFile)
+        elif self._usingSHA == Q.USING_SHA3:
+            actualKey = fileSHA3Hex(pathToFile)
         if actualKey != key:
             raise ValueError('actual hash %s, claimed hash %s' % (
                 actualKey, key))
