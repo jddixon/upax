@@ -5,7 +5,7 @@ import time
 import unittest
 
 from upax.ftlog import LogEntry, Reader, StringReader, FileReader
-from xlattice import Q
+from xlattice import Q, checkUsingSHA
 
 
 class TestLogReader (unittest.TestCase):
@@ -17,6 +17,7 @@ class TestLogReader (unittest.TestCase):
         pass
 
     def getGood(self, usingSHA):
+        checkUsingSHA(usingSHA)
         if usingSHA == Q.USING_SHA1:
             GOODKEY_1 = '0123456789012345678901234567890123456789'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
@@ -27,7 +28,7 @@ class TestLogReader (unittest.TestCase):
             GOODKEY_7 = '3456789012345678901234567890123456789012'
             GOODKEY_8 = 'cba9876543210fedcba9876543210fedcba98fed'
         else:
-            # FIX ME FIX ME FIX ME
+            # 32-byte keys; values are arbitrary
             GOODKEY_1 = '0123456789012345678901234567890123456789abcdef3330123456789abcde'
             GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
             GOODKEY_3 = '1234567890123456789012345678901234567890abcdef697698768696969696'
@@ -40,6 +41,7 @@ class TestLogReader (unittest.TestCase):
                 GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,)
 
     def doTestStringReader(self, usingSHA):
+        checkUsingSHA(usingSHA)
 
         (GOODKEY_1, GOODKEY_2, GOODKEY_3, GOODKEY_4,
          GOODKEY_5, GOODKEY_6, GOODKEY_7, GOODKEY_8,) = self.getGood(usingSHA)
@@ -82,16 +84,16 @@ class TestLogReader (unittest.TestCase):
         self.assertEqual(3, len(index))
 
     def testStringReader(self):
-        self.doTestStringReader(True)
-        self.doTestStringReader(False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doTestStringReader(using)
 
     # ---------------------------------------------------------------
 
-    def testFileReader(self):
-        """
-        XXX Don't know why the log file is named Q, nor is it clear
-        why the file should have anything in it.
-        """
+#   def testFileReader(self):
+#       """
+#       XXX Don't know why the log file is named Q, nor is it clear
+#       why the file should have anything in it.
+#       """
 #        reader = FileReader('dev3/U', 'Q')
 #        assert reader is not None
 #        self.assertEqual('dev3/U',   reader.uPath)
@@ -101,10 +103,10 @@ class TestLogReader (unittest.TestCase):
 #        assert reader.index is not None
 #        self.assertEqual(0, len(reader.index)) # GEEP
 
-        reader = FileReader('dev0/U')
-        assert reader is not None
-        self.assertEqual('dev0/U', reader.uPath)
-        self.assertEqual('dev0/U/L', reader.logFile)   # default name
+#       reader = FileReader('dev0/U')
+#       assert reader is not None
+#       self.assertEqual('dev0/U', reader.uPath)
+#       self.assertEqual('dev0/U/L', reader.logFile)   # default name
 
     # ---------------------------------------------------------------
 

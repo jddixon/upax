@@ -10,7 +10,8 @@ from argparse import ArgumentParser
 
 import u
 import upax
-from xlattice import Q
+from xlattice import (Q, checkUsingSHA,
+                      parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
 
 # PATs AND REs ######################################################
 
@@ -20,7 +21,6 @@ def doWhatever(args):
     uDir = args.uDir
     usingSHA = args.usingSHA
     verbose = args.verbose
-
     s = upax.BlockingServer(uDir, usingSHA)
     log = s.log
     if verbose:
@@ -34,9 +34,6 @@ def doWhatever(args):
         pathToFile = os.path.join(args.inDir, file)
         if usingSHA == Q.USING_SHA1:
             hash = u.fileSHA1(pathToFile)
-        else:
-            # FIX ME FIX ME FIX ME
-            hash = u.fileSHA3(pathToFile)
         if noChanges:
             if verbose:
                 print('would add %s %s' % (hash, pathToFile))
@@ -63,9 +60,6 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser('post new files in a directory into Upax')
 
-    parser.add_argument('-1', '--usingSHA', action='store_true',
-                        help='use SHA1, and so 160-bit keys')
-
     parser.add_argument('-e', '--ec2Host', action='store_true',
                         help='set if machine is in EC2')
 
@@ -84,9 +78,7 @@ def main():
     parser.add_argument('-t', '--showTimestamp', action='store_true',
                         help='show run timestamp')
 
-    # just the base name (usually Upax or Upax0) we will fix this up below
-    parser.add_argument('-u', '--uDir', default='Upax',
-                        help='base name of  U/ directory, default to Upax')
+    # -u/--uDir just the base name (usually Upax or Upax0); fixed up below
 
     parser.add_argument('-T', '--testing', action='store_true',
                         help='test run - write to ./testU')
@@ -94,21 +86,24 @@ def main():
     parser.add_argument('-V', '--showVersion', action='store_true',
                         help='show version number and date')
 
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='talk a lot')
-
     parser.add_argument('-z', '--noChanges', action='store_true',
                         help="don't actually write anything to disk")
+
+    # -1,-2,-3, usingSHA, -v/--verbose
+    parseUsingSHA(parser)
 
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
+    fixUsingSHA(args)
+
     args.pgmNameAndVersion = pgmNameAndVersion
     if args.testing:
         args.inDir = 'testIn'
     args.timestamp = timestamp
 
     # -- sanity checks ----------------------------------------------
+    checkUsingSHA(args.usingSHA)
     if not os.path.exists(args.inDir):
         print("input directory '%s' does not exist" % args.inDir)
         sys.exit(1)
@@ -153,9 +148,8 @@ def main():
         print('showVersion      = ' + str(args.showVersion))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
-        print('usingSHA        = ' + str(args.usingSHA))
-        print('uDir             = ' + str(args.uDir))
-        print('verbose          = ' + str(args.verbose))
+        # usingSHA, uDir, verbose
+        showUsing(parser, args)
 
     if not args.justShow:
         lock = u.ULock(args.uDir)

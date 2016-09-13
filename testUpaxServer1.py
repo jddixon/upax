@@ -7,7 +7,7 @@ import time
 import unittest
 import rnglib
 import upax
-from xlattice import u256 as u, Q
+from xlattice import u, Q, checkUsingSHA
 
 rng = rnglib.SimpleRNG(time.time())
 
@@ -23,6 +23,7 @@ class TestUpaxServer (unittest.TestCase):
         pass
 
     def doTestConstructFromNothing(self, usingSHA):
+        checkUsingSHA(usingSHA)
         # SETUP
         uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
         while os.path.exists(uPath):
@@ -47,7 +48,8 @@ class TestUpaxServer (unittest.TestCase):
                 self.assertEqual(41, len(nodeID))
                 self.assertEqual(ord('\n'), nodeID[40])
             else:
-                # FIX ME FIX ME FIX ME
+                # we only look at the hash length, so this is ok for
+                # both SHA2 and SHA3
                 self.assertEqual(65, len(nodeID))
                 self.assertEqual(ord('\n'), nodeID[64])
             nodeID = nodeID[:-1]
@@ -56,14 +58,15 @@ class TestUpaxServer (unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
 
     def testConstructFromNothing(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
-            # FIX ME FIX ME
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
             self.doTestConstructFromNothing(using)
 
 #   # ---------------------------------------------------------------
 
     def makeSomeFiles(self, usingSHA):
         """ return a map: hash=>path """
+
+        checkUsingSHA(usingSHA)
 
         # create a random number of unique data files of random length
         #   in myData/; take hash of each as it is created, using
@@ -81,9 +84,10 @@ class TestUpaxServer (unittest.TestCase):
                 (dLen, dPath) = rng.nextDataFile(DATA_PATH, 16 * 1024, 1)
             if usingSHA == Q.USING_SHA1:
                 dKey = u.fileSHA1Hex(dPath)
-            else:
-                # FIX ME FIX ME FIX ME
+            elif usingSHA == Q.USING_SHA2:
                 dKey = u.fileSHA2Hex(dPath)
+            elif usingSHA == Q.USING_SHA3:
+                dKey = u.fileSHA3Hex(dPath)
             files[dKey] = dPath
 
         self.assertEqual(fileCount, len(files))
@@ -114,7 +118,7 @@ class TestUpaxServer (unittest.TestCase):
             self.assertEqual(fileCount, len(log))
 
             for key in list(fileMap.keys()):
-                u.exists(uPath, key)
+                s.exists(key)
                 entry = log.getEntry(key)
                 self.assertIsNotNone(entry)
                 # STUB: shold examine properties of log entry
@@ -123,8 +127,7 @@ class TestUpaxServer (unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
 
     def testPutToEmpty(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
-            # FIX ME FIX ME
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
             self.doTestPutToEmpty(using)
 
     # ---------------------------------------------------------------
@@ -155,12 +158,12 @@ class TestUpaxServer (unittest.TestCase):
             self.assertEqual(fileCount1 + fileCount2, len(log))
 
             for key in list(fileMap1.keys()):
-                u.exists(uPath, key)
+                s.exists(key)
                 entry = log.getEntry(key)
                 self.assertIsNotNone(entry)
 
             for key in list(fileMap2.keys()):
-                u.exists(uPath, key)
+                s.exists(key)
                 entry = log.getEntry(key)
                 self.assertIsNotNone(entry)
         finally:
@@ -168,7 +171,7 @@ class TestUpaxServer (unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))
 
     def testPutCloseReopenAndPut(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
             self.doTestPutCloseReopenAndPut(using)          # GEEP
 
 if __name__ == '__main__':

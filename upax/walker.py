@@ -7,7 +7,7 @@ import re
 import u
 from upax import *
 from upax.ftlog import *
-from xlattice import Q
+from xlattice import Q, checkUsingSHA
 
 HEX_DIR_PAT = '^[0-9a-fA-F]{2}$'
 HEX_DIR_RE = re.compile(HEX_DIR_PAT)
@@ -19,9 +19,11 @@ TWO_HEX_RE = re.compile('[0-9a-f]{2}')
 class UWalker(object):
 
     def __init__(self, uDir='/var/U', limit=64, startAt='00',
-                 justKeys=False, usingSHA=False, verbose=False):
+                 justKeys=False, usingSHA=Q.USING_SHA2, verbose=False):
         if not os.path.exists(uDir):
             raise ValueError("directory '%s' does not exist" % str(uDir))
+
+        checkUsingSHA(usingSHA)
         self._uDir = uDir
         self._count = 0
         if limit > 0:
@@ -87,9 +89,10 @@ class UWalker(object):
                             pathToFile = os.path.join(midDirPath, file)
                             if self._usingSHA == Q.USING_SHA1:
                                 contentKey = u.fileSHA1(pathToFile)
-                            else:
-                                # FIX ME FIX ME FIX ME
+                            elif self._usingSHA == Q.USING_SHA2:
                                 contentKey = u.fileSHA2(pathToFile)
+                            elif self._usingSHA == Q.USING_SHA3:
+                                contentKey = u.fileSHA3(pathToFile)
 
                             if file != contentKey:
                                 print(('*** HASH MISMATCH: expected %s, actual %s ***'

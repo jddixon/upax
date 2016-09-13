@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.7.2
+    2016-09-13
+        * fixed FIX MEs, add -1/2/3 support                         SLOC 2799
 v0.7.1
     2016-09-05
         * fix various typos                                         SLOC 2778
@@ -131,6 +134,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 
