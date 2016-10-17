@@ -1,0 +1,7 @@
+pylint setup.py upax    \
+    check_u_consistency \
+    upax_bulk_poster    \
+    upax_update_node_id \
+    zz_mistune_test.py  \
+    test*.py
+

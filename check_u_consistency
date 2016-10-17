@@ -8,7 +8,8 @@ import re
 import sys
 import time
 from argparse import ArgumentParser
-from xlattice import Q
+from xlattice import (Q, checkUsingSHA,
+                      parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
 from upax import *
 import upax.consistency
 
@@ -34,14 +35,11 @@ def main():
 
     # -- program defaults -------------------------------------------
     limit = 1024 * 1024 * 1024    # maximum number of files in U processed
-    uDir = '/var/U'          # root of the U256x256 directory structure
+    uPath = '/var/U'          # root of the U256x256 directory structure
 
     # -- parse the command line -------------------------------------
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser()
-
-    parser.add_argument('-1', '--usingSHA', action='store_true',
-                        help='set if using SHA1 (40 hex digit keys)')
 
     parser.add_argument('-a', '--startAt', default='00',
                         help='start at, default = 00')
@@ -61,29 +59,27 @@ def main():
     parser.add_argument('-T', '--testing', action='store_true',
                         help='test run, use default local dirs')
 
-    parser.add_argument('-u', '--uDir', default=uDir,
-                        help='path to U/, default %s' % str(uDir))
-
     parser.add_argument('-V', '--showVersion', action='store_true',
                         help='show version number and date')
 
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='talk a lot')
-
+    parseUsingSHA1(parser)
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
+    fixUsingSHA(args)
     args.timestamp = int(time.time())
     if args.testing:
-        args.uDir = 'myU'
-        if not os.path.exists(args.uDir):
-            os.makedirs(args.uDir)
-    if args.uDir:
-        dieIfNotFound(args.uDir)
+        args.uPath = 'myU'
+        if not os.path.exists(args.uPath):
+            os.makedirs(args.uPath)
+    if args.uPath:
+        dieIfNotFound(args.uPath)
 
     # -- sanity checks ----------------------------------------------
+    checkUsingSHA(args.usingSHA)
+    checkUPath(parser, args, mustExist=True)
     args.myNodeID = None
-    pathToNodeID = os.path.join(uDir, 'nodeID')
+    pathToNodeID = os.path.join(uPath, 'nodeID')
     if os.path.exists(pathToNodeID):
         with open(pathToNodeID, 'r') as f:
             args.myNodeID = f.read().strip()
@@ -113,9 +109,7 @@ def main():
         print('startAt         = ' + str(args.startAt))
         print('testing         = ' + str(args.testing))
         print('timestamp       = ' + str(args.timestamp))
-        print('uDir            = ' + str(args.uDir))
-        print('usingSHA       = ' + str(args.usingSHA))
-        print('verbose         = ' + str(args.verbose))
+        showUsingSHA(args)
 
     if not args.justShow:
         upax.consistency.check(args)

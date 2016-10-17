@@ -10,8 +10,8 @@ from xlattice.u import (fileSHA1Hex, fileSHA2Hex, fileSHA3Hex,
                         UDir)
 import upax.ftlog
 
-__version__ = '0.7.2'
-__version_date__ = '2016-09-13'
+__version__ = '0.7.3'
+__version_date__ = '2016-10-17'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',

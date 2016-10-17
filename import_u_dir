@@ -8,7 +8,8 @@ import sys
 import time
 from argparse import ArgumentParser
 
-import u
+from xlattice import (u, Q, checkUsingSHA,
+                      parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
 
 from upax import *
 
@@ -20,7 +21,6 @@ def main():
 
     # -- program defaults -------------------------------------------
     destDir = None
-    srcDir = None
 
     # -- check for config file --------------------------------------
 
@@ -28,17 +28,11 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser()
 
-    parser.add_argument('-1', '--usingSHA', action='store_true',
-                        help='use SHA1, and so 160-bit keys')
-
     parser.add_argument('-d', '--destDir', type=str,
                         help='base name of destination U/ directory')
 
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show args and exit')
-
-    parser.add_argument('-s', '--srcDir', type=str,
-                        help='base name of  source U/ directory')
 
     parser.add_argument('-t', '--showTimestamp', action='store_true',
                         help='show run timestamp')
@@ -49,27 +43,17 @@ def main():
     parser.add_argument('-V', '--showVersion', action='store_true',
                         help='show version number and date')
 
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='talk a lot')
-
+    parseUsingSHA(parser)
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
+    fixUsingSHA(args)
     args.pgmNameAndVersion = pgmNameAndVersion
     args.timestamp = timestamp
 
     # -- sanity checks ----------------------------------------------
-    # given how much trouble an error can cause, there are no defaults
-    # and we require that the source and target exist
-    if (args.srcDir is None):
-        print("you must specify a source U directory")
-        sys.exit(1)
-    if not os.path.exists(args.srcDir):
-        print("directory does not exist: '%s'" % args.srcDir)
-        sys.exit(1)
-    if not os.path.isdir(args.srcDir):
-        print("not a directory: '%s'" % args.srcDir)
-        sys.exit(1)
+    checkUsingSHA(args.usingSHA)
+    checkUPath(parser, args, mustExist=True)
 
     if (args.destDir is None):
         print("you must specify a destination U directory")
@@ -82,8 +66,6 @@ def main():
         sys.exit(1)
 
     # fixups --------------------------------------------------------
-    if args.srcDir and args.srcDir[-1] == '/':
-        args.srcDir = args.srcDir[:-1]              # drop any trailing slash
     if args.destDir and args.destDir[-1] == '/':
         args.destDir = args.destDir[:-1]            # drop any trailing slash
 
@@ -100,24 +82,22 @@ def main():
         print('justShow         = ' + str(args.justShow))
         print('showTimestamp    = ' + str(args.showTimestamp))
         print('showVersion      = ' + str(args.showVersion))
-        print('srcDir           = ' + str(args.srcDir))
         print('timestamp        = ' + str(args.timestamp))
-        print('usingSHA        = ' + str(args.usingSHA))
-        print('verbose          = ' + str(args.verbose))
+        showUsingSHA(args)
 
     if not args.justShow:
-        lock = u.ULock(args.srcDir)
+        lock = u.ULock(args.uPath)
         try:
             if lock.getLock():
                 if args.verbose:
-                    print('have lock on ' + args.srcDir)
+                    print('have lock on ' + args.uPath)
                 importer = Importer.createImporter(args)
                 importer.doImportUDir()
             else:
-                print('could not get lock on %s' % args.srcDir)
+                print('could not get lock on %s' % args.uPath)
         finally:
             if args.verbose:
-                print('releasing lock on ' + args.srcDir)
+                print('releasing lock on ' + args.uPath)
             lock.releaseLock()
 
 if __name__ == '__main__':

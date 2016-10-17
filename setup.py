@@ -23,14 +23,12 @@ setup(name='upax_py',
       packages=['upax', ],
       #
       # following could be in scripts/ subdir; SQuote
-      scripts=['checkUConsistency', 'importUDir',
-               'upaxBulkPoster', 'upaxUpdateNodeID', ],
+      scripts=['check_u_consistency', 'import_u_dir',
+               'upax_bulk_poster', 'upax_update_node_id', ],
       description='full-mesh ring of U store servers',
       url='https://jddixon/github.io/upax_py',
       classifiers=[
           'Development Status :: 2 - Pre-Alpha',
-          'Development Status :: 3 - Alpha',
-          'Development Status :: 4 - Beta',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
           'Natural Language :: English',

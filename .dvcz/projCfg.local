@@ -25,7 +25,7 @@ code:std:.dvcz/projCfg.local
 code:std:.gitignore
 code:std:MANIFEST.in
 
-py:global:checkUConsistency
-py:global:importUDir
-py:global:upaxBulkPoster
-py:global:upaxUpdateNodeID
+py:global:check_u_consistency
+py:global:import_u_dir
+py:global:upax_bulk_poster
+py:global:upax_update_node_id
