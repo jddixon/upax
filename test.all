@@ -4,15 +4,15 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/upax_py
   
-  ./testBoundLog1.py
-  ./testImporter1.py
-  ./testLog1.py
-  ./testLogEntry1.py
-  ./testLogReader1.py
-  ./testUWalker.py
-  ./testUpaxNode1.py
-  ./testUpaxServer1.py
-  ./testZMQ.py
+  ./test_bound_log.py
+  ./test_importer.py
+  ./test_log.py
+  ./test_log_entry.py
+  ./test_log_reader.py
+  ./test_u_walker.py
+  ./test_upax_node.py
+  ./test_upax_server.py
+  ./test_zmq.py
   
 else
   echo "DEV_BASE is not defined"

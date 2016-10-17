@@ -6,7 +6,7 @@ then
   
   rm -rf build/* myApp/* myData/* myU/* uDir/* 
   
-  pySloc -L py checkUConsistency importUDir upaxBulkPoster upaxUpdateNodeID  -X dist -v $@
+  runpysloc -L py check_u_consistency import_u_dir upax_bulk_poster upax_update_node_id  -X cover -X htmlcov -X dist -v $@
 else
   echo "DEV_BASE is not defined"
 fi
