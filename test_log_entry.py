@@ -6,7 +6,7 @@ import unittest
 
 # confuson between module and class
 from upax.ftlog import LogEntry
-from xlattice import Q, checkUsingSHA
+from xlattice import QQQ, check_using_sha
 
 
 class TestLogEntry (unittest.TestCase):
@@ -17,71 +17,71 @@ class TestLogEntry (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def getKeys(self, usingSHA):
-        checkUsingSHA(usingSHA)
+    def get_keys(self, using_sha):
+        check_using_sha(using_sha)
 
-        if usingSHA == Q.USING_SHA1:
-            GOODKEY_1 = '0123456789012345678901234567890123456789'
-            GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98'
+        if using_sha == QQQ.USING_SHA1:
+            goodkey_1 = '0123456789012345678901234567890123456789'
+            goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98'
         else:
             # dummy data good for either SHA2 or SHA3
-            GOODKEY_1 = '0123456789012345678901234567890123456789abcdefghi0123456789abcde'
-            GOODKEY_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
-        return (GOODKEY_1, GOODKEY_2)
+            goodkey_1 = '0123456789012345678901234567890123456789abcdefghi0123456789abcde'
+            goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
+        return (goodkey_1, goodkey_2)
 
-    def doTestConstructor(self, usingSHA):
-        checkUsingSHA(usingSHA)
+    def do_test_consructor(self, using_sha):
+        check_using_sha(using_sha)
 
-        (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA)
+        (goodkey_1, goodkey_2) = self.get_keys(using_sha)
 
-        entry = LogEntry(time.time(), GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
+        entry = LogEntry(time.time(), goodkey_1, goodkey_2, 'jdd', 'document1')
 
         assert entry is not None
-        deltaT = time.time() - entry.timestamp
-        self.assertTrue(deltaT >= 0 and deltaT <= 5)
-        self.assertEqual(GOODKEY_1, entry.key)
-        self.assertEqual(GOODKEY_2, entry.nodeID)
+        delta_t = time.time() - entry.timestamp
+        self.assertTrue(delta_t >= 0 and delta_t <= 5)
+        self.assertEqual(goodkey_1, entry.key)
+        self.assertEqual(goodkey_2, entry.node_id)
         self.assertEqual('jdd', entry.src)
         self.assertEqual('document1', entry.path)
 
-    def testConstructor(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTestConstructor(using)
+    def test_constructor(self):
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_consructor(using)
 
-    def doTest__str__(self, usingSHA):
-        (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA)
+    def do_test_to_string(self, using_sha):
+        (goodkey_1, goodkey_2) = self.get_keys(using_sha)
 
         now = time.time()
-        entry = LogEntry(now, GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
+        entry = LogEntry(now, goodkey_1, goodkey_2, 'jdd', 'document1')
 
-        expected = '%013u %40s %40s "%s" %s\n' % (now, GOODKEY_1, GOODKEY_2,
+        expected = '%013u %40s %40s "%s" %s\n' % (now, goodkey_1, goodkey_2,
                                                   'jdd', 'document1')
         actual = entry.__str__()
         self.assertEqual(expected, actual)
 
     def test__str__(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTest__str__(using)
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_to_string(using)
 
-    def doTestEquals(self, usingSHA):
-        checkUsingSHA(usingSHA)
-        (GOODKEY_1, GOODKEY_2) = self.getKeys(usingSHA)
+    def do_test_equals(self, using_sha):
+        check_using_sha(using_sha)
+        (goodkey_1, goodkey_2) = self.get_keys(using_sha)
 
         time1 = time.time() - 1000
         time2 = time1 + 500
-        entry1 = LogEntry(time1, GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
-        entry2 = LogEntry(time2, GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
+        entry1 = LogEntry(time1, goodkey_1, goodkey_2, 'jdd', 'document1')
+        entry2 = LogEntry(time2, goodkey_1, goodkey_2, 'jdd', 'document1')
         # same values as entry1
-        entry3 = LogEntry(time1, GOODKEY_1, GOODKEY_2, 'jdd', 'document1')
+        entry3 = LogEntry(time1, goodkey_1, goodkey_2, 'jdd', 'document1')
 
         self.assertFalse(entry1.equals(1))
         self.assertTrue(entry1.equals(entry1))
         self.assertFalse(entry1.equals(entry2))     # times differ
         self.assertTrue(entry1.equals(entry3))
 
-    def testEquals(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTestEquals(using)
+    def test_equals(self):
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_equals(using)
 
 if __name__ == '__main__':
     unittest.main()

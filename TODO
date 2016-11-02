@@ -1,5 +1,9 @@
 ~/dev/py:/upax/TODO
 
+2016-11-02
+    * ftLog.equals should be __eq__
+    * adjust tests accordingly (assertTrue => assertEqual)
+
 2016-09-16
     * errors in checkUpaxConsistency from importing upax.consistency
 

@@ -21,28 +21,28 @@ __all__ = ['check', ]
 # -- implementation -------------------------------------------------
 
 
-def setupServer(options):
-    options.uServer = upax.BlockingServer(options.uDir, options.usingSHA)
+def setup_server(options):
+    options.uServer = upax.BlockingServer(options.u_dir, options.using_sha)
 
 
-def shutdownServer(options):
+def shutdown_server(options):
     if options.uServer:
         options.uServer.close()
 
 
-def walkU(options):
+def walk_u(options):
     """
     Returns a list of content keys in the selected region of U,
     the region being defined by a two hex digit start point and
     a maximum number of entries to be included.
     """
-    w = UWalker(justKeys=options.justKeys,
-                limit=options.limit,
-                startAt=options.startAt,
-                uDir=options.uDir,
-                usingSHA=options.usingSHA,
-                verbose=options.verbose)
-    keys = w.walk()
+    www = UWalker(justKeys=options.justKeys,
+                  limit=options.limit,
+                  start_at=options.start_at,
+                  u_dir=options.u_dir,
+                  using_sha=options.using_sha,
+                  verbose=options.verbose)
+    keys = www.walk()
     return keys
 
 
@@ -74,34 +74,34 @@ def check(options):
     verbose = options.verbose
     options.uServer = None
     try:
-        setupServer(options)       # gets locks on U and U0
-    except ValueError as v:
+        setup_server(options)       # gets locks on U and U0
+    except ValueError as vvv:
         if options.uServer is None:
             print("have you set usingSHA correctly?")
         else:
-            raise v
+            raise vvv
     if options.uServer is not None:
         try:
             # LOG: keyed by hash, later entries with same hash should
             # overwrite earlier
-            options.reader = FileReader(options.uDir, options.usingSHA)
-            options.log = BoundLog(options.reader, options.usingSHA)
+            options.reader = FileReader(options.u_dir, options.using_sha)
+            options.log = BoundLog(options.reader, options.using_sha)
             log = options.log
 
             # U: sorted content keys
-            keys = walkU(options)
+            keys = walk_u(options)
 
             # for now, just check whether each content key has a log
             # entry
             for key in keys:
                 if key in log.index:
                     if verbose:
-                        logE = log.index[key]
-                        print(("%s in ndx, src '%s'" % (key, logE.src)))
+                        log_e = log.index[key]
+                        print(("%s in ndx, src '%s'" % (key, log_e.src)))
                 else:
                     if repairing:
-                        entry = log.addEntry(options.timestamp, key,
-                                             options.myNodeID, options.appName, key)
+                        entry = log.add_entry(options.timestamp, key,
+                                              options.myNodeID, options.appName, key)
                         print(("ADDED TO LOG: %s" % entry))
                     else:
                         print(("%s is not in the log" % key))
@@ -117,4 +117,4 @@ def check(options):
                     options.log.close()
             except AttributeError:
                 pass
-            shutdownServer(options)     # releases lock on U
+            shutdown_server(options)     # releases lock on U

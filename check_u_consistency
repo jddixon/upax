@@ -8,15 +8,15 @@ import re
 import sys
 import time
 from argparse import ArgumentParser
-from xlattice import (Q, checkUsingSHA,
-                      parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
+from xlattice import (QQQ, check_using_sha,
+                      parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
 from upax import *
 import upax.consistency
 
 
-def dieIfNotFound(s):
-    if not os.path.exists(s):
-        print("cannot continue: %s does not exist" % s)
+def die_if_not_found(string):
+    if not os.path.exists(string):
+        print("cannot continue: %s does not exist" % string)
         sys.exit(1)
 
 
@@ -35,7 +35,7 @@ def main():
 
     # -- program defaults -------------------------------------------
     limit = 1024 * 1024 * 1024    # maximum number of files in U processed
-    uPath = '/var/U'          # root of the U256x256 directory structure
+    u_path = '/var/U'          # root of the U256x256 directory structure
 
     # -- parse the command line -------------------------------------
     # see docs.python.org/library/argparse.html
@@ -66,32 +66,32 @@ def main():
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
-    fixUsingSHA(args)
+    fix_using_sha(args)
     args.timestamp = int(time.time())
     if args.testing:
-        args.uPath = 'myU'
-        if not os.path.exists(args.uPath):
-            os.makedirs(args.uPath)
-    if args.uPath:
-        dieIfNotFound(args.uPath)
+        args.u_path = 'myU'
+        if not os.path.exists(args.u_path):
+            os.makedirs(args.u_path)
+    if args.u_path:
+        die_if_not_found(args.u_path)
 
     # -- sanity checks ----------------------------------------------
-    checkUsingSHA(args.usingSHA)
-    checkUPath(parser, args, mustExist=True)
+    check_using_sha(args.using_sha)
+    check_u_path(parser, args, mustExist=True)
     args.myNodeID = None
-    pathToNodeID = os.path.join(uPath, 'nodeID')
-    if os.path.exists(pathToNodeID):
-        with open(pathToNodeID, 'r') as f:
-            args.myNodeID = f.read().strip()
+    path_to_node_id = os.path.join(u_path, 'node_id')
+    if os.path.exists(path_to_node_id):
+        with open(path_to_node_id, 'rdr') as file:
+            args.myNodeID = file.read().strip()
         # DEBUG
         print("MY NODE_ID IS %s" % args.myNodeID)
         # END
     # startAt must be a string of two hex characters
-    hexChar = '0123456789abcdef'
-    startAt = args.startAt = args.startAt.lower()
-    if not isinstance(startAt, str) or len(startAt) != 2 \
-            or not startAt[0] in hexChar or not startAt[1] in hexChar:
-        print("startAt must be two hex digits; '%s' isn't" % args.startAt)
+    hex_char = '0123456789abcdef'
+    start_at = args.start_at = args.start_at.lower()
+    if not isinstance(start_at, str) or len(start_at) != 2\
+            or not start_at[0] in hex_char or not start_at[1] in hex_char:
+        print("startAt must be two hex digits; '%s' isn't" % args.start_at)
 
     # -- do it ------------------------------------------------------
     args.appName = 'checkUConsistency v%s' % __version__
@@ -106,10 +106,10 @@ def main():
         print('limit           = ' + str(args.limit))
         print('repairing       = ' + str(args.repairing))
         print('showVersion     = ' + str(args.showVersion))
-        print('startAt         = ' + str(args.startAt))
+        print('startAt         = ' + str(args.start_at))
         print('testing         = ' + str(args.testing))
         print('timestamp       = ' + str(args.timestamp))
-        showUsingSHA(args)
+        show_using_sha(args)
 
     if not args.justShow:
         upax.consistency.check(args)
