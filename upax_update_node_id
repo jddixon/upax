@@ -12,69 +12,69 @@ import time
 from argparse import ArgumentParser
 
 import upax
-from xlattice import (u, Q, checkUsingSHA,
-                      parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
+from xlattice import (u, QQQ, check_using_sha,
+                      parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
 
 # PATs AND REs ######################################################
 
 
-def doWhatever(args):
-    noChanges = args.noChanges
+def do_whatever(args):
+    no_changes = args.no_changes
     testing = args.testing
-    uDir = args.uDir
-    usingSHA = args.usingSHA
+    u_dir = args.u_dir
+    using_sha = args.using_sha
     verbose = args.verbose
 
-    s = upax.BlockingServer(uDir, usingSHA)
-    log = s.log
+    string = upax.BlockingServer(u_dir, using_sha)
+    log = string.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (
-            len(log), uDir))
+            len(log), u_dir))
 
-    src = args.pgmNameAndVersion
+    src = args.pgm_name_and_version
 
     if testing:
         login = pwd.getpwuid(os.getuid())[0]
     else:
         login = 'upax'
-    pubkeyPath = '/home/%s/.ssh/id_rsa.pub' % login
-    if not os.path.exists(pubkeyPath):
+    putkey_path = '/home/%s/.ssh/id_rsa.pub' % login
+    if not os.path.exists(putkey_path):
         print("can't find public key for %s" % login)
-        s.close()
+        string.close()
         return
 
-    if usingSHA == Q.USING_SHA1:
-        nodeID = u.fileSHA1(pubkeyPath)
-    elif usingSHA == Q.USING_SHA2:
-        nodeID = u.fileSHA2(pubkeyPath)
-    elif usingSHA == Q.USING_SHA3:
-        nodeID = u.fileSHA3(pubkeyPath)
+    if using_sha == QQQ.USING_SHA1:
+        node_id = u.fileSHA1(putkey_path)
+    elif using_sha == QQQ.USING_SHA2:
+        node_id = u.fileSHA2(putkey_path)
+    elif using_sha == QQQ.USING_SHA3:
+        node_id = u.fileSHA3(putkey_path)
     if verbose:
-        print("nodeID: " + nodeID)
+        print("nodeID: " + node_id)
 
-    pathToNodeID = os.path.join(uDir, 'nodeID')
-    if os.path.exists(pathToNodeID):
-        with open(pathToNodeID, 'r') as f:
-            currentNodeID = f.read()[:-1]
-        if currentNodeID == nodeID:
+    path_to_node_id = os.path.join(u_dir, 'node_id')
+    if os.path.exists(path_to_node_id):
+        with open(path_to_node_id, 'rdr') as file:
+            current_node_id = file.read()[:-1]
+        if current_node_id == node_id:
             if verbose:
-                print('nodeID in %s is already correct' % uDir)
-                s.close()
+                print('nodeID in %s is already correct' % u_dir)
+                string.close()
                 return
-    with open(pathToNodeID, 'w') as f:
-        f.write(nodeID + '\n')
-        os.chmod(pathToNodeID, 0o444)
-    s.put(pubkeyPath, nodeID, src)
+    with open(path_to_node_id, 'www') as file:
+        file.write(node_id + '\n')
+        os.chmod(path_to_node_id, 0o444)
+    string.put(putkey_path, node_id, src)
 
     if verbose:
         print("there are %7u files in %s at the end of the run" % (
-            len(log), uDir))
-    s.close()
+            len(log), u_dir))
+    string.close()
 
 
 def main():
 
-    pgmNameAndVersion = "upaxUpdateNodeID v%s %s" % (
+    pgm_name_and_version = "upaxUpdateNodeID v%s %s" % (
         upax.__version__, upax.__version_date__)
     timestamp = "%04d%02d%02d-%02d%02d%02d" % time.gmtime()[:6]
 
@@ -121,14 +121,14 @@ def main():
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
-    fixUsingSHA(args)
-    args.pgmNameAndVersion = pgmNameAndVersion
+    fix_using_sha(args)
+    args.pgm_name_and_version = pgm_name_and_version
     if args.testing:
         args.inDir = 'testIn'
     args.timestamp = timestamp
 
     # -- sanity checks ----------------------------------------------
-    checkUsingSHA(args.usingSHA)
+    check_using_sha(args.using_sha)
     if not os.path.exists(args.inDir):
         print("input directory '%s' does not exist" % args.inDir)
         sys.exit(1)
@@ -144,20 +144,20 @@ def main():
         sys.exit(1)
 
     # fixups --------------------------------------------------------
-    args.pgmNameAndVersion = pgmNameAndVersion
-    if args.uDir and args.uDir[-1] == '/':
-        args.uDir = args.uDir[:-1]          # drop any trailing slash
+    args.pgm_name_and_version = pgm_name_and_version
+    if args.u_dir and args.u_dir[-1] == '/':
+        args.u_dir = args.u_dir[:-1]          # drop any trailing slash
 
     if args.testing:
-        args.uDir = 'testU'
+        args.u_dir = 'testU'
     elif args.ec2Host:
-        args.uDir = os.path.join('/vol', args.uDir)
+        args.u_dir = os.path.join('/vol', args.u_dir)
     else:
-        args.uDir = os.path.join('/var', args.uDir)
+        args.u_dir = os.path.join('/var', args.u_dir)
 
     # -- do it ------------------------------------------------------
     if args.verbose or args.showVersion or args.justShow:
-        print(args.pgmNameAndVersion)
+        print(args.pgm_name_and_version)
     if args.showTimestamp:
         print('run at %s GMT' % timestamp)   # could be prettier
     else:
@@ -168,22 +168,22 @@ def main():
         print('inDir            = ' + str(args.inDir))
         print('justShow         = ' + str(args.justShow))
         print('nameserver       = ' + str(args.nameserver))
-        print('noChanges        = ' + str(args.noChanges))
+        print('noChanges        = ' + str(args.no_changes))
         print('showTimestamp    = ' + str(args.showTimestamp))
         print('showVersion      = ' + str(args.showVersion))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
-        showUsingSHA(parser, args)
+        show_using_sha(parser, args)
 
     if not args.justShow:
-        lock = u.ULock(args.uDir)
+        lock = u.ULock(args.u_dir)
         try:
-            if lock.getLock():
-                doWhatever(args)
+            if lock.get_lock():
+                do_whatever(args)
             else:
-                print('could not get lock on %s' % args.uDir)
+                print('could not get lock on %s' % args.u_dir)
         finally:
-            lock.releaseLock()
+            lock.release_lock()
 
 if __name__ == '__main__':
     main()

@@ -17,7 +17,7 @@ class TestZMQ (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testConstructor(self):
+    def test_constructor(self):
         pass
 
 if __name__ == '__main__':

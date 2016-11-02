@@ -11,9 +11,9 @@ from upax import *
 from upax.ftlog import *
 from upax.walker import UWalker
 from rnglib import SimpleRNG
-from xlattice import Q
+from xlattice import QQQ
 
-rng = SimpleRNG(time.time())
+RNG = SimpleRNG(time.time())
 
 
 class TestUWalker (unittest.TestCase):
@@ -27,34 +27,34 @@ class TestUWalker (unittest.TestCase):
     # utility functions #############################################
 
     # actual unit tests #############################################
-    def testWalkingEmptyDir(self):
-        uDir = 'uDir'
-        if not os.path.exists(uDir):
-            os.makedirs(uDir)
-        w = UWalker(uDir)
-        self.assertEqual(uDir, w.uDir)
-        self.assertEqual(0, w.count)
+    def test_walking_empty_dir(self):
+        u_dir = 'u_dir'
+        if not os.path.exists(u_dir):
+            os.makedirs(u_dir)
+        www = UWalker(u_dir)
+        self.assertEqual(u_dir, www.u_dir)
+        self.assertEqual(0, www.count)
 
     # ---------------------------------------------------------------
 
-    def doTestWalkingRealDir(self, usingSHA):
-        uDir = '/var/U'
+    def do_test_walking_real_dir(self, using_sha):
+        u_dir = '/var/U'
         limit = 100              # 1000
-        startAt = 'a0'
-        if not os.path.exists(uDir):
-            os.makedirs(uDir)
-        w = UWalker(
-            uDir=uDir,
+        start_at = 'a0'
+        if not os.path.exists(u_dir):
+            os.makedirs(u_dir)
+        www = UWalker(
+            u_dir=u_dir,
             limit=limit,
-            startAt=startAt,
-            usingSHA=usingSHA)
-        self.assertEqual(uDir, w.uDir)
-        self.assertEqual(0, w.count)
-        self.assertEqual(limit, w.limit)
+            start_at=start_at,
+            using_sha=using_sha)
+        self.assertEqual(u_dir, www.u_dir)
+        self.assertEqual(0, www.count)
+        self.assertEqual(limit, www.limit)
 
-        keys = w.walk()
+        keys = www.walk()
         count = len(keys)
-        self.assertEqual(count, w.count)
+        self.assertEqual(count, www.count)
         # print(("\nFOUND %u ENTRIES IN RANGE" % count))         # DEBUG
 
         #print(("THE FIRST SIXTEEN KEYS IN %s FROM %s" % (uDir, startAt)))
@@ -62,8 +62,8 @@ class TestUWalker (unittest.TestCase):
         #    p = w.keys[i]
         #    print(('%s' % p))
 
-    def testWalkingRealDir(self):
-        self.doTestWalkingRealDir(True)
+    def test_walking_real_dir(self):
+        self.do_test_walking_real_dir(True)
         # the real directory used actually uses SHA1
         # self.doTestWalkingRealDir(False)
 

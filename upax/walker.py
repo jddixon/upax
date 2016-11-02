@@ -7,7 +7,7 @@ import re
 import u
 from upax import *
 from upax.ftlog import *
-from xlattice import Q, checkUsingSHA
+from xlattice import QQQ, check_using_sha
 
 HEX_DIR_PAT = '^[0-9a-fA-F]{2}$'
 HEX_DIR_RE = re.compile(HEX_DIR_PAT)
@@ -18,26 +18,26 @@ TWO_HEX_RE = re.compile('[0-9a-f]{2}')
 
 class UWalker(object):
 
-    def __init__(self, uDir='/var/U', limit=64, startAt='00',
-                 justKeys=False, usingSHA=Q.USING_SHA2, verbose=False):
-        if not os.path.exists(uDir):
-            raise ValueError("directory '%s' does not exist" % str(uDir))
+    def __init__(self, u_dir='/var/U', limit=64, start_at='00',
+                 justKeys=False, using_sha=QQQ.USING_SHA2, verbose=False):
+        if not os.path.exists(u_dir):
+            raise ValueError("directory '%s' does not exist" % str(u_dir))
 
-        checkUsingSHA(usingSHA)
-        self._uDir = uDir
+        check_using_sha(using_sha)
+        self._u_dir = u_dir
         self._count = 0
         if limit > 0:
             self._limit = limit
         else:
             self._limit = 64                # default
         # we constrain startAt to be two lowercase hex digits
-        startAt = startAt.lower()
-        if not TWO_HEX_RE.match(startAt):
-            print(("startAt = '%s' is not valid hex" % startAt))
+        start_at = start_at.lower()
+        if not TWO_HEX_RE.match(start_at):
+            print(("startAt = '%s' is not valid hex" % start_at))
             sys.exit(-1)
-        self._justKeys = justKeys
-        self._startAt = startAt
-        self._usingSHA = usingSHA
+        self._just_keys = justKeys
+        self._start_at = start_at
+        self._using_sha = using_sha
         self._verbose = verbose
 
         self._keys = []
@@ -52,7 +52,7 @@ class UWalker(object):
     def limit(self): return self._limit
 
     @property
-    def uDir(self): return self._uDir
+    def u_dir(self): return self._u_dir
 
     def walk(self):
         """
@@ -62,18 +62,18 @@ class UWalker(object):
         verbose = self._verbose
 
         self._count = 0
-        topDirs = sorted(os.listdir(self._uDir))
+        top_dirs = sorted(os.listdir(self._u_dir))
         walking = True
-        for top in topDirs:
+        for top in top_dirs:
             if HEX_DIR_RE.match(top):
-                if top < self._startAt:
+                if top < self._start_at:
                     continue
-                topDirPath = os.path.join(self._uDir, top)
-                midDirs = sorted(os.listdir(topDirPath))
-                for mid in midDirs:
+                top_dir_path = os.path.join(self._u_dir, top)
+                mid_dirs = sorted(os.listdir(top_dir_path))
+                for mid in mid_dirs:
                     if HEX_DIR_RE.match(mid):
-                        midDirPath = os.path.join(topDirPath, mid)
-                        files = sorted(os.listdir(midDirPath))
+                        mid_dir_path = os.path.join(top_dir_path, mid)
+                        files = sorted(os.listdir(mid_dir_path))
                         for file in files:
                             self._count += 1
 #                           if verbose:
@@ -81,22 +81,22 @@ class UWalker(object):
                             if self._count >= limit:
                                 walking = False
                             self._keys.append(file)
-                            if self._justKeys:
+                            if self._just_keys:
                                 if not walking:
                                     break
                                 continue
 
-                            pathToFile = os.path.join(midDirPath, file)
-                            if self._usingSHA == Q.USING_SHA1:
-                                contentKey = u.fileSHA1(pathToFile)
-                            elif self._usingSHA == Q.USING_SHA2:
-                                contentKey = u.fileSHA2(pathToFile)
-                            elif self._usingSHA == Q.USING_SHA3:
-                                contentKey = u.fileSHA3(pathToFile)
+                            path_to_file = os.path.join(mid_dir_path, file)
+                            if self._using_sha == QQQ.USING_SHA1:
+                                content_key = u.fileSHA1(path_to_file)
+                            elif self._using_sha == QQQ.USING_SHA2:
+                                content_key = u.fileSHA2(path_to_file)
+                            elif self._using_sha == QQQ.USING_SHA3:
+                                content_key = u.fileSHA3(path_to_file)
 
-                            if file != contentKey:
+                            if file != content_key:
                                 print(('*** HASH MISMATCH: expected %s, actual %s ***'
-                                       % (file, contentKey)))
+                                       % (file, content_key)))
                             if not walking:
                                 break
                     if not walking:

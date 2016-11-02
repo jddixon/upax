@@ -6,9 +6,9 @@ import unittest
 from rnglib import SimpleRNG
 from upax.node import *
 from upax.ftlog import LogEntry
-from xlattice import Q, checkUsingSHA
+from xlattice import QQQ, check_using_sha
 
-rng = SimpleRNG(int(time.time()))
+RNG = SimpleRNG(int(time.time()))
 
 
 class TestUpaxNode (unittest.TestCase):
@@ -20,96 +20,96 @@ class TestUpaxNode (unittest.TestCase):
         pass
 
     # tests both sha1 and sha3 versions of code
-    def doTestCheckNodeID(self, usingSHA):
-        checkUsingSHA(usingSHA)
+    def do_test_check_node_id(self, using_sha):
+        check_using_sha(using_sha)
         for i in range(15):
             count = i + 18
-            nodeID = bytearray(count)
-            if usingSHA == Q.USING_SHA1 and count == 20:
+            node_id = bytearray(count)
+            if using_sha == QQQ.USING_SHA1 and count == 20:
                 try:
-                    checkNodeID(nodeID, usingSHA)
-                except ValueError as ve:
-                    self.fail('unexpected value error on %s' % nodeID)
+                    check_node_id(node_id, using_sha)
+                except ValueError as val_err:
+                    self.fail('unexpected value error on %s' % node_id)
 
-            elif (usingSHA != Q.USING_SHA1) and count == 32:
+            elif (using_sha != QQQ.USING_SHA1) and count == 32:
                 try:
-                    checkNodeID(nodeID, usingSHA)
-                except ValueError as ve:
-                    self.fail('unexpected value error on %s' % nodeID)
+                    check_node_id(node_id, using_sha)
+                except ValueError as val_err:
+                    self.fail('unexpected value error on %s' % node_id)
             else:
                 try:
-                    checkNodeID(nodeID, usingSHA)
-                    self.fail('expected value error on %s' % nodeID)
-                except ValueError as ve:
+                    check_node_id(node_id, using_sha)
+                    self.fail('expected value error on %s' % node_id)
+                except ValueError as val_err:
                     pass
 
-    def testCheckNodeID(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTestCheckNodeID(using)
+    def test_check_node_id(self):
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_check_node_id(using)
 
     # ---------------------------------------------------------------
 
-    def doTestPeer(self, usingSHA):
+    def do_test_peer(self, using_sha):
         """ simple integrity checks on Peer type"""
 
-        checkUsingSHA(usingSHA)
-        if usingSHA == Q.USING_SHA1:
-            nodeID = bytearray(20)
+        check_using_sha(using_sha)
+        if using_sha == QQQ.USING_SHA1:
+            node_id = bytearray(20)
         else:
             # 32-byte key
-            nodeID = bytearray(32)
-        rng.nextBytes(nodeID)
-        pubKey = bytearray(162)         # number not to be taken seriously
-        rng.nextBytes(pubKey)
-        peer = Peer(nodeID, pubKey, usingSHA)
-        self.assertEqual(nodeID, peer.nodeID)
-        self.assertEqual(pubKey, peer.rsaPubKey)
-        self.assertIsNone(peer.nodeNdx)
-        peer.nodeNdx = 42
+            node_id = bytearray(32)
+        RNG.next_bytes(node_id)
+        pub_key = bytearray(162)         # number not to be taken seriously
+        RNG.next_bytes(pub_key)
+        peer = Peer(node_id, pub_key, using_sha)
+        self.assertEqual(node_id, peer.node_id)
+        self.assertEqual(pub_key, peer.rsa_pub_key)
+        self.assertIsNone(peer.node_ndx)
+        peer.node_ndx = 42
         try:
-            peer.nodeNdx = 43
+            peer.node_ndx = 43
             self.fail("changed existing nodeID")
         except:
             pass
-        self.assertEqual(42, peer.nodeNdx)
+        self.assertEqual(42, peer.node_ndx)
 
         # expect three empty lists
         self.assertEqual(0, len(peer.cnx))
-        self.assertEqual(0, len(peer.ipAddr))
+        self.assertEqual(0, len(peer.ip_addr))
         self.assertEqual(0, len(peer.fqdn))
 
         # verify that nodeNdx must be non-negative integer
-        peer2 = Peer(nodeID, pubKey, usingSHA)          # True = sha1
+        peer2 = Peer(node_id, pub_key, using_sha)          # True = sha1
         try:
-            peer2.nodeNdx = 'sugar'
+            peer2.node_ndx = 'sugar'
             self.fail('successfully set nodeNdx to string value')
         except:
             pass
-        peer3 = Peer(nodeID, pubKey, usingSHA)
+        peer3 = Peer(node_id, pub_key, using_sha)
         try:
-            peer3.nodeNdx = -19
+            peer3.node_ndx = -19
             self.fail('successfully set nodeNdx to negative number')
         except:
             pass
 
-    def testPeer(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTestPeer(using)
+    def test_peer(self):
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_peer(using)
 
     # ---------------------------------------------------------------
 
-    def testUpaxNode(self):
+    def test_upax_node(self):
         """
         """
         pass
 
-    def testStringSerialization(self):
+    def test_string_serialization(self):
         pass
 
-    def testEquals(self):
+    def test_equals(self):
         pass
 
-    def testLHash(self):
+    def test_l_hash(self):
         pass
 
 if __name__ == '__main__':

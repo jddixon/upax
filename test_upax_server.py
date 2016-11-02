@@ -7,9 +7,9 @@ import time
 import unittest
 import rnglib
 import upax
-from xlattice import u, Q, checkUsingSHA
+from xlattice import u, QQQ, check_using_sha
 
-rng = rnglib.SimpleRNG(time.time())
+RNG = rnglib.SimpleRNG(time.time())
 
 DATA_PATH = 'myData'
 
@@ -22,157 +22,157 @@ class TestUpaxServer (unittest.TestCase):
     def tearDown(self):
         pass
 
-    def doTestConstructFromNothing(self, usingSHA):
-        checkUsingSHA(usingSHA)
+    def do_test_construct_from_nothing(self, using_sha):
+        check_using_sha(using_sha)
         # SETUP
-        uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
-        while os.path.exists(uPath):
-            uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+        u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
+        while os.path.exists(u_path):
+            u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
         # we are guaranteed that uPath does _not_ exist
-        s = upax.BlockingServer(uPath, usingSHA)
+        string = upax.BlockingServer(u_path, using_sha)
         try:
-            self.assertIsNotNone(s)
-            self.assertTrue(os.path.exists(s.uPath))
+            self.assertIsNotNone(string)
+            self.assertTrue(os.path.exists(string.u_path))
 
             # subdirectories
-            self.assertTrue(os.path.exists(os.path.join(uPath, 'in')))
-            self.assertTrue(os.path.exists(os.path.join(uPath, 'tmp')))
+            self.assertTrue(os.path.exists(os.path.join(u_path, 'in')))
+            self.assertTrue(os.path.exists(os.path.join(u_path, 'tmp')))
 
             # nodeID
-            idPath = os.path.join(uPath, 'nodeID')
-            self.assertTrue(os.path.exists(idPath))
-            with open(idPath, 'rb') as f:
-                nodeID = f.read()
-            if usingSHA == Q.USING_SHA1:
-                self.assertEqual(41, len(nodeID))
-                self.assertEqual(ord('\n'), nodeID[40])
+            id_path = os.path.join(u_path, 'node_id')
+            self.assertTrue(os.path.exists(id_path))
+            with open(id_path, 'rb') as file:
+                node_id = file.read()
+            if using_sha == QQQ.USING_SHA1:
+                self.assertEqual(41, len(node_id))
+                self.assertEqual(ord('\n'), node_id[40])
             else:
                 # we only look at the hash length, so this is ok for
                 # both SHA2 and SHA3
-                self.assertEqual(65, len(nodeID))
-                self.assertEqual(ord('\n'), nodeID[64])
-            nodeID = nodeID[:-1]
+                self.assertEqual(65, len(node_id))
+                self.assertEqual(ord('\n'), node_id[64])
+            node_id = node_id[:-1]
         finally:
-            s.close()
-        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
+            string.close()
+        self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))   # GEEP
 
-    def testConstructFromNothing(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTestConstructFromNothing(using)
+    def test_construct_from_nothing(self):
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_construct_from_nothing(using)
 
 #   # ---------------------------------------------------------------
 
-    def makeSomeFiles(self, usingSHA):
+    def make_some_files(self, using_sha):
         """ return a map: hash=>path """
 
-        checkUsingSHA(usingSHA)
+        check_using_sha(using_sha)
 
         # create a random number of unique data files of random length
         #   in myData/; take hash of each as it is created, using
         #   this to verify uniqueness; add hash to list (or use hash
         #   as key to map
-        fileCount = 3 + rng.nextInt16(16)
+        file_count = 3 + RNG.next_int16(16)
         files = {}             # a map hash->path
-        for n in range(fileCount):
-            dKey = None
-            dPath = None
+        for nnn in range(file_count):
+            d_key = None
+            d_path = None
             # create a random file name                  maxLen   minLen
-            (dLen, dPath) = rng.nextDataFile(DATA_PATH, 16 * 1024, 1)
+            (d_len, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
             # perhaps more restrictions needed
-            while dPath.endswith('.'):
-                (dLen, dPath) = rng.nextDataFile(DATA_PATH, 16 * 1024, 1)
-            if usingSHA == Q.USING_SHA1:
-                dKey = u.fileSHA1Hex(dPath)
-            elif usingSHA == Q.USING_SHA2:
-                dKey = u.fileSHA2Hex(dPath)
-            elif usingSHA == Q.USING_SHA3:
-                dKey = u.fileSHA3Hex(dPath)
-            files[dKey] = dPath
+            while d_path.endswith('.'):
+                (d_len, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
+            if using_sha == QQQ.USING_SHA1:
+                d_key = u.file_sha1hex(d_path)
+            elif using_sha == QQQ.USING_SHA2:
+                d_key = u.file_sha2hex(d_path)
+            elif using_sha == QQQ.USING_SHA3:
+                d_key = u.file_sha3hex(d_path)
+            files[d_key] = d_path
 
-        self.assertEqual(fileCount, len(files))
+        self.assertEqual(file_count, len(files))
         return files
 
     # ---------------------------------------------------------------
 
-    def doTestPutToEmpty(self, usingSHA):
+    def do_test_put_to_empty(self, using_sha):
         # SETUP
-        uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
-        while os.path.exists(uPath):
-            uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+        u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
+        while os.path.exists(u_path):
+            u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
-        s = upax.BlockingServer(uPath, usingSHA)
+        string = upax.BlockingServer(u_path, using_sha)
         try:
-            fileMap = self.makeSomeFiles(usingSHA)
-            fileCount = len(fileMap)
+            file_map = self.make_some_files(using_sha)
+            file_count = len(file_map)
 
-            for key in list(fileMap.keys()):
-                s.put(fileMap[key], key, 'testPutToEmpty')
-                self.assertTrue(s.exists(key))
-                with open(fileMap[key], 'rb') as f:
-                    dataInFile = f.read()
-                dataInU = s.get(key)
-                self.assertEqual(dataInFile, dataInU)
+            for key in list(file_map.keys()):
+                string.put(file_map[key], key, 'test_put_to_empty')
+                self.assertTrue(string.exists(key))
+                with open(file_map[key], 'rb') as file:
+                    data_in_file = file.read()
+                data_in_u = string.get(key)
+                self.assertEqual(data_in_file, data_in_u)
 
-            log = s.log
-            self.assertEqual(fileCount, len(log))
+            log = string.log
+            self.assertEqual(file_count, len(log))
 
-            for key in list(fileMap.keys()):
-                s.exists(key)
-                entry = log.getEntry(key)
+            for key in list(file_map.keys()):
+                string.exists(key)
+                entry = log.get_entry(key)
                 self.assertIsNotNone(entry)
                 # STUB: shold examine properties of log entry
         finally:
-            s.close()
-        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))   # GEEP
+            string.close()
+        self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))   # GEEP
 
-    def testPutToEmpty(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTestPutToEmpty(using)
+    def test_put_to_empty(self):
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_put_to_empty(using)
 
     # ---------------------------------------------------------------
 
-    def doTestPutCloseReopenAndPut(self, usingSHA):
+    def do_test_put_close_reopen_and_put(self, using_sha):
         # SETUP
-        uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
-        while os.path.exists(uPath):
-            uPath = os.path.join(DATA_PATH, rng.nextFileName(16))
+        u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
+        while os.path.exists(u_path):
+            u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
-        s = upax.BlockingServer(uPath, usingSHA)
+        string = upax.BlockingServer(u_path, using_sha)
         try:
-            fileMap1 = self.makeSomeFiles(usingSHA)
-            fileCount1 = len(fileMap1)
-            for key in list(fileMap1.keys()):
-                s.put(fileMap1[key], key, 'testPut ... first phase')
+            file_map1 = self.make_some_files(using_sha)
+            file_count1 = len(file_map1)
+            for key in list(file_map1.keys()):
+                string.put(file_map1[key], key, 'testPut ... first phase')
         finally:
-            s.close()
+            string.close()
 
-        s = upax.BlockingServer(uPath, usingSHA)
+        string = upax.BlockingServer(u_path, using_sha)
         try:
-            fileMap2 = self.makeSomeFiles(usingSHA)
-            fileCount2 = len(fileMap2)
-            for key in list(fileMap2.keys()):
-                s.put(fileMap2[key], key, 'testPut ... SECOND PHASE')
+            file_map2 = self.make_some_files(using_sha)
+            file_count2 = len(file_map2)
+            for key in list(file_map2.keys()):
+                string.put(file_map2[key], key, 'testPut ... SECOND PHASE')
 
-            log = s.log
-            self.assertEqual(fileCount1 + fileCount2, len(log))
+            log = string.log
+            self.assertEqual(file_count1 + file_count2, len(log))
 
-            for key in list(fileMap1.keys()):
-                s.exists(key)
-                entry = log.getEntry(key)
+            for key in list(file_map1.keys()):
+                string.exists(key)
+                entry = log.get_entry(key)
                 self.assertIsNotNone(entry)
 
-            for key in list(fileMap2.keys()):
-                s.exists(key)
-                entry = log.getEntry(key)
+            for key in list(file_map2.keys()):
+                string.exists(key)
+                entry = log.get_entry(key)
                 self.assertIsNotNone(entry)
         finally:
-            s.close()
-        self.assertTrue(os.path.exists(os.path.join(uPath, 'L')))
+            string.close()
+        self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))
 
-    def testPutCloseReopenAndPut(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
-            self.doTestPutCloseReopenAndPut(using)          # GEEP
+    def test_put_close_reopen_and_put(self):
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+            self.do_test_put_close_reopen_and_put(using)          # GEEP
 
 if __name__ == '__main__':
     unittest.main()

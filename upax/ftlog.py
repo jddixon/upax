@@ -4,9 +4,9 @@ import os
 import re
 import sys
 from collections import Container, Sized
-from xlattice import (Q, checkUsingSHA, u,
+from xlattice import (QQQ, check_using_sha, u,
                       SHA1_HEX_NONE, SHA2_HEX_NONE, SHA3_HEX_NONE)
-from upax.node import checkHexNodeID160, checkHexNodeID256
+from upax.node import check_hex_node_id_160, check_hex_node_id_256
 
 __all__ = ['ATEXT', 'AT_FREE',
            'PATH_RE',
@@ -30,11 +30,11 @@ AT_FREE = ATEXT + '(?:\.' + ATEXT + ')*'
 PATH_PAT = AT_FREE + '(?:@' + AT_FREE + ')?'
 PATH_RE = re.compile(PATH_PAT, re.I)
 
-BODY_LINE_1_PAT   = \
+BODY_LINE_1_PAT   =\
     '^(\d+) ([0-9a-f]{40}) ([0-9a-f]{40}) "([^"]*)" (%s)$' % PATH_PAT
 BODY_LINE_1_RE = re.compile(BODY_LINE_1_PAT, re.I)
 
-BODY_LINE_256_PAT   = \
+BODY_LINE_256_PAT   =\
     '^(\d+) ([0-9a-f]{64}) ([0-9a-f]{64}) "([^"]*)" (%s)$' % PATH_PAT
 BODY_LINE_256_RE = re.compile(BODY_LINE_256_PAT, re.I)
 
@@ -49,20 +49,20 @@ class Log(Container, Sized):
     #__slots__ = ['_entries', '_index', '_timestamp',
     #              '_prevHash', '_prevMaster', '_usingSHA', ]
 
-    def __init__(self, reader, usingSHA):
-        self._usingSHA = usingSHA
-        (timestamp, prevLogHash, prevMaster, entries, index) = reader.read()
+    def __init__(self, reader, using_sha):
+        self._using_sha = using_sha
+        (timestamp, prev_log_hash, prev_master, entries, index) = reader.read()
         self._timestamp = timestamp     # seconds from epoch
-        self._prevHash = prevLogHash   # SHA1/3 hash of previous log
-        if usingSHA == Q.USING_SHA1:
-            checkHexNodeID160(self._prevHash)
+        self._prev_hash = prev_log_hash   # SHA1/3 hash of previous log
+        if using_sha == QQQ.USING_SHA1:
+            check_hex_node_id_160(self._prev_hash)
         else:
-            checkHexNodeID256(self._prevHash)
-        self._prevMaster = prevMaster    # nodeID of master writing prev log
-        if usingSHA == Q.USING_SHA1:
-            checkHexNodeID160(self._prevMaster)
+            check_hex_node_id_256(self._prev_hash)
+        self._prev_master = prev_master    # nodeID of master writing prev log
+        if using_sha == QQQ.USING_SHA1:
+            check_hex_node_id_160(self._prev_master)
         else:
-            checkHexNodeID256(self._prevMaster)
+            check_hex_node_id_256(self._prev_master)
 
         self._entries = entries       # a list
         self._index = index         # a map, hash => entry
@@ -77,19 +77,19 @@ class Log(Container, Sized):
         """used for serialization, so includes newline"""
 
         # first line
-        if self._usingSHA == Q.USING_SHA1:
+        if self._using_sha == QQQ.USING_SHA1:
             fmt = "%013u %40s %40s\n"
         else:
             fmt = "%013u %64s %64s\n"
-        ret = fmt % (self._timestamp, self._prevHash, self._prevMaster)
+        ret = fmt % (self._timestamp, self._prev_hash, self._prev_master)
 
         # list of entries
         for entry in self._entries:
             ret += str(entry)           # woefully inefficient :-)
         return ret
 
-    def addEntry(self, t, key, nodeID, src, path):
-        entry = LogEntry(t, key, nodeID, src, path)
+    def add_entry(self, tstamp, key, node_id, src, path):
+        entry = LogEntry(tstamp, key, node_id, src, path)
         if key in self._index:
             existing = self._index[key]
             if entry == existing:
@@ -98,7 +98,7 @@ class Log(Container, Sized):
         self._index[key] = entry        # overwrites any earlier duplicates
         return entry
 
-    def getEntry(self, key):
+    def get_entry(self, key):
         if not key in self._index:
             return None
         else:
@@ -113,12 +113,12 @@ class Log(Container, Sized):
         return self._index
 
     @property
-    def prevHash(self):
-        return self._prevHash
+    def prev_hash(self):
+        return self._prev_hash
 
     @property
-    def prevMaster(self):
-        return self._prevMaster
+    def prev_master(self):
+        return self._prev_master
 
     @property
     def timestamp(self):
@@ -129,79 +129,86 @@ class Log(Container, Sized):
 
 class BoundLog(Log):
 
-    def __init__(self, reader, usingSHA=Q.USING_SHA2,
-                 uPath=None, baseName='L'):
-        super(). __init__(reader, usingSHA)
-        self.fd = -1
-        self.isOpen = False     # for appending
+    def __init__(self, reader, using_sha=QQQ.USING_SHA2,
+                 u_path=None, base_name='L'):
+        super(). __init__(reader, using_sha)
+        self.fd_ = -1
+        self.is_open = False     # for appending
         overwriting = False
-        if uPath:
-            self.uPath = uPath
-            self.baseName = baseName
+        if u_path:
+            self.u_path = u_path
+            self.base_name = base_name
             overwriting = True
         else:
             if isinstance(reader, FileReader):
-                self.uPath = reader.uPath
-                self.baseName = reader.baseName
+                self.u_path = reader.u_path
+                self.base_name = reader.base_name
                 overwriting = False
             else:
                 msg = "no target uPath/baseName specified"
                 raise RuntimeError(msg)
-        self.pathToLog = "%s/%s" % (self.uPath, self.baseName)
+        self.path_to_log = "%s/%s" % (self.u_path, self.base_name)
         if overwriting:
-            with open(self.pathToLog, 'w') as f:
-                logContents = super(BoundLog, self).__str__()
-                f.write(logContents)
-                f.close()
-        self.fd = open(self.pathToLog, 'a')
-        self.isOpen = True
+            with open(self.path_to_log, 'w') as file:
+                log_contents = super(BoundLog, self).__str__()
+                file.write(log_contents)
+                file.close()
+        self.fd_ = open(self.path_to_log, 'a')
+        self.is_open = True
 
-    def addEntry(self, t, key, nodeID, src, path):
-        if not self.isOpen:
-            msg = "log file %s is not open for appending" % self.pathToLog
+    def add_entry(self, tstamp, key, node_id, src, path):
+        if not self.is_open:
+            msg = "log file %s is not open for appending" % self.path_to_log
             raise RuntimeError(msg)
 
         # XXX NEED TO THINK ABOUT THE ORDER OF OPERATIONS HERE
-        entry = super(BoundLog, self).addEntry(t, key, nodeID, src, path)
+        entry = super(
+            BoundLog,
+            self).add_entry(
+            tstamp,
+            key,
+            node_id,
+            src,
+            path)
         stringified = str(entry)
-        self.fd.write(stringified)
+        self.fd_.write(stringified)
         return entry
 
     def flush(self):
-        self.fd.flush()
+        self.fd_.flush()
 
     def close(self):
-        self.fd.close()
-        self.isOpen = False
+        self.fd_.close()
+        self.is_open = False
 
 
 # -------------------------------------------------------------------
 class LogEntry():
 
-    __slots__ = ['_timestamp', '_key', '_nodeID', '_src', '_path', ]
+    __slots__ = ['_timestamp', '_key', '_node_id', '_src', '_path', ]
 
     def __init__(self,
-                 timestamp, key, nodeID, source, pathToDoc):
+                 timestamp, key, node_id, source, pathToDoc):
         self._timestamp = timestamp      # seconds from epoch
 
         if key is None:
             raise ValueError('LogEntry key may not be None')
-        usingSHA = len(key) == 40
+        using_sha = len(key) == 40
         self._key = key              # 40 or 64 hex digits, content hash
-        if usingSHA == Q.USING_SHA1:
-            checkHexNodeID160(self._key)
+        if using_sha == QQQ.USING_SHA1:
+            check_hex_node_id_160(self._key)
         else:
-            checkHexNodeID256(self._key)
+            check_hex_node_id_256(self._key)
 
-        if nodeID is None:
+        if node_id is None:
             raise ValueError('LogEntry nodeID may not be None')
-        self._nodeID = nodeID           # 40/64 digits, node providing entry
+        self._node_id = node_id           # 40/64 digits, node providing entry
         # XXX This is questionable.  Why can't a node with a SHA1 id store
         # a datum with a SHA3 key?
-        if usingSHA == Q.USING_SHA1:
-            checkHexNodeID160(self._nodeID)
+        if using_sha == QQQ.USING_SHA1:
+            check_hex_node_id_160(self._node_id)
         else:
-            checkHexNodeID256(self._nodeID)
+            check_hex_node_id_256(self._node_id)
 
         self._src = source           # tool or person responsible
         self._path = pathToDoc        # file name
@@ -211,8 +218,8 @@ class LogEntry():
         return self._key
 
     @property
-    def nodeID(self):
-        return self._nodeID
+    def node_id(self):
+        return self._node_id
 
     @property
     def path(self):
@@ -227,17 +234,17 @@ class LogEntry():
         return self._timestamp
 
     @property
-    def usingSHA(self):
+    def using_sha(self):
         return len(self._key) == 40
 
     # used in serialization, so newlines are intended
     def __str__(self):
-        if self.usingSHA == Q.USING_SHA1:
+        if self.using_sha == QQQ.USING_SHA1:
             fmt = '%013u %40s %40s "%s" %s\n'
         else:
             fmt = '%013u %64s %64s "%s" %s\n'
         return fmt % (self._timestamp, self._key,
-                      self._nodeID, self._src, self._path)
+                      self._node_id, self._src, self._path)
 
     def __eq__(self, other):
         return self.equals(other)
@@ -249,11 +256,11 @@ class LogEntry():
         """
         The function usualy known as __eq__.
         """
-        if isinstance(other, LogEntry)              and \
-                self._timestamp == other.timestamp  and \
-                self._key       == other.key        and \
-                self._nodeID    == other.nodeID     and \
-                self._src       == other.src        and \
+        if isinstance(other, LogEntry)              and\
+                self._timestamp == other.timestamp  and\
+                self._key       == other.key        and\
+                self._node_id    == other.node_id     and\
+                self._src       == other.src        and\
                 self._path == other.path:
             return True
         else:
@@ -277,22 +284,22 @@ class Reader(object):
     #__slots__ = ['_entries', '_index', '_lines', '_usingSHA',
     #             'FIRST_LINE_RE', ]
 
-    def __init__(self, lines, usingSHA):
-        checkUsingSHA(usingSHA)
-        self._usingSHA = usingSHA
-        if usingSHA == Q.USING_SHA1:
-            FIRST_LINE_PAT = '^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
+    def __init__(self, lines, using_sha):
+        check_using_sha(using_sha)
+        self._using_sha = using_sha
+        if using_sha == QQQ.USING_SHA1:
+            first_line_pat = '^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
         else:
-            FIRST_LINE_PAT = '^(\d{13}) ([0-9a-f]{64}) ([0-9a-f]{64})$'
-        self.FIRST_LINE_RE = re.compile(FIRST_LINE_PAT, re.I)
+            first_line_pat = '^(\d{13}) ([0-9a-f]{64}) ([0-9a-f]{64})$'
+        self.first_line_re = re.compile(first_line_pat, re.I)
 
         # XXX verify that argument is an array of strings
         self._lines = lines
 
-        ndxLast = len(self._lines) - 1
+        ndx_last = len(self._lines) - 1
         # strip newline from last line if present
-        if ndxLast >= 1:
-            self._lines[ndxLast] = self._lines[ndxLast].rstrip('\n')
+        if ndx_last >= 1:
+            self._lines[ndx_last] = self._lines[ndx_last].rstrip('\n')
 
         # Entries are a collection, a list.  We also need a dictionary
         # that accesses each log entry using its hash.
@@ -300,7 +307,7 @@ class Reader(object):
         self._index = dict()        # mapping hash => entry
 
     @property
-    def usingSHA(self): return self._usingSHA
+    def using_sha(self): return self._using_sha
 
     def read(self):
 
@@ -311,31 +318,31 @@ class Reader(object):
         # milliseconds since the epoch.  It can be printed with %13u.
         # The current value (April 2011) is about 1.3 trillion (1301961973000).
 
-        firstLine = None
+        first_line = None
         if self._lines and len(self._lines) > 0:
-            firstLine = self._lines[0]
-        if firstLine:
-            m = re.match(self.FIRST_LINE_RE, firstLine)
-            if not m:
-                print("NO MATCH, FIRST LINE; usingSHA = %s" % self.usingSHA)
-                print(("  FIRST LINE: '%s'" % firstLine))
+            first_line = self._lines[0]
+        if first_line:
+            match = re.match(self.first_line_re, first_line)
+            if not match:
+                print("NO MATCH, FIRST LINE; usingSHA = %s" % self.using_sha)
+                print(("  FIRST LINE: '%s'" % first_line))
                 raise ValueError("no match on first line; giving up")
-            timestamp = int(m.group(1))
-            prevLogHash = m.group(2)
-            prevMaster = m.group(3)
+            timestamp = int(match.group(1))
+            prev_log_hash = match.group(2)
+            prev_master = match.group(3)
             del self._lines[0]        # so we can cleanly iterate
         else:
             # no first line
             timestamp = 0
-            if self._usingSHA == Q.USING_SHA1:
-                prevLogHash = SHA1_HEX_NONE
-                prevMaster = SHA1_HEX_NONE
-            elif self._usingSHA == Q.USING_SHA2:
-                prevLogHash = SHA2_HEX_NONE
-                prevMaster = SHA2_HEX_NONE
-            elif self._usingSHA == Q.USING_SHA3:
-                prevLogHash = SHA3_HEX_NONE
-                prevMaster = SHA3_HEX_NONE
+            if self._using_sha == QQQ.USING_SHA1:
+                prev_log_hash = SHA1_HEX_NONE
+                prev_master = SHA1_HEX_NONE
+            elif self._using_sha == QQQ.USING_SHA2:
+                prev_log_hash = SHA2_HEX_NONE
+                prev_master = SHA2_HEX_NONE
+            elif self._using_sha == QQQ.USING_SHA3:
+                prev_log_hash = SHA3_HEX_NONE
+                prev_master = SHA3_HEX_NONE
 
         entries = []
         index = dict()
@@ -344,28 +351,28 @@ class Reader(object):
             # Read each successive line, creating an entry for each and
             # indexing each.  Ignore blank lines and those beginning with
             # a hash ('#')
-            m = re.match(IGNORABLE_RE, line)
-            if m:
+            match = re.match(IGNORABLE_RE, line)
+            if match:
                 continue
-            if self._usingSHA == Q.USING_SHA1:
-                m = re.match(BODY_LINE_1_RE, line)
+            if self._using_sha == QQQ.USING_SHA1:
+                match = re.match(BODY_LINE_1_RE, line)
             else:
-                m = re.match(BODY_LINE_256_RE, line)
-            if m:
-                t = int(m.group(1))
-                key = m.group(2)
-                nodeID = m.group(3)
-                src = m.group(4)
-                path = m.group(5)
+                match = re.match(BODY_LINE_256_RE, line)
+            if match:
+                tstamp = int(match.group(1))
+                key = match.group(2)
+                node_id = match.group(3)
+                src = match.group(4)
+                path = match.group(5)
                 # constructor should catch invalid fields
-                entry = LogEntry(t, key, nodeID, src, path)
+                entry = LogEntry(tstamp, key, node_id, src, path)
                 entries.append(entry)
                 index[key] = entry
             else:
                 msg = "not a valid log entry line: '%s'" % line
                 raise RuntimeError(msg)
 
-        return (timestamp, prevLogHash, prevMaster, entries, index)
+        return (timestamp, prev_log_hash, prev_master, entries, index)
 
 # -------------------------------------------------------------------
 
@@ -375,31 +382,31 @@ class FileReader(Reader):
     Accept uPath and optionally log file name, read entire file into
     a string array, pass to Reader.
     """
-    __slots__ = ['_uPath', '_baseName', '_logFile', ]
+    __slots__ = ['_u_path', '_base_name', '_log_file', ]
 
     # XXX CHECK ORDER OF ARGUMENTS
-    def __init__(self, uPath, usingSHA=False, baseName="L"):
-        if not os.path.exists(uPath):
-            raise RuntimeError("no such directory %s" % uPath)
-        self._uPath = uPath
-        self._baseName = baseName
-        self._logFile = "%s/%s" % (self._uPath, baseName)
-        with open(self._logFile, 'r') as f:
-            contents = f.read()
+    def __init__(self, u_path, using_sha=False, base_name="L"):
+        if not os.path.exists(u_path):
+            raise RuntimeError("no such directory %s" % u_path)
+        self._u_path = u_path
+        self._base_name = base_name
+        self._log_file = "%s/%s" % (self._u_path, base_name)
+        with open(self._log_file, 'r') as file:
+            contents = file.read()
         lines = contents.split('\n')
-        super(FileReader, self).__init__(lines, usingSHA)
+        super(FileReader, self).__init__(lines, using_sha)
 
     @property
-    def baseName(self):
-        return self._baseName
+    def base_name(self):
+        return self._base_name
 
     @property
-    def logFile(self):
-        return self._logFile
+    def log_file(self):
+        return self._log_file
 
     @property
-    def uPath(self):
-        return self._uPath
+    def u_path(self):
+        return self._u_path
 
 # -------------------------------------------------------------------
 
@@ -409,9 +416,9 @@ class StringReader(Reader):
     Accept a (big) string, convert to a string array, pass to Reader
     """
 
-    def __init__(self, bigString, usingSHA=False):
+    def __init__(self, bigString, using_sha=False):
 
         # split on newlines
         lines = bigString.split('\n')
 
-        super().__init__(lines, usingSHA)
+        super().__init__(lines, using_sha)
