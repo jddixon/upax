@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.8.1
+    2016-11-03
+        * update web pages; minor bug fixes; more PEP 8             SLOC 2930
 v0.8.0
     2016-11-02
         * rename vars per PEP 8                                     SLOC 2917
@@ -140,6 +143,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

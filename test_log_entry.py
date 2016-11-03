@@ -9,7 +9,7 @@ from upax.ftlog import LogEntry
 from xlattice import QQQ, check_using_sha
 
 
-class TestLogEntry (unittest.TestCase):
+class TestLogEntry(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -71,13 +71,12 @@ class TestLogEntry (unittest.TestCase):
         time2 = time1 + 500
         entry1 = LogEntry(time1, goodkey_1, goodkey_2, 'jdd', 'document1')
         entry2 = LogEntry(time2, goodkey_1, goodkey_2, 'jdd', 'document1')
-        # same values as entry1
         entry3 = LogEntry(time1, goodkey_1, goodkey_2, 'jdd', 'document1')
 
-        self.assertFalse(entry1.equals(1))
-        self.assertTrue(entry1.equals(entry1))
-        self.assertFalse(entry1.equals(entry2))     # times differ
-        self.assertTrue(entry1.equals(entry3))
+        self.assertTrue(entry1 == entry1)       # identical
+        self.assertTrue(entry1 == entry3)       # same attributes
+        self.assertFalse(entry1 == entry2)      # times differ
+        self.assertFalse(entry2 == entry3)      # times differ
 
     def test_equals(self):
         for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:

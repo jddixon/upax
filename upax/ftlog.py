@@ -30,11 +30,11 @@ AT_FREE = ATEXT + '(?:\.' + ATEXT + ')*'
 PATH_PAT = AT_FREE + '(?:@' + AT_FREE + ')?'
 PATH_RE = re.compile(PATH_PAT, re.I)
 
-BODY_LINE_1_PAT   =\
+BODY_LINE_1_PAT =\
     '^(\d+) ([0-9a-f]{40}) ([0-9a-f]{40}) "([^"]*)" (%s)$' % PATH_PAT
 BODY_LINE_1_RE = re.compile(BODY_LINE_1_PAT, re.I)
 
-BODY_LINE_256_PAT   =\
+BODY_LINE_256_PAT =\
     '^(\d+) ([0-9a-f]{64}) ([0-9a-f]{64}) "([^"]*)" (%s)$' % PATH_PAT
 BODY_LINE_256_RE = re.compile(BODY_LINE_256_PAT, re.I)
 
@@ -164,12 +164,7 @@ class BoundLog(Log):
         # XXX NEED TO THINK ABOUT THE ORDER OF OPERATIONS HERE
         entry = super(
             BoundLog,
-            self).add_entry(
-            tstamp,
-            key,
-            node_id,
-            src,
-            path)
+            self).add_entry(tstamp, key, node_id, src, path)
         stringified = str(entry)
         self.fd_.write(stringified)
         return entry
@@ -247,7 +242,15 @@ class LogEntry():
                       self._node_id, self._src, self._path)
 
     def __eq__(self, other):
-        return self.equals(other)
+        if isinstance(other, LogEntry)              and\
+                self._timestamp == other.timestamp  and\
+                self._key       == other.key        and\
+                self._node_id    == other.node_id   and\
+                self._src       == other.src        and\
+                self._path == other.path:
+            return True
+        else:
+            return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -256,15 +259,7 @@ class LogEntry():
         """
         The function usualy known as __eq__.
         """
-        if isinstance(other, LogEntry)              and\
-                self._timestamp == other.timestamp  and\
-                self._key       == other.key        and\
-                self._node_id    == other.node_id     and\
-                self._src       == other.src        and\
-                self._path == other.path:
-            return True
-        else:
-            return False
+        return self.__eq__(other)
 
 # -------------------------------------------------------------------
 # CLASS READER AND SUBCLASSES

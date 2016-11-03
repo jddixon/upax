@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# ~/dev/py/upax/upaxUpdateNodeID
+# ~/dev/py/upax/upax_update_node_id
 
 import binascii
 import os
@@ -13,7 +13,7 @@ from argparse import ArgumentParser
 
 import upax
 from xlattice import (u, QQQ, check_using_sha,
-                      parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
+                      parse_using_sha, fix_using_sha, show_using_sha, check_u_path)
 
 # PATs AND REs ######################################################
 
@@ -54,14 +54,14 @@ def do_whatever(args):
 
     path_to_node_id = os.path.join(u_dir, 'node_id')
     if os.path.exists(path_to_node_id):
-        with open(path_to_node_id, 'rdr') as file:
+        with open(path_to_node_id, 'r') as file:
             current_node_id = file.read()[:-1]
         if current_node_id == node_id:
             if verbose:
                 print('nodeID in %s is already correct' % u_dir)
                 string.close()
                 return
-    with open(path_to_node_id, 'www') as file:
+    with open(path_to_node_id, 'w') as file:
         file.write(node_id + '\n')
         os.chmod(path_to_node_id, 0o444)
     string.put(putkey_path, node_id, src)
@@ -74,7 +74,7 @@ def do_whatever(args):
 
 def main():
 
-    pgm_name_and_version = "upaxUpdateNodeID v%s %s" % (
+    pgm_name_and_version = "upax_update_node_id v%s %s" % (
         upax.__version__, upax.__version_date__)
     timestamp = "%04d%02d%02d-%02d%02d%02d" % time.gmtime()[:6]
 
@@ -86,22 +86,22 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser('post new files in a directory into Upax')
 
-    parser.add_argument('-e', '--ec2Host', action='store_true',
+    parser.add_argument('-e', '--ec2host', action='store_true',
                         help='set if machine is in EC2')
 
-    parser.add_argument('-i', '--inDir', default='/home/upax/.ssh',
+    parser.add_argument('-i', '--in_dir', default='/home/upax/.ssh',
                         help='path to .ssh/ (forced to ./ testIn if testing)')
 
     parser.add_argument('-H', '--hostmaster', action='store_true',
                         help='set if machine runs bindMgr')
 
-    parser.add_argument('-j', '--justShow', action='store_true',
+    parser.add_argument('-j', '--just_show', action='store_true',
                         help='show args and exit')
 
     parser.add_argument('-N', '--nameserver', action='store_true',
                         help='set if machine is a name server and so runs bindLocalMgr')
 
-    parser.add_argument('-t', '--showTimestamp', action='store_true',
+    parser.add_argument('-t', '--show_timestamp', action='store_true',
                         help='show run timestamp')
 
     # -u/--uDir just the base name (usually Upax or Upax0), fixed up below
@@ -109,14 +109,14 @@ def main():
     parser.add_argument('-T', '--testing', action='store_true',
                         help='test run - write to ./testU')
 
-    parser.add_argument('-V', '--showVersion', action='store_true',
+    parser.add_argument('-V', '--show_version', action='store_true',
                         help='show version number and date')
 
-    parser.add_argument('-z', '--noChanges', action='store_true',
+    parser.add_argument('-z', '--no_changes', action='store_true',
                         help="don't actually write anything to disk")
 
     # -1,-2,-3, usingSHA, -v/--verbose
-    parseUsingSHA(parser)
+    parse_using_sha(parser)
 
     args = parser.parse_args()      # a Namespace object
 
@@ -124,13 +124,13 @@ def main():
     fix_using_sha(args)
     args.pgm_name_and_version = pgm_name_and_version
     if args.testing:
-        args.inDir = 'testIn'
+        args.in_dir = 'testIn'
     args.timestamp = timestamp
 
     # -- sanity checks ----------------------------------------------
     check_using_sha(args.using_sha)
-    if not os.path.exists(args.inDir):
-        print("input directory '%s' does not exist" % args.inDir)
+    if not os.path.exists(args.in_dir):
+        print("input directory '%s' does not exist" % args.in_dir)
         sys.exit(1)
 
     # REMOVING THIS RESTRICTION #################
@@ -150,32 +150,33 @@ def main():
 
     if args.testing:
         args.u_dir = 'testU'
-    elif args.ec2Host:
+    elif args.ec2_host:
         args.u_dir = os.path.join('/vol', args.u_dir)
     else:
         args.u_dir = os.path.join('/var', args.u_dir)
 
     # -- do it ------------------------------------------------------
-    if args.verbose or args.showVersion or args.justShow:
+    if args.verbose or args.show_version or args.just_show:
         print(args.pgm_name_and_version)
-    if args.showTimestamp:
+    if args.show_timestamp:
         print('run at %s GMT' % timestamp)   # could be prettier
     else:
         print()                               # there's a comma up there
 
-    if args.justShow or args.verbose:
+    if args.just_show or args.verbose:
+        print('ec2host       = ' + str(args.ec2host))
         print('hostmaster       = ' + str(args.hostmaster))
-        print('inDir            = ' + str(args.inDir))
-        print('justShow         = ' + str(args.justShow))
+        print('in_dir           = ' + str(args.in_dir))
+        print('just_show        = ' + str(args.just_show))
         print('nameserver       = ' + str(args.nameserver))
-        print('noChanges        = ' + str(args.no_changes))
-        print('showTimestamp    = ' + str(args.showTimestamp))
-        print('showVersion      = ' + str(args.showVersion))
+        print('no_changes       = ' + str(args.no_changes))
+        print('show_timestamp   = ' + str(args.show_timestamp))
+        print('show_version     = ' + str(args.show_version))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
         show_using_sha(parser, args)
 
-    if not args.justShow:
+    if not args.just_show:
         lock = u.ULock(args.u_dir)
         try:
             if lock.get_lock():

@@ -6,10 +6,10 @@ import unittest
 import zmq
 from upax.ftlog import LogEntry
 
-context = zmq.Context.instance()
+CONTEXT = zmq.Context.instance()
 
 
-class TestZMQ (unittest.TestCase):
+class TestZMQ(unittest.TestCase):
 
     def setUp(self):
         pass
