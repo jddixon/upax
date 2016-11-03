@@ -8,11 +8,10 @@ import re
 import sys
 import time
 
-import serverutil
 import u
 
 import upax          # MUST LOCK uDir
-from upax import *
+# from upax import *
 from upax.ftlog import BoundLog, FileReader, LogEntry
 from upax.walker import UWalker
 
@@ -36,7 +35,7 @@ def walk_u(options):
     the region being defined by a two hex digit start point and
     a maximum number of entries to be included.
     """
-    www = UWalker(justKeys=options.justKeys,
+    www = UWalker(just_keys=options.just_keys,
                   limit=options.limit,
                   start_at=options.start_at,
                   u_dir=options.u_dir,
@@ -101,7 +100,7 @@ def check(options):
                 else:
                     if repairing:
                         entry = log.add_entry(options.timestamp, key,
-                                              options.myNodeID, options.appName, key)
+                                              options.myNodeID, options.app_name, key)
                         print(("ADDED TO LOG: %s" % entry))
                     else:
                         print(("%s is not in the log" % key))

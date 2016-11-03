@@ -8,10 +8,10 @@ import rnglib
 from xlattice import QQQ, check_using_sha
 from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
                         UDir)
-import upax.ftlog
+from upax.ftlog import BoundLog, FileReader, Reader
 
-__version__ = '0.8.0'
-__version_date__ = '2016-11-02'
+__version__ = '0.8.1'
+__version_date__ = '2016-11-03'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -168,8 +168,8 @@ class Server(object):
                 byte_id = bytearray(20)
             else:
                 byte_id = bytearray(32)
-            RNG = rnglib.SimpleRNG(time.time())
-            RNG.next_bytes(byte_id)       # a low-quality quasi-random number
+            rng = rnglib.SimpleRNG(time.time())
+            rng.next_bytes(byte_id)       # a low-quality quasi-random number
             id_ = str(binascii.b2a_hex(byte_id), 'utf-8')
             self._node_id = id_
             with open(_id_file_path, 'w') as file:
@@ -180,11 +180,11 @@ class Server(object):
                 self._node_id = file.read()[:-1]
 
         if os.path.exists(_log_file_path):
-            self._log = ftlog.BoundLog(ftlog.FileReader(u_path, self._using_sha),
-                                       self._using_sha, u_path)
+            self._log = BoundLog(FileReader(u_path, self._using_sha),
+                                 self._using_sha, u_path)
         else:
-            self._log = ftlog.BoundLog(ftlog.Reader([], self._using_sha),
-                                       self._using_sha, u_path)
+            self._log = BoundLog(Reader([], self._using_sha),
+                                 self._using_sha, u_path)
 
     @property
     def u_dir(self):

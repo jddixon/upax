@@ -14,7 +14,7 @@ RNG = rnglib.SimpleRNG(time.time())
 DATA_PATH = 'myData'
 
 
-class TestUpaxServer (unittest.TestCase):
+class TestUpaxServer(unittest.TestCase):
 
     def setUp(self):
         pass

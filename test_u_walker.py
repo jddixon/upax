@@ -7,8 +7,6 @@ import re
 import time
 import unittest
 
-from upax import *
-from upax.ftlog import *
 from upax.walker import UWalker
 from rnglib import SimpleRNG
 from xlattice import QQQ
@@ -16,7 +14,7 @@ from xlattice import QQQ
 RNG = SimpleRNG(time.time())
 
 
-class TestUWalker (unittest.TestCase):
+class TestUWalker(unittest.TestCase):
 
     def setUp(self):
         pass

@@ -1,8 +1,16 @@
 ~/dev/py:/upax/TODO
 
 2016-11-02
-    * ftLog.equals should be __eq__
-    * adjust tests accordingly (assertTrue => assertEqual)
+    * ftLog.equals should be __eq__                                     * DONE
+    * adjust tests accordingly (assertTrue => assertEqual)              * DONE
+    * update gh-pages to reflect changed utility names                  * DONE
+    * upax_update_node_id internal name needs to be PEP 8'ed            * DONE
+    * fix me: utility options need to be per PEP 8                      * DONE
+    * eg attempts to run check_u_consistency -h fail because            * FIXED
+        cLogForPy.cpython-34m.so has undefined symbol(s)                * FIXED
+        Py_InitModule4_64                                               * FIXED
+    * for all four utilities compare PGM_NAME -h output with            * DONE
+        options list                                                    * DONE
 
 2016-09-16
     * errors in checkUpaxConsistency from importing upax.consistency

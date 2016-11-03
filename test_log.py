@@ -9,7 +9,7 @@ from xlattice import QQQ, check_using_sha
 from upax.ftlog import Log, LogEntry, Reader, StringReader
 
 
-class TestLog (unittest.TestCase):
+class TestLog(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -91,11 +91,11 @@ class TestLog (unittest.TestCase):
 
         # NOT IN testLog3 ---------------------------------
         self.assertEqual(3, len(log.entries))
-        for entryA in log.entries:
-            self.assertEqual(entryA, entryA)
-            for entryB in log.entries:
-                if entryB.key != entryA.key:
-                    self.assertTrue(entryA != entryB)
+        for entry_x in log.entries:
+            self.assertEqual(entry_x, entry_x)
+            for entry_y in log.entries:
+                if entry_y.key != entry_x.key:
+                    self.assertTrue(entry_x != entry_y)
 
         # END NOT IN --------------------------------------
 
@@ -106,15 +106,15 @@ class TestLog (unittest.TestCase):
 
         self.assertTrue(goodkey_3 in log)
         entry = log.get_entry(goodkey_3)
-        self.assertTrue(entry1.equals(entry))
+        self.assertEqual(entry1, entry)
 
         self.assertTrue(goodkey_5 in log)
         entry = log.get_entry(goodkey_5)
-        self.assertTrue(entry2.equals(entry))
+        self.assertEqual(entry2, entry)
 
         self.assertTrue(goodkey_7 in log)
         entry = log.get_entry(goodkey_7)
-        self.assertTrue(entry3.equals(entry))
+        self.assertEqual(entry3, entry)
 
         # NOT IN testLog3 ---------------------------------
         entry_count0 = len(log.entries)
@@ -173,20 +173,20 @@ class TestLog (unittest.TestCase):
         log.add_entry(time1, goodkey_3, goodkey_4, 'jdd', 'document1')
         self.assertEqual(1, len(log))
         entry = log.get_entry(goodkey_3)
-        self.assertTrue(entry1.equals(entry))
+        self.assertEqual(entry1, entry)
         self.assertTrue(goodkey_3 in log)
         self.assertFalse(goodkey_5 in log)
 
         log.add_entry(time2, goodkey_5, goodkey_6, 'jdd', 'document2')
         self.assertEqual(2, len(log))
         entry = log.get_entry(goodkey_5)
-        self.assertTrue(entry2.equals(entry))
+        self.assertEqual(entry2, entry)
         self.assertTrue(goodkey_5 in log)
 
         log.add_entry(time3, goodkey_7, goodkey_8, 'jdd', 'document3')
         self.assertEqual(3, len(log))
         entry = log.get_entry(goodkey_7)
-        self.assertTrue(entry3.equals(entry))
+        self.assertEqual(entry3, entry)
         self.assertTrue(goodkey_7 in log)
 
     def test_add_entry(self):

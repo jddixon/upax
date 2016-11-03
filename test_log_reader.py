@@ -8,7 +8,7 @@ from upax.ftlog import LogEntry, Reader, StringReader, FileReader
 from xlattice import QQQ, check_using_sha
 
 
-class TestLogReader (unittest.TestCase):
+class TestLogReader(unittest.TestCase):
 
     def setUp(self):
         pass

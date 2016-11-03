@@ -8,9 +8,10 @@ import re
 import sys
 import time
 from argparse import ArgumentParser
-from xlattice import (QQQ, check_using_sha,
-                      parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
-from upax import *
+from xlattice import (
+    QQQ, check_using_sha, parse_using_sha, fix_using_sha,
+    show_using_sha, check_u_path)
+# from upax import *
 import upax.consistency
 
 
@@ -41,13 +42,13 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser()
 
-    parser.add_argument('-a', '--startAt', default='00',
+    parser.add_argument('-a', '--start_at', default='00',
                         help='start at, default = 00')
 
-    parser.add_argument('-j', '--justShow', action='store_true',
+    parser.add_argument('-j', '--just_show', action='store_true',
                         help='show args and exit')
 
-    parser.add_argument('-k', '--justKeys', action='store_true',
+    parser.add_argument('-k', '--just_keys', action='store_true',
                         help='just collect keys, do not check they are valid content keys')
 
     parser.add_argument('-L', '--limit', default=limit, type=int,
@@ -59,10 +60,10 @@ def main():
     parser.add_argument('-T', '--testing', action='store_true',
                         help='test run, use default local dirs')
 
-    parser.add_argument('-V', '--showVersion', action='store_true',
+    parser.add_argument('-V', '--show_version', action='store_true',
                         help='show version number and date')
 
-    parseUsingSHA1(parser)
+    parse_using_sha(parser)
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
@@ -81,37 +82,37 @@ def main():
     args.myNodeID = None
     path_to_node_id = os.path.join(u_path, 'node_id')
     if os.path.exists(path_to_node_id):
-        with open(path_to_node_id, 'rdr') as file:
+        with open(path_to_node_id, 'r') as file:
             args.myNodeID = file.read().strip()
         # DEBUG
         print("MY NODE_ID IS %s" % args.myNodeID)
         # END
-    # startAt must be a string of two hex characters
+    # start_at must be a string of two hex characters
     hex_char = '0123456789abcdef'
     start_at = args.start_at = args.start_at.lower()
     if not isinstance(start_at, str) or len(start_at) != 2\
             or not start_at[0] in hex_char or not start_at[1] in hex_char:
-        print("startAt must be two hex digits; '%s' isn't" % args.start_at)
+        print("start_at must be two hex digits; '%s' isn't" % args.start_at)
 
     # -- do it ------------------------------------------------------
-    args.appName = 'checkUConsistency v%s' % __version__
-    if args.verbose or args.showVersion or args.justShow:
-        print("%s %s" % (args.appName, __version_date__))
+    args.app_name = 'checkUConsistency v%s' % __version__
+    if args.verbose or args.show_version or args.just_show:
+        print("%s %s" % (args.app_name, __version_date__))
 
-    if args.verbose or args.justShow:
+    if args.verbose or args.just_show:
 
-        print('appName         = ' + str(args.appName))
-        print('justKeys        = ' + str(args.justKeys))
-        print('justShow        = ' + str(args.justShow))
+        print('app_name        = ' + str(args.app_name))
+        print('just_keys       = ' + str(args.just_keys))
+        print('just_show       = ' + str(args.just_show))
         print('limit           = ' + str(args.limit))
         print('repairing       = ' + str(args.repairing))
-        print('showVersion     = ' + str(args.showVersion))
-        print('startAt         = ' + str(args.start_at))
+        print('show_version    = ' + str(args.show_version))
+        print('start_at        = ' + str(args.start_at))
         print('testing         = ' + str(args.testing))
         print('timestamp       = ' + str(args.timestamp))
         show_using_sha(args)
 
-    if not args.justShow:
+    if not args.just_show:
         upax.consistency.check(args)
 
 if __name__ == '__main__':

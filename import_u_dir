@@ -9,7 +9,7 @@ import time
 from argparse import ArgumentParser
 
 from xlattice import (u, QQQ, check_using_sha,
-                      parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
+                      parse_using_sha, fix_using_sha, show_using_sha, check_u_path)
 
 from upax import *
 
@@ -28,22 +28,22 @@ def main():
     # see docs.python.org/library/argparse.html
     parser = ArgumentParser()
 
-    parser.add_argument('-d', '--destDir', type=str,
+    parser.add_argument('-d', '--dest_dir', type=str,
                         help='base name of destination U/ directory')
 
-    parser.add_argument('-j', '--justShow', action='store_true',
+    parser.add_argument('-j', '--just_show', action='store_true',
                         help='show args and exit')
 
-    parser.add_argument('-t', '--showTimestamp', action='store_true',
+    parser.add_argument('-t', '--show_timestamp', action='store_true',
                         help='show run timestamp')
 
     parser.add_argument('-T', '--testing', action='store_true',
                         help='test run - write to ./testU')
 
-    parser.add_argument('-V', '--showVersion', action='store_true',
+    parser.add_argument('-V', '--show_version', action='store_true',
                         help='show version number and date')
 
-    parseUsingSHA(parser)
+    parse_using_sha(parser)
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
@@ -70,22 +70,22 @@ def main():
         args.dest_dir = args.dest_dir[:-1]            # drop any trailing slash
 
     # -- do it ------------------------------------------------------
-    if args.verbose or args.showVersion or args.justShow:
+    if args.verbose or args.show_version or args.just_show:
         print(args.pgm_name_and_version)
-    if args.showTimestamp:
+    if args.show_timestamp:
         print('run at %s GMT' % timestamp)   # could be prettier
     else:
         print()                               # there's a comma up there
 
-    if args.justShow or args.verbose:
-        print('destDir          = ' + str(args.dest_dir))
-        print('justShow         = ' + str(args.justShow))
-        print('showTimestamp    = ' + str(args.showTimestamp))
-        print('showVersion      = ' + str(args.showVersion))
+    if args.just_show or args.verbose:
+        print('dest_dir         = ' + str(args.dest_dir))
+        print('just_show        = ' + str(args.just_show))
+        print('show_timestamp   = ' + str(args.show_timestamp))
+        print('show_version     = ' + str(args.show_version))
         print('timestamp        = ' + str(args.timestamp))
         show_using_sha(args)
 
-    if not args.justShow:
+    if not args.just_show:
         lock = u.ULock(args.u_path)
         try:
             if lock.get_lock():

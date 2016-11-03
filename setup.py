@@ -4,7 +4,7 @@
 
 import re
 from distutils.core import setup
-__version__ = re.search("__version__\s*=\s*'(.*)'",
+__version__ = re.search(r"__version__\s*=\s*'(.*)'",
                         open('upax/__init__.py').read()).group(1)
 
 # see http://docs.python.org/distutils/setupscript.html
@@ -34,5 +34,4 @@ setup(name='upax_py',
           'Natural Language :: English',
           'Programming Language :: Python 3',
           'Topic :: Software Development :: Libraries :: Python Modules',
-      ],
-      )
+      ],)

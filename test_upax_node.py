@@ -4,14 +4,14 @@
 import time
 import unittest
 from rnglib import SimpleRNG
-from upax.node import *
 from upax.ftlog import LogEntry
 from xlattice import QQQ, check_using_sha
+from upax.node import check_node_id, Peer
 
 RNG = SimpleRNG(int(time.time()))
 
 
-class TestUpaxNode (unittest.TestCase):
+class TestUpaxNode(unittest.TestCase):
 
     def setUp(self):
         pass
