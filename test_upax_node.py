@@ -4,9 +4,9 @@
 import time
 import unittest
 from rnglib import SimpleRNG
-from upax.ftlog import LogEntry
-from xlattice import QQQ, check_using_sha
+# from upax.ftlog import LogEntry
 from upax.node import check_node_id, Peer
+from xlattice import QQQ, check_using_sha
 
 RNG = SimpleRNG(int(time.time()))
 

@@ -3,13 +3,13 @@
 # ~/dev/py/upax/testUWalker.py
 
 import os
-import re
+# import re
 import time
 import unittest
 
 from upax.walker import UWalker
 from rnglib import SimpleRNG
-from xlattice import QQQ
+# from xlattice import QQQ
 
 RNG = SimpleRNG(time.time())
 

@@ -7,7 +7,7 @@ import time
 import unittest
 from xlattice import QQQ, check_using_sha
 
-from upax.ftlog import BoundLog, FileReader, Log, LogEntry, Reader, StringReader
+from upax.ftlog import BoundLog, FileReader, LogEntry, StringReader
 
 
 class TestBoundLog(unittest.TestCase):
@@ -110,7 +110,7 @@ class TestBoundLog(unittest.TestCase):
         (time0, time1, time2, time3, entry1, entry2, entry3, empty_log, log_w_three) =\
             self.setup_the_server(using_sha)
         reader = StringReader(log_w_three, using_sha)
-        log = BoundLog(reader, using_sha, self.u_dir, 'L')   # XXX FAILS
+        log = BoundLog(reader, using_sha, self.u_dir, 'L')
         assert log is not None
         self.assertEqual(time0, log.timestamp)
         self.assertEqual(goodkey_1, log.prev_hash)

@@ -25,8 +25,8 @@ def do_whatever(args):
     using_sha = args.using_sha
     verbose = args.verbose
 
-    string = upax.BlockingServer(u_dir, using_sha)
-    log = string.log
+    server = upax.BlockingServer(u_dir, using_sha)
+    log = server.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (
             len(log), u_dir))
@@ -37,18 +37,18 @@ def do_whatever(args):
         login = pwd.getpwuid(os.getuid())[0]
     else:
         login = 'upax'
-    putkey_path = '/home/%s/.ssh/id_rsa.pub' % login
-    if not os.path.exists(putkey_path):
+    pubkey_path = '/home/%s/.ssh/id_rsa.pub' % login
+    if not os.path.exists(pubkey_path):
         print("can't find public key for %s" % login)
-        string.close()
+        server.close()
         return
 
     if using_sha == QQQ.USING_SHA1:
-        node_id = u.fileSHA1(putkey_path)
+        node_id = u.file_sha1hex(pubkey_path)
     elif using_sha == QQQ.USING_SHA2:
-        node_id = u.fileSHA2(putkey_path)
+        node_id = u.file_sha2hex(pubkey_path)
     elif using_sha == QQQ.USING_SHA3:
-        node_id = u.fileSHA3(putkey_path)
+        node_id = u.file_sha3hex(pubkey_path)
     if verbose:
         print("nodeID: " + node_id)
 
@@ -59,17 +59,17 @@ def do_whatever(args):
         if current_node_id == node_id:
             if verbose:
                 print('nodeID in %s is already correct' % u_dir)
-                string.close()
+                server.close()
                 return
     with open(path_to_node_id, 'w') as file:
         file.write(node_id + '\n')
         os.chmod(path_to_node_id, 0o444)
-    string.put(putkey_path, node_id, src)
+    server.put(pubkey_path, node_id, src)
 
     if verbose:
         print("there are %7u files in %s at the end of the run" % (
             len(log), u_dir))
-    string.close()
+    server.close()
 
 
 def main():
@@ -174,7 +174,7 @@ def main():
         print('show_version     = ' + str(args.show_version))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
-        show_using_sha(parser, args)
+        show_using_sha(args)
 
     if not args.just_show:
         lock = u.ULock(args.u_dir)

@@ -2,9 +2,9 @@
 
 import os
 import re
-import sys
+# import sys
 from collections import Container, Sized
-from xlattice import (QQQ, check_using_sha, u,
+from xlattice import (QQQ, check_using_sha,     # u,
                       SHA1_HEX_NONE, SHA2_HEX_NONE, SHA3_HEX_NONE)
 from upax.node import check_hex_node_id_160, check_hex_node_id_256
 
@@ -23,19 +23,19 @@ __all__ = ['ATEXT', 'AT_FREE',
 
 # Take care: this pattern is used in xlmfilter, possibly elsewhere
 # this is RFC2822's atext; *,+,?,- are escaped; needs to be enclosed in []+
-ATEXT = "[a-z0-9!#$%&'\*\+/=\?^_`{|}~\-]+"
-AT_FREE = ATEXT + '(?:\.' + ATEXT + ')*'
+ATEXT = r"[a-z0-9!#$%&'\*\+/=\?^_`{|}~\-]+"
+AT_FREE = ATEXT + r'(?:\.' + ATEXT + r')*'
 
 # this permits an RFC2822 message ID but is a little less restrictive
-PATH_PAT = AT_FREE + '(?:@' + AT_FREE + ')?'
+PATH_PAT = AT_FREE + r'(?:@' + AT_FREE + ')?'
 PATH_RE = re.compile(PATH_PAT, re.I)
 
 BODY_LINE_1_PAT =\
-    '^(\d+) ([0-9a-f]{40}) ([0-9a-f]{40}) "([^"]*)" (%s)$' % PATH_PAT
+    r'^(\d+) ([0-9a-f]{40}) ([0-9a-f]{40}) "([^"]*)" (%s)$' % PATH_PAT
 BODY_LINE_1_RE = re.compile(BODY_LINE_1_PAT, re.I)
 
 BODY_LINE_256_PAT =\
-    '^(\d+) ([0-9a-f]{64}) ([0-9a-f]{64}) "([^"]*)" (%s)$' % PATH_PAT
+    r'^(\d+) ([0-9a-f]{64}) ([0-9a-f]{64}) "([^"]*)" (%s)$' % PATH_PAT
 BODY_LINE_256_RE = re.compile(BODY_LINE_256_PAT, re.I)
 
 
@@ -47,7 +47,7 @@ class Log(Container, Sized):
     """a fault-tolerant log"""
 
     #__slots__ = ['_entries', '_index', '_timestamp',
-    #              '_prevHash', '_prevMaster', '_usingSHA', ]
+    #              '_prevHash', '_prevMaster', '_using_sha', ]
 
     def __init__(self, reader, using_sha):
         self._using_sha = using_sha
@@ -132,7 +132,7 @@ class BoundLog(Log):
     def __init__(self, reader, using_sha=QQQ.USING_SHA2,
                  u_path=None, base_name='L'):
         super(). __init__(reader, using_sha)
-        self.fd_ = -1
+        self.fd_ = None
         self.is_open = False     # for appending
         overwriting = False
         if u_path:
@@ -242,22 +242,19 @@ class LogEntry():
                       self._node_id, self._src, self._path)
 
     def __eq__(self, other):
-        if isinstance(other, LogEntry)              and\
-                self._timestamp == other.timestamp  and\
-                self._key       == other.key        and\
-                self._node_id    == other.node_id   and\
-                self._src       == other.src        and\
-                self._path == other.path:
-            return True
-        else:
-            return False
+        return isinstance(other, LogEntry)          and\
+            self._timestamp == other.timestamp  and\
+            self._key == other.key              and\
+            self._node_id == other.node_id      and\
+            self._src == other.src              and\
+            self._path == other.path
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def equals(self, other):
         """
-        The function usualy known as __eq__.
+        The function usualy known as __eq__.  XXX DEPRECATED
         """
         return self.__eq__(other)
 
@@ -276,7 +273,7 @@ class LogEntry():
 
 
 class Reader(object):
-    #__slots__ = ['_entries', '_index', '_lines', '_usingSHA',
+    #__slots__ = ['_entries', '_index', '_lines', '_using_sha',
     #             'FIRST_LINE_RE', ]
 
     def __init__(self, lines, using_sha):
@@ -302,7 +299,8 @@ class Reader(object):
         self._index = dict()        # mapping hash => entry
 
     @property
-    def using_sha(self): return self._using_sha
+    def using_sha(self):
+        return self._using_sha
 
     def read(self):
 
@@ -319,7 +317,7 @@ class Reader(object):
         if first_line:
             match = re.match(self.first_line_re, first_line)
             if not match:
-                print("NO MATCH, FIRST LINE; usingSHA = %s" % self.using_sha)
+                print("NO MATCH, FIRST LINE; using_sha = %s" % self.using_sha)
                 print(("  FIRST LINE: '%s'" % first_line))
                 raise ValueError("no match on first line; giving up")
             timestamp = int(match.group(1))
