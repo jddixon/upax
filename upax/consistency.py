@@ -1,30 +1,31 @@
 #!/usr/bin/python
-
 # ~/dev/py/upax/upax/consistency.py
 
-import os
-import random
-import re
-import sys
-import time
+""" Funcions for verifying the internal cosistency of a upax server. """
 
-import u
+#import os
+#import random
+#import re
+#import sys
+#import time
+#
+#import u
 
 import upax          # MUST LOCK uDir
 # from upax import *
-from upax.ftlog import BoundLog, FileReader, LogEntry
+from upax.ftlog import BoundLog, FileReader     # , LogEntry
 from upax.walker import UWalker
 
 __all__ = ['check', ]
 
-# -- implementation -------------------------------------------------
-
 
 def setup_server(options):
+    """ Add server configuration info to the set of options. """
     options.uServer = upax.BlockingServer(options.u_dir, options.using_sha)
 
 
 def shutdown_server(options):
+    """ Shut down a upax server if it is running. """
     if options.uServer:
         options.uServer.close()
 

@@ -4,6 +4,8 @@
 
 import os
 import re
+import sys
+
 from xlattice import u, QQQ, check_using_sha
 
 HEX_DIR_PAT = '^[0-9a-fA-F]{2}$'
@@ -40,16 +42,20 @@ class UWalker(object):
         self._keys = []
 
     @property
-    def count(self): return self._count
+    def count(self):
+        return self._count
 
     @property
-    def keys(self): return self._keys
+    def keys(self):
+        return self._keys
 
     @property
-    def limit(self): return self._limit
+    def limit(self):
+        return self._limit
 
     @property
-    def u_dir(self): return self._u_dir
+    def u_dir(self):
+        return self._u_dir
 
     def walk(self):
         """

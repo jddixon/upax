@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 # testZMQ.py
-import time
 import unittest
 import zmq
-from upax.ftlog import LogEntry
+# from upax.ftlog import LogEntry
 
 CONTEXT = zmq.Context.instance()
 
@@ -18,6 +17,7 @@ class TestZMQ(unittest.TestCase):
         pass
 
     def test_constructor(self):
+        # XXX STUB
         pass
 
 if __name__ == '__main__':

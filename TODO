@@ -1,5 +1,12 @@
 ~/dev/py:/upax/TODO
 
+2016-11-09
+    * add sanity check: it must not be possible to any peers to 
+        share the same nodeID
+    * all use of RSA, AES, other crypto must be through 
+        xlattice.crypto
+        - and must be carefully tested
+
 2016-11-02
     * ftLog.equals should be __eq__                                     * DONE
     * adjust tests accordingly (assertTrue => assertEqual)              * DONE

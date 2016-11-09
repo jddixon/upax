@@ -7,7 +7,7 @@ import time
 import unittest
 import rnglib
 from xlattice import QQQ, check_using_sha
-from xlattice.u import UDir, file_sha1hex, file_sha2hex, file_sha3hex
+from xlattice.u import file_sha1hex, file_sha2hex, file_sha3hex
 from upax import __version__, BlockingServer, Importer
 
 

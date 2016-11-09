@@ -6,7 +6,7 @@ import time
 import unittest
 from xlattice import QQQ, check_using_sha
 
-from upax.ftlog import Log, LogEntry, Reader, StringReader
+from upax.ftlog import Log, LogEntry, StringReader
 
 
 class TestLog(unittest.TestCase):

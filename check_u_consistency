@@ -1,17 +1,15 @@
 #!/usr/bin/python3
 
-# ~/dev/py/upax/checkUConsistency
+# ~/dev/py/upax/check_u_consistency
 
 import os
-import random
-import re
 import sys
 import time
 from argparse import ArgumentParser
 from xlattice import (
-    QQQ, check_using_sha, parse_using_sha, fix_using_sha,
+    check_using_sha, parse_using_sha, fix_using_sha,
     show_using_sha, check_u_path)
-# from upax import *
+from upax import __version__, __version_date__
 import upax.consistency
 
 
@@ -23,9 +21,10 @@ def die_if_not_found(string):
 
 def main():
     """
-    Collects options for upax.consistency.check.  If the --repair
-    argument is present, will locate any content files in U that
-    are not in the log (U/L) and add them with the int time of the
+    Collects options for upax.consistency.check.
+
+    If the --repair argument is present, will locate any content files in U
+    that are not in the log (U/L) and add them with the int time of the
     run as the timestamp, U/nodeID as the nodeID, this program as the
     source, and the content key as the path.  By default the program
     assumes that we are using SHA1 to calculate content keys.
@@ -35,8 +34,8 @@ def main():
     """
 
     # -- program defaults -------------------------------------------
-    limit = 1024 * 1024 * 1024    # maximum number of files in U processed
-    u_path = '/var/U'          # root of the U256x256 directory structure
+    limit = 1024 * 1024 * 1024  # maximum number of files in U processed
+    u_path = '/var/U'           # root of the U256x256 directory structure
 
     # -- parse the command line -------------------------------------
     # see docs.python.org/library/argparse.html
@@ -78,7 +77,7 @@ def main():
 
     # -- sanity checks ----------------------------------------------
     check_using_sha(args.using_sha)
-    check_u_path(parser, args, mustExist=True)
+    check_u_path(parser, args, must_exist=True)
     args.myNodeID = None
     path_to_node_id = os.path.join(u_path, 'node_id')
     if os.path.exists(path_to_node_id):
@@ -95,7 +94,7 @@ def main():
         print("start_at must be two hex digits; '%s' isn't" % args.start_at)
 
     # -- do it ------------------------------------------------------
-    args.app_name = 'checkUConsistency v%s' % __version__
+    args.app_name = 'check_u_consistency v%s' % __version__
     if args.verbose or args.show_version or args.just_show:
         print("%s %s" % (args.app_name, __version_date__))
 

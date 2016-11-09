@@ -1,17 +1,15 @@
 #!/usr/bin/python3
 
-# ~/dev/py/upax/upaxBulkPoster
+# ~/dev/py/upax/upax_bulk_poster
 
 import os
-import re
 import sys
 import time
 from argparse import ArgumentParser
 
-import u
 import upax
-from xlattice import (QQQ, check_using_sha,
-                      parse_using_sha, fix_using_sha, show_using_sha, check_u_path)
+from xlattice import (QQQ, u, check_using_sha,
+                      parse_using_sha, fix_using_sha, show_using_sha)
 
 # PATs AND REs ######################################################
 
@@ -21,8 +19,8 @@ def do_whatever(args):
     u_dir = args.u_dir
     using_sha = args.using_sha
     verbose = args.verbose
-    string = upax.BlockingServer(u_dir, using_sha)
-    log = string.log
+    server = upax.BlockingServer(u_dir, using_sha)
+    log = server.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (
             len(log), u_dir))
@@ -32,29 +30,34 @@ def do_whatever(args):
     files = os.listdir(args.in_dir)
     for file in files:
         path_to_file = os.path.join(args.in_dir, file)
+        # pylint: disable=redefined-variable-type
         if using_sha == QQQ.USING_SHA1:
-            hash = u.fileSHA1(path_to_file)
+            hash_ = u.file_sha1hex(path_to_file)
+        elif using_sha == QQQ.USING_SHA2:
+            hash_ = u.file_sha2hex(path_to_file)
+        elif using_sha == QQQ.USING_SHA3:
+            hash_ = u.file_sha3hex(path_to_file)
         if no_changes:
             if verbose:
-                print('would add %s %s' % (hash, path_to_file))
+                print('would add %s %s' % (hash_, path_to_file))
         else:
-            string.put(path_to_file, hash, src)
+            server.put(path_to_file, hash_, src)
 
     if verbose:
         print("there are %7u files in %s at the end of the run" % (
             len(log), u_dir))
-    string.close()
+    server.close()
 
 
 def main():
 
-    pgm_name_and_version = "upaxBulkPoster v%s %s" % (
+    pgm_name_and_version = "upax_bulk_poster v%s %s" % (
         upax.__version__, upax.__version_date__)
     timestamp = "%04d%02d%02d-%02d%02d%02d" % time.gmtime()[:6]
 
-    # -- program defaults -------------------------------------------
-
     # -- check for config file --------------------------------------
+
+    # XXX STUB
 
     # -- parse the command line -------------------------------------
     # see docs.python.org/library/argparse.html
@@ -78,7 +81,7 @@ def main():
     parser.add_argument('-t', '--show_timestamp', action='store_true',
                         help='show run timestamp')
 
-    # -u/--uDir just the base name (usually Upax or Upax0); fixed up below
+    # -u/--u_dir just the base name (usually Upax or Upax0); fixed up below
 
     parser.add_argument('-T', '--testing', action='store_true',
                         help='test run - write to ./testU')
@@ -89,7 +92,7 @@ def main():
     parser.add_argument('-z', '--no_changes', action='store_true',
                         help="don't actually write anything to disk")
 
-    # -1,-2,-3, usingSHA, -v/--verbose
+    # -1,-2,-3, using_sha, -v/--verbose
     parse_using_sha(parser)
 
     args = parser.parse_args()      # a Namespace object
@@ -109,9 +112,9 @@ def main():
         sys.exit(1)
 
     # REMOVING THIS RESTRICTION #################
-#   uDirParts = args.uDir.split('/')
-#   if len(uDirParts) > 1:
-#       print "uDir may not contain any slashes: aborting"
+#   u_dirParts = args.u_dir.split('/')
+#   if len(u_dirParts) > 1:
+#       print "u_dir may not contain any slashes: aborting"
 #       sys.exit(1)
 
     if args.hostmaster and args.nameserver:
@@ -149,8 +152,8 @@ def main():
         print('show_version     = ' + str(args.show_version))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
-        # usingSHA, uDir, verbose
-        show_using(parser, args)
+        # using_sha, u_dir, verbose
+        show_using_sha(args)
 
     if not args.just_show:
         lock = u.ULock(args.u_dir)

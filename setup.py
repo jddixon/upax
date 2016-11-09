@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-
 # ~/dev/py/upax_py/setup.py
+
+""" Set up distutils for upax_py. """
 
 import re
 from distutils.core import setup

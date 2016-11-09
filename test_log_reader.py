@@ -4,7 +4,7 @@
 import time
 import unittest
 
-from upax.ftlog import LogEntry, Reader, StringReader, FileReader
+from upax.ftlog import LogEntry, Reader, StringReader  # , FileReader
 from xlattice import QQQ, check_using_sha
 
 

@@ -10,8 +10,8 @@ from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
                         UDir)
 from upax.ftlog import BoundLog, FileReader, Reader
 
-__version__ = '0.8.1'
-__version_date__ = '2016-11-03'
+__version__ = '0.8.2'
+__version_date__ = '2016-11-09'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -38,17 +38,23 @@ class Importer(object):
         self._src_dir = src_dir
         self._dest_dir = dest_dir
         self._pgm_name_and_version = pgm_name_and_version
+        self._server = None
         self._using_sha = using_sha
         self._verbose = verbose
+        self._count = 0
 
     @property
-    def src_dir(self): return self._src_dir
+    def src_dir(self):
+        return self._src_dir
 
-    def dest_dir(self): return self._desDir
+    def dest_dir(self):
+        return self._dest_dir
 
-    def pgm_name_and_version(self): return self._pgm_name_and_version
+    def pgm_name_and_version(self):
+        return self._pgm_name_and_version
 
-    def verbose(self): return self._verbose
+    def verbose(self):
+        return self._verbose
 
     @staticmethod
     def create_importer(args):
@@ -73,7 +79,7 @@ class Importer(object):
                 count += 1
                 if self._verbose:
                     print(('      ' + path_to))
-                (length, actual_hash) = string.put(path_to, file, src)
+                (_, actual_hash) = string.put(path_to, file, src)
                 if actual_hash != file:
                     print(("%s has content key %s" % (path_to, actual_hash)))
             else:
@@ -236,7 +242,7 @@ class Server(object):
             return (-1, key)
 
         # XXX uses tempfile package, so not secure XXX
-        (len, hash) = self._u_dir.copy_and_put(path_to_file, key)
+        (len_, hash_) = self._u_dir.copy_and_put(path_to_file, key)
 
         # XXX should deal with exceptions
         self._log.add_entry(
@@ -245,11 +251,11 @@ class Server(object):
             self._node_id,
             source,
             logged_path)
-        return (len, hash)
+        return (len_, hash_)
 
     def put_data(self, data, key, source, logged_path='z@__posted_data__'):
-        """ returns (len, hash) """
-        (len, hash) = self._u_dir.put_data(data, key)
+        """ returns (len_, hash_) """
+        (len_, hash_) = self._u_dir.put_data(data, key)
 
         # XXX should deal with exceptions
 
@@ -259,7 +265,7 @@ class Server(object):
             self._node_id,
             source,
             logged_path)
-        return (len, hash)
+        return (len_, hash_)
 
     def close(self):
         self._log.close()
