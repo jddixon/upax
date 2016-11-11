@@ -280,9 +280,9 @@ class Reader(object):
         check_using_sha(using_sha)
         self._using_sha = using_sha
         if using_sha == QQQ.USING_SHA1:
-            first_line_pat = '^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
+            first_line_pat = r'^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
         else:
-            first_line_pat = '^(\d{13}) ([0-9a-f]{64}) ([0-9a-f]{64})$'
+            first_line_pat = r'^(\d{13}) ([0-9a-f]{64}) ([0-9a-f]{64})$'
         self.first_line_re = re.compile(first_line_pat, re.I)
 
         # XXX verify that argument is an array of strings

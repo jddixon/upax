@@ -8,6 +8,8 @@ byte arrays.  So get it right here and then backport to XLattice.
 """
 
 import re
+
+from Crypto.PublicKey import RSA            # new 2016-11-10
 from xlattice import QQQ
 
 NODE_ID_1_PAT = '^[A-Z0-9]{40}$'
@@ -87,20 +89,25 @@ class Peer(object):
     def using_sha(self):
         return self._using_sha
 
-    # These all return a reference to a list.  This is quite insecure
-    # and nothing prevents users from adding arbitrary trash to a list.
-    # A better API would expose get/set/del methods, with validation
-    # on the getters.
     @property
     def cnx(self):
+        """
+        Return a reference to a list.
+
+        This is quite insecure and nothing prevents users from adding arbitrary
+        trash to a list. A better API would expose get/set/del methods,
+        with validation on the getters.
+        """
         return self._cnx
 
     @property
     def ip_addr(self):
+        """ Returns a reference to a list; warnings as above. """
         return self._ip_addr
 
     @property
     def fqdn(self):
+        """ Returns a reference to a list; warnings as above. """
         return self._fqdn
 
 
@@ -109,22 +116,37 @@ class UpaxNode(Peer):
     def __init__(self, node_id=None, rsa_priv_key=None):
 
         if rsa_priv_key is None:
-            # XXX STUB XXX generate one
-            pass
+            rsa_priv_key = RSA.generate(2048)       # XXX key fixed at 2K bits
         self._rsa_priv_key = rsa_priv_key
-        # XXX STUB: extract the private key from the public key
+        # extract the public key from the private key
+        rsa_pub_key = rsa_priv_key.publickey()
         super(UpaxNode, self).__init__(node_id, rsa_pub_key)
 
-        self._peers = {}    # nodeNdx (uInt32)    to Peer object
-        self._l_hashes = {}    # nodeNdx + timestamp to LHash object
-        self._l_map = {}    # L hash + timestamp  to text (bytearray)
+        self._peers = {}    # nodeNdx (uInt32)    => Peer object
+        self._l_hashes = {}  # nodeNdx + timestamp => LHash object
+        self._l_map = {}    # L hash + timestamp  => text (bytearray)
 
 
 class LHash(object):
+    """ Presumably the hash of an object stored on the node. """
 
     def __init__(self, node_ndx, tstamp, hash_):
+        """
+        We assume the caller guarantees that the hash is correct and
+        refers to something stored somewhere.
+        """
         self._node_ndx = node_ndx
         self._timestamp = tstamp
-        # we assume the caller guarantees that the hash is correct and
-        # refers to something stored somewhere
         self._hash = hash_
+
+    @property
+    def node_ndx(self):
+        return self._node_ndx
+
+    @property
+    def timestamp(self):
+        return self._timestamp
+
+    @property
+    def l_hash(self):
+        return self._hash
