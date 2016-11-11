@@ -6,6 +6,8 @@
     * all use of RSA, AES, other crypto must be through 
         xlattice.crypto
         - and must be carefully tested
+    * ASAP fix dangling reference to rsa_pub_key in upax/node.py
+        (about line 115)
 
 2016-11-02
     * ftLog.equals should be __eq__                                     * DONE

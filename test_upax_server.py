@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-
 # testUpaxServer.py
+
+""" Test functions of a Upax server. """
 
 import os
 import time
@@ -15,6 +16,7 @@ DATA_PATH = 'myData'
 
 
 class TestUpaxServer(unittest.TestCase):
+    """ Test functions of a Upax server. """
 
     def setUp(self):
         pass
@@ -23,6 +25,8 @@ class TestUpaxServer(unittest.TestCase):
         pass
 
     def do_test_construct_from_nothing(self, using_sha):
+        """ Test the constructor for a specific  SHA type. """
+
         check_using_sha(using_sha)
         # SETUP
         u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
@@ -58,30 +62,35 @@ class TestUpaxServer(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))   # GEEP
 
     def test_construct_from_nothing(self):
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+        """ Test the constructor for the various SHA types. """
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
             self.do_test_construct_from_nothing(using)
 
 #   # ---------------------------------------------------------------
 
     def make_some_files(self, using_sha):
-        """ return a map: hash=>path """
+        """
+        Create a random number of unique data files of random length
+          in myData/.
+
+        Take hash of each as it is created, using this to verify uniqueness;
+        add hash to list (or use hash as key to map).
+
+        Return a map: hash -> path.
+        """
 
         check_using_sha(using_sha)
 
-        # create a random number of unique data files of random length
-        #   in myData/; take hash of each as it is created, using
-        #   this to verify uniqueness; add hash to list (or use hash
-        #   as key to map
         file_count = 3 + RNG.next_int16(16)
         files = {}             # a map hash->path
-        for nnn in range(file_count):
+        for _ in range(file_count):
             d_key = None
             d_path = None
             # create a random file name                  maxLen   minLen
-            (d_len, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
+            (_, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
             # perhaps more restrictions needed
             while d_path.endswith('.'):
-                (d_len, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
+                (_, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
             if using_sha == QQQ.USING_SHA1:
                 d_key = u.file_sha1hex(d_path)
             elif using_sha == QQQ.USING_SHA2:
@@ -96,6 +105,10 @@ class TestUpaxServer(unittest.TestCase):
     # ---------------------------------------------------------------
 
     def do_test_put_to_empty(self, using_sha):
+        """
+        Test the put() function on what is initially an empty server
+        using a specific hash type.
+        """
         # SETUP
         u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
         while os.path.exists(u_path):
@@ -106,7 +119,7 @@ class TestUpaxServer(unittest.TestCase):
             file_map = self.make_some_files(using_sha)
             file_count = len(file_map)
 
-            for key in list(file_map.keys()):
+            for key in file_map:
                 string.put(file_map[key], key, 'test_put_to_empty')
                 self.assertTrue(string.exists(key))
                 with open(file_map[key], 'rb') as file:
@@ -117,7 +130,7 @@ class TestUpaxServer(unittest.TestCase):
             log = string.log
             self.assertEqual(file_count, len(log))
 
-            for key in list(file_map.keys()):
+            for key in file_map:
                 string.exists(key)
                 entry = log.get_entry(key)
                 self.assertIsNotNone(entry)
@@ -127,12 +140,20 @@ class TestUpaxServer(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))   # GEEP
 
     def test_put_to_empty(self):
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+        """
+        Test the put() function on what is initially an empty server
+        using the various supported hash types.
+        """
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
             self.do_test_put_to_empty(using)
 
     # ---------------------------------------------------------------
 
     def do_test_put_close_reopen_and_put(self, using_sha):
+        """
+        Test put/close/reopen then put again to a previously empty
+        upax server using a specific SHA types.
+        """
         # SETUP
         u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
         while os.path.exists(u_path):
@@ -142,7 +163,7 @@ class TestUpaxServer(unittest.TestCase):
         try:
             file_map1 = self.make_some_files(using_sha)
             file_count1 = len(file_map1)
-            for key in list(file_map1.keys()):
+            for key in file_map1:
                 string.put(file_map1[key], key, 'testPut ... first phase')
         finally:
             string.close()
@@ -151,18 +172,18 @@ class TestUpaxServer(unittest.TestCase):
         try:
             file_map2 = self.make_some_files(using_sha)
             file_count2 = len(file_map2)
-            for key in list(file_map2.keys()):
+            for key in file_map2:
                 string.put(file_map2[key], key, 'testPut ... SECOND PHASE')
 
             log = string.log
             self.assertEqual(file_count1 + file_count2, len(log))
 
-            for key in list(file_map1.keys()):
+            for key in file_map1:
                 string.exists(key)
                 entry = log.get_entry(key)
                 self.assertIsNotNone(entry)
 
-            for key in list(file_map2.keys()):
+            for key in file_map2:
                 string.exists(key)
                 entry = log.get_entry(key)
                 self.assertIsNotNone(entry)
@@ -171,6 +192,10 @@ class TestUpaxServer(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))
 
     def test_put_close_reopen_and_put(self):
+        """
+        Test put/close/reopen then put again to a previously empty
+        upax server using the supported SHA types.
+        """
         for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
             self.do_test_put_close_reopen_and_put(using)          # GEEP
 

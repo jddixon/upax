@@ -10,8 +10,8 @@ from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
                         UDir)
 from upax.ftlog import BoundLog, FileReader, Reader
 
-__version__ = '0.8.2'
-__version_date__ = '2016-11-09'
+__version__ = '0.8.3'
+__version_date__ = '2016-11-10'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -274,10 +274,10 @@ class Server(object):
 class BlockingServer(Server):
 
     def __init__(self, u_dir, using_sha=QQQ.USING_SHA2):
-        super(BlockingServer, self).__init__(u_dir, using_sha)
+        super().__init__(u_dir, using_sha)
 
 
 class NonBlockingServer(Server):
 
     def __init__(self, u_dir, using_sha=QQQ.USING_SHA2):
-        pass
+        super().__init__(u_dir, using_sha)

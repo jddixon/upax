@@ -41,6 +41,10 @@ class TestLog(unittest.TestCase):
                 goodkey_5, goodkey_6, goodkey_7, goodkey_8,)
 
     def do_test_to_string_without_entries(self, using_sha):
+        """
+        Test writing log entries using a specific hash type to an initially
+        empty string.
+        """
         check_using_sha(using_sha)
 
         (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
@@ -62,12 +66,17 @@ class TestLog(unittest.TestCase):
         self.assertEqual(0, len(log))
 
     def test_str_without_entries(self):
+        """
+        Test writing log entries using supported hash types to an initially
+        empty string.
+        """
         for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
             self.do_test_to_string_without_entries(using)
 
     # ---------------------------------------------------------------
 
     def do_test_multi_entry_log(self, using_sha):
+        """ Test adding multiple entries to log with specific hash type. """
 
         check_using_sha(using_sha)
 
@@ -122,7 +131,7 @@ class TestLog(unittest.TestCase):
 
         # add a duplicate entry: this should have no visible effect
         # log.addEntry(entry3)
-        dupe3 = log.add_entry(time3, goodkey_7, goodkey_8, 'jdd', 'document3')
+        _ = log.add_entry(time3, goodkey_7, goodkey_8, 'jdd', 'document3')
         self.assertEqual(entry_count0, len(log.entries))
         self.assertEqual(index_count0, len(log.index))
 
@@ -141,12 +150,14 @@ class TestLog(unittest.TestCase):
         # END NOT IN --------------------------------------
 
     def test_multi_entry_log(self):
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+        """ Test adding multiple entries to log with supported types. """
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
             self.do_test_multi_entry_log(using)
 
     # ---------------------------------------------------------------
 
     def do_test_add_entry(self, using_sha):
+        """ Add sample entries to log using selected SHA hash type. """
         check_using_sha(using_sha)
 
         (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
@@ -161,7 +172,8 @@ class TestLog(unittest.TestCase):
         entry1 = LogEntry(time1, goodkey_3, goodkey_4, 'jdd', 'document1')
         entry2 = LogEntry(time2, goodkey_5, goodkey_6, 'jdd', 'document2')
         entry3 = LogEntry(time3, goodkey_7, goodkey_8, 'jdd', 'document3')
-        test_log = empty_log + str(entry1) + str(entry2) + str(entry3)
+        # test_log = empty_log + str(entry1) + str(entry2) + str(entry3)
+
         reader = StringReader(empty_log, using_sha)
         log = Log(reader, using_sha)
         assert log is not None
@@ -190,7 +202,8 @@ class TestLog(unittest.TestCase):
         self.assertTrue(goodkey_7 in log)
 
     def test_add_entry(self):
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+        """ Add sample entries to log using supported SHA hash type. """
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
             self.do_test_add_entry(using)
 
 if __name__ == '__main__':

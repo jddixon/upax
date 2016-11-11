@@ -1,4 +1,4 @@
------BEGIN RSA PUBLIC KEY-----
+-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoM2sBgX0ChP2JriXkOxS
 e2FjHYVzBGkNvgf0vIAa7FFYZi2pWmxBAVXgl3tTiB3quqqud/MbKqdejM6gkKBK
 v8f7hlcBQLD6BLIZ/RRfhIElc+WlDVfKSnBTB4va5qTQAgvuq5i8+oMj7G8WEy5d
@@ -6,26 +6,26 @@ v8f7hlcBQLD6BLIZ/RRfhIElc+WlDVfKSnBTB4va5qTQAgvuq5i8+oMj7G8WEy5d
 zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
------END RSA PUBLIC KEY-----
-upax_py v0.8.2
-2016-11-09 23:55:06
+-----END PUBLIC KEY-----
+upax_py v0.8.3
+2016-11-11 00:52:59
 # BEGIN CONTENT #
 upax_py
  .dvcz
-  builds 9e5c346b4ce5183e09e5de7212d4bbce46e02fa0
+  builds 03f9dcb17c9f8baf404e7c6ba90351e70dd7e406
   copyright 40a152c0598a7da436fc48b2286fb14b4f2e9101
-  lastBuildList 9acaa724678e6fa33fc871949f7ee1ad1ab24730
+  lastBuildList 3d9cc07c1b1ec3becc17a01a169ecc1fb2164292
   license 5977a55c75bb4612004451a56b0b4c22d9d3311d
   projCfg 387838116e423692c3db267de3492968b65f6f8a
   projCfg.local 3258109f937dfc30585f333131e112df4b244301
-  version 02a625b695197820e4f8b0d9d4299e2bac70c9ae
+  version a85d941eec1ee1ba28411de21439049b2c279704
  .gitignore 68242d00de0771dd19ca1f653d968539b2ef36ea
  .gitignore.local c2d10285e0ab23017eda564eb5cdeb1b28cbbee4
- CHANGES 6584bdbd862221d4d907553b7f148d93831eaca1
+ CHANGES d1b427c662e0b00b70030f3418bfb3d2fbd8a376
  LICENSE-MIT.md 7ff8ae89c5e4489f22b3a360a03225241877bc8d
  MANIFEST.in 0af3cac075b23ed9ae22a2b0794ce15fcfefeb76
  README.md 722d325a5f7acae1025cef7387886cd0fd2bb85c
- TODO c1b4d037aec0e4a3d993c2db23cd0552c4b8b8f6
+ TODO 918a4671a3a2e66a9b7306d2f6d8fb05cb2c75de
  bkp2U 3a5b1170bd7d845e678acf167b84b106c9de768c
  checkCoverage 39640510f8c9831dddfac488c63c7c2909d6b5c1
  check_u_consistency ce4dfd4d7930a2ec7ef8d1bbe5b2b39e9a670611
@@ -64,6 +64,7 @@ upax_py
   upax_py-0.8.0.tar.gz c1c919366cfb9288cfe6f3644457c0a816f7e756
   upax_py-0.8.1.tar.gz 6ea93bec38c4415c54e5f578c683dc0036d423d2
   upax_py-0.8.2.tar.gz ad622cc70289c6947b52ecacdea65d80823f473f
+  upax_py-0.8.3.tar.gz 4c6f971bd81fe6b567377b24b761124cfae6f7ee
  doPyLint d7b83e45e50ad3b90532aaed2f9da93cdbf9c49a
  ghpDoc
   css
@@ -91,24 +92,24 @@ upax_py
  styleit ec21359b7d619a2b00a8b06f965e39a951f4c9f6
  test.all ef3c839a28f46f89fe2c0c305497ca9543591255
  test_bound_log.py ca470b50fcc160156220d905526323bb002f08ad
- test_importer.py ce51c8811cd9be8008ed4345c2432e7f5538471a
- test_log.py 0dcf5bb4c4186e44e4ee148ca483abf0b9e6ac10
+ test_importer.py 8239e99803b8d45d11d8770c88a58e8c6fc45ab3
+ test_log.py b8b82dff9882cd4d6d895626856872af175545af
  test_log_entry.py c67057ba4d6909338ca21b51ea3c30bfa98018e3
  test_log_reader.py 5b4ad1d7bd89c787945a8792fa6de68f58be2ce5
  test_u_walker.py a42de53e7ac9f0022a3b3c615bc400bfda9e3d15
  test_upax_node.py 2c2ec8d88db4c1d91c899fa7542207585639db7d
- test_upax_server.py d4f5b7ec53450555883fc22e456e956b8ff33b56
+ test_upax_server.py 9ceefcc116693646ac7c750cd86a9645908f6967
  test_zmq.py a64d2c511b208c3752f4d96383b8c96918091e73
  u_dir
  upax
-  __init__.py 378bbc11e08ba0bb043c897ec01efc7f92848044
-  consistency.py 1eba5925ed13a58fd57a4066b967048f64b15f81
-  ftlog.py 10cc7a91c099baa2fc98476714cbb87b951005d9
-  node.py 10145c1564d3d343b3c26cefa57c3b962dea61f1
+  __init__.py 8fa801bc4f070a00d21e781dd174e08dc69f0cae
+  consistency.py 257b2b62960ca591dafb6cdce9c6488c67a1b379
+  ftlog.py a0f3941c69a8fd97c63f5736e9367344b5053238
+  node.py 9904bab5a0ffefa88fca55ca8769b7f91e696751
   walker.py a9859dab0c58eba2889ae83b9dc5722c7200a318
- upax_bulk_poster 98ba53d5290587f2649db886118ea17076ee6a3e
+ upax_bulk_poster 51a4d0c712a429b3ccd4a0a6d149b4bd706d7f4b
  upax_update_node_id 3f5b6c4002b575725b724209b2b2a9c6e0eaa609
  zz_mistune_test.py 51fc3c13b4993a6974b1033f2364b75fd779034e
 # END CONTENT #
 
-d3wSAz7SC9kKCAoeowHQ8PF9K5C19Nbo9xUKeqh3L/80pTHt13Rf8/pkBoVc20Dh3tDXV01/bycPLLbUtXWPBz+RFMrUgLX4+2te1VwdwNO+JUOQtfFaXNohH9nDQrvs4+F4n9CQEou04DGZHl4EgpY3qVIrPmATFPIFRpj2ctsd5BpvLWjcPlzs2cc+vpSqz4zs/r09G9zlHV1u0XsRqwSAlq56kpnsNVamr3tghdLI989FL1NUFie/dgUzsAaUZO7OHMPMi0u9y3uM0M+41bh3bDOoW8HttsxkhZPuzkLp7RVQEHwZkuzkCorONIAIop0XbP4e4f4gYQRlYX7BXQ==
+McIMd2K2HDvvkZeHP8vaT9iSsyac8wz4vXZ7vr5/8xHvBinoKqiJjBgN2xaaU5V3AerUMPlLswcp4LdDVQX9Tj1SBDo+Gnw9WrMJZ32zbbZsTgSm5g0yhyOm8eMxNYLxKbPR2BcRMRt72u5La6PcFYAuWeLuZOSnix1q0XPqA/Lk5ZQ4kZ6nvXgPJhI3aZW6wg/efIQ4IaLpF74mj8kNwkluZUaIk6lYU3NVbm6JwyZl0AMlrRp4CAJ5RRVjtHaJQa3/uoX/NFfnAcQBAI3hI0b965biwzy8a0pCAvBvD2cXZ9lLcXlcOLUblG3aBtXxJBXiNFcFcOjmJQ0SE3opuQ==

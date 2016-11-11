@@ -35,13 +35,13 @@ class TestImporter(unittest.TestCase):
         check_using_sha(using_sha)
         file_count = 17 + RNG.next_int16(128)
         files = {}             # a map hash->path
-        for nnn in range(file_count):
+        for _ in range(file_count):
             d_key = None
             # create a random file name                  maxLen   minLen
-            (d_len, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
+            (_, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
             # perhaps more restrictions needed
             while '.' in d_path:
-                (d_len, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
+                (_, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
             if using_sha == QQQ.USING_SHA1:
                 d_key = file_sha1hex(d_path)
             elif using_sha == QQQ.USING_SHA2:
@@ -84,10 +84,11 @@ class TestImporter(unittest.TestCase):
         return string
 
     def populate_empty(self, string, file_map, using_sha):
+
         u_path = string.u_path
         file_count = len(file_map)
 
-        for key in list(file_map.keys()):
+        for key in file_map:
             string.put(file_map[key], key, 'test_put_to_empty')
             self.assertTrue(string.exists(key))                  # FAILS
             with open(file_map[key], 'rb') as file:
@@ -98,7 +99,7 @@ class TestImporter(unittest.TestCase):
         log = string.log
         self.assertEqual(file_count, len(log))
 
-        for key in list(file_map.keys()):
+        for key in file_map:
             string.exists(key)
             entry = log.get_entry(key)
             self.assertIsNotNone(entry)
@@ -143,7 +144,7 @@ class TestImporter(unittest.TestCase):
         self.assertEqual(server2.using_sha, using_sha)
         log = server2.log
 
-        for key in list(file_map.keys()):
+        for key in file_map:
             server2.exists(key)
             entry = log.get_entry(key)
             self.assertIsNotNone(entry)

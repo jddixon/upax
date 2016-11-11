@@ -70,51 +70,57 @@ def check(options):
     by content key.
 
     """
-    repairing = options.repairing
-    verbose = options.verbose
     options.uServer = None
     try:
         setup_server(options)       # gets locks on U and U0
-    except ValueError as vvv:
+    except ValueError:
         if options.uServer is None:
             print("have you set usingSHA correctly?")
         else:
-            raise vvv
+            raise
     if options.uServer is not None:
-        try:
-            # LOG: keyed by hash, later entries with same hash should
-            # overwrite earlier
-            options.reader = FileReader(options.u_dir, options.using_sha)
-            options.log = BoundLog(options.reader, options.using_sha)
-            log = options.log
+        _do_server_shutdown(options)
 
-            # U: sorted content keys
-            keys = walk_u(options)
 
-            # for now, just check whether each content key has a log
-            # entry
-            for key in keys:
-                if key in log.index:
+def _do_server_shutdown(options):
+    repairing = options.repairing
+    verbose = options.verbose
+    try:
+        # LOG: keyed by hash, later entries with same hash should
+        # overwrite earlier
+        options.reader = FileReader(options.u_dir, options.using_sha)
+        options.log = BoundLog(options.reader, options.using_sha)
+        log = options.log
+
+        # U: sorted content keys
+        keys = walk_u(options)
+
+        # for now, just check whether each content key has a log
+        # entry
+        for key in keys:
+            if key in log.index:
+                if verbose:
+                    log_e = log.index[key]
+                    print(("%s in ndx, src '%s'" % (key, log_e.src)))
+            else:
+                if repairing:
+                    entry = log.add_entry(options.timestamp, key,
+                                          options.myNodeID, options.app_name, key)
                     if verbose:
-                        log_e = log.index[key]
-                        print(("%s in ndx, src '%s'" % (key, log_e.src)))
-                else:
-                    if repairing:
-                        entry = log.add_entry(options.timestamp, key,
-                                              options.myNodeID, options.app_name, key)
                         print(("ADDED TO LOG: %s" % entry))
-                    else:
+                else:
+                    if verbose:
                         print(("%s is not in the log" % key))
 
-            # DEBUG -------------------------------------------------
-            if verbose:
-                print(("COUNT OF ITEMS CHECKED IN U: %s" % len(keys)))
-                print(("NUMBER OF LOG ENTRIES:         %s" % len(options.log)))
-            # END ---------------------------------------------------
-        finally:
-            try:
-                if options.log is not None:
-                    options.log.close()
-            except AttributeError:
-                pass
-            shutdown_server(options)     # releases lock on U
+        # DEBUG -------------------------------------------------
+        if verbose:
+            print(("COUNT OF ITEMS CHECKED IN U: %s" % len(keys)))
+            print(("NUMBER OF LOG ENTRIES:         %s" % len(options.log)))
+        # END ---------------------------------------------------
+    finally:
+        try:
+            if options.log is not None:
+                options.log.close()
+        except AttributeError:
+            pass
+        shutdown_server(options)     # releases lock on U
