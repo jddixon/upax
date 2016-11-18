@@ -16,6 +16,11 @@ TWO_HEX_RE = re.compile('[0-9a-f]{2}')
 
 
 class UWalker(object):
+    """
+    Walks a content-keyed directory structure.
+
+    XXX Can't handle DIR_FLAT.
+    """
 
     def __init__(self, u_dir='/var/U', limit=64, start_at='00',
                  just_keys=False, using_sha=QQQ.USING_SHA2, verbose=False):
@@ -43,6 +48,7 @@ class UWalker(object):
 
     @property
     def count(self):
+        """ Return a count of nodes found during the walk. """
         return self._count
 
     @property

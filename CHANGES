@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.8.4
+    2016-11-18
+        * replace most uses of listdir with scandir; more PEP 8     SLOC 3063
 v0.8.3
     2016-11-10
         * more PEP 8, more minor bug fixes                          SLOC 3031
@@ -149,6 +152,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

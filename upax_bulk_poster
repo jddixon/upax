@@ -1,47 +1,52 @@
 #!/usr/bin/python3
-
 # ~/dev/py/upax/upax_bulk_poster
 
-import os
+""" Copy files in selected directory into the content-keyed store. """
+
 import sys
 import time
 from argparse import ArgumentParser
 
-import upax
+import os
+try:
+    from os.scandir import scandir
+except ImportError:
+    from scandir import scandir
+
+from upax import __version__, __version_date__, BlockingServer
+
 from xlattice import (QQQ, u, check_using_sha, check_u_path,
                       parse_using_sha, fix_using_sha, show_using_sha)
 
-# PATs AND REs ######################################################
-
 
 def do_whatever(args):
+    """ Given selected options, carry out the bulk posting.  """
+
     no_changes = args.no_changes
     u_path = args.u_path
     using_sha = args.using_sha
     verbose = args.verbose
-    server = upax.BlockingServer(u_path, using_sha)
+    server = BlockingServer(u_path, using_sha)
     log = server.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (
             len(log), u_path))
 
-    src = args.pgm_name_and_version
+    src = args.app_name
 
-    files = os.listdir(args.in_dir)
-    for file in files:
-        path_to_file = os.path.join(args.in_dir, file)
+    for entry in scandir(args.in_dir):
         # pylint: disable=redefined-variable-type
         if using_sha == QQQ.USING_SHA1:
-            hash_ = u.file_sha1hex(path_to_file)
+            hash_ = u.file_sha1hex(entry.path)
         elif using_sha == QQQ.USING_SHA2:
-            hash_ = u.file_sha2hex(path_to_file)
+            hash_ = u.file_sha2hex(entry.path)
         elif using_sha == QQQ.USING_SHA3:
-            hash_ = u.file_sha3hex(path_to_file)
+            hash_ = u.file_sha3hex(entry.path)
         if no_changes:
             if verbose:
-                print('would add %s %s' % (hash_, path_to_file))
+                print('would add %s %s' % (hash_, entry.path))
         else:
-            server.put(path_to_file, hash_, src)
+            server.put(entry.path, hash_, src)
 
     if verbose:
         print("there are %7u files in %s at the end of the run" % (
@@ -49,12 +54,17 @@ def do_whatever(args):
     server.close()
 
 
-def get_args(pgm_name_and_version, timestamp):
+def get_args():
     """
-    Parse the command line, validate options, optionally list option values.
+    Parse the command line.
 
     Return (parser, args), where args is a simple Namespace.
     """
+
+    # defaults and such ---------------------------------------------
+
+    app_name = "upax_bulk_poster v%s %s" % (__version__, __version_date__)
+    timestamp = "%04d%02d%02d-%02d%02d%02d" % time.gmtime()[:6]
 
     # -- check for config file --------------------------------------
 
@@ -97,14 +107,23 @@ def get_args(pgm_name_and_version, timestamp):
     parse_using_sha(parser)
 
     args = parser.parse_args()      # a Namespace object
+    if args.show_version:
+        print(args.app_name)
+        sys.exit(0)
+
+    args.app_name = app_name
+    args.timestamp = timestamp
+    return parser, args
+
+
+def check_args(parser, args):
+    """ Check and sometimes modify the interpreted command line arguments. """
 
     # -- fixups -----------------------------------------------------
     fix_using_sha(args)
 
-    args.pgm_name_and_version = pgm_name_and_version
     if args.testing:
         args.in_dir = 'testIn'
-    args.timestamp = timestamp
 
     # -- sanity checks ----------------------------------------------
     if not args.just_show:
@@ -118,7 +137,6 @@ def get_args(pgm_name_and_version, timestamp):
             sys.exit(1)
 
     # fixups --------------------------------------------------------
-    args.pgm_name_and_version = pgm_name_and_version
     if args.u_path and args.u_path[-1] == '/':
         args.u_path = args.u_path[:-1]          # drop any trailing slash
 
@@ -130,11 +148,14 @@ def get_args(pgm_name_and_version, timestamp):
     if not args.just_show:
         check_u_path(parser, args, must_exist=True)
 
-    # -- do it ------------------------------------------------------
-    if args.verbose or args.show_version or args.just_show:
-        print(args.pgm_name_and_version)
+
+def show_args(args):
+    """ Optionally display option values. """
+
+    if args.verbose or args.just_show:
+        print(args.app_name)
     if args.show_timestamp:
-        print('run at %s GMT' % timestamp)   # could be prettier
+        print('run at %s GMT' % args.timestamp)     # could be prettier
     else:
         print()                               # there's a comma up there
 
@@ -146,22 +167,18 @@ def get_args(pgm_name_and_version, timestamp):
         print('nameserver       = ' + str(args.nameserver))
         print('no_changes       = ' + str(args.no_changes))
         print('show_timestamp   = ' + str(args.show_timestamp))
-        print('show_version     = ' + str(args.show_version))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
         # using_sha, u_path, verbose
         show_using_sha(args)
 
-    return parser, args
-
 
 def main():
+    """ Parse, check, and show command line args; run the app. """
 
-    pgm_name_and_version = "upax_bulk_poster v%s %s" % (
-        upax.__version__, upax.__version_date__)
-    timestamp = "%04d%02d%02d-%02d%02d%02d" % time.gmtime()[:6]
-
-    _, args = get_args(pgm_name_and_version, timestamp)
+    parser, args = get_args()
+    check_args(parser, args)
+    show_args(args)
 
     if not args.just_show:
         lock = u.ULock(args.u_path)
