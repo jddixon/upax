@@ -116,7 +116,7 @@ class UpaxNode(Peer):
     def __init__(self, node_id=None, rsa_priv_key=None):
 
         if rsa_priv_key is None:
-            rsa_priv_key = RSA.generate(2048)       # XXX key fixed at 2K bits
+            rsa_priv_key = RSA.generate(2048)   # XXX RSA key fixed at 2K bits
         self._rsa_priv_key = rsa_priv_key
         # extract the public key from the private key
         rsa_pub_key = rsa_priv_key.publickey()

@@ -1,5 +1,14 @@
 ~/dev/py:/upax/TODO
 
+2016-11-18
+    * UWalker assumes using_sha is a boolean, but it should be 
+        tri-valued
+        - test_u_walker.py has the same problem
+    * UWalker, test_u_walker should support all directory structures,   
+        so DIR_FLAT, DIR16x16, DIR256x256
+    * modify test_u_walker.py to use xl_test_data
+    * possibly modify test_u_server.py in the same way
+
 2016-11-09
     * add sanity check: it must not be possible to any peers to 
         share the same nodeID

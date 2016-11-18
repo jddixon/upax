@@ -26,33 +26,33 @@ class TestUWalker(unittest.TestCase):
 
     # actual unit tests #############################################
     def test_walking_empty_dir(self):
-        u_dir = 'u_dir'
+        u_dir = 'uDir'
         if not os.path.exists(u_dir):
             os.makedirs(u_dir)
-        www = UWalker(u_dir)
-        self.assertEqual(u_dir, www.u_dir)
-        self.assertEqual(0, www.count)
+        walker = UWalker(u_dir)
+        self.assertEqual(u_dir, walker.u_dir)
+        self.assertEqual(0, walker.count)
 
     # ---------------------------------------------------------------
 
     def do_test_walking_real_dir(self, using_sha):
         u_dir = '/var/U'
-        limit = 100              # 1000
+        limit = 1000
         start_at = 'a0'
         if not os.path.exists(u_dir):
             os.makedirs(u_dir)
-        www = UWalker(
+        walker = UWalker(
             u_dir=u_dir,
             limit=limit,
             start_at=start_at,
             using_sha=using_sha)
-        self.assertEqual(u_dir, www.u_dir)
-        self.assertEqual(0, www.count)
-        self.assertEqual(limit, www.limit)
+        self.assertEqual(u_dir, walker.u_dir)
+        self.assertEqual(0, walker.count)
+        self.assertEqual(limit, walker.limit)
 
-        keys = www.walk()
+        keys = walker.walk()
         count = len(keys)
-        self.assertEqual(count, www.count)
+        self.assertEqual(count, walker.count)
         # print(("\nFOUND %u ENTRIES IN RANGE" % count))         # DEBUG
 
         #print(("THE FIRST SIXTEEN KEYS IN %s FROM %s" % (uDir, startAt)))

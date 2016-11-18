@@ -1,17 +1,22 @@
 # upax/__init__.py
 
 import binascii
-import os
 import re
 import time
+import os
+try:
+    from os.scandir import scandir
+except:
+    from scandir import scandir
+
 import rnglib
 from xlattice import QQQ, check_using_sha
 from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
                         UDir)
 from upax.ftlog import BoundLog, FileReader, Reader
 
-__version__ = '0.8.3'
-__version_date__ = '2016-11-10'
+__version__ = '0.8.4'
+__version_date__ = '2016-11-18'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -62,46 +67,54 @@ class Importer(object):
                         args.pgm_name_and_version, args.using_sha,
                         args.verbose)
 
-    def import_leaf_dir(self, sub_sub):
+    def import_bottom_dir(self, bottom_dir):
         src = self._pgm_name_and_version
         string = self._server
 
         count = 0
-        files = sorted(os.listdir(sub_sub))
-        for file in files:
-            # leaf file names should be the file's SHA hash, its content key
-            path_to = os.path.join(sub_sub, file)
-            if self._using_sha == QQQ.USING_SHA1:
-                match = FILE_NAME_1_RE.match(file)
-            else:
-                match = FILE_NAME_2_RE.match(file)
-            if match is not None:
-                count += 1
-                if self._verbose:
-                    print(('      ' + path_to))
-                (_, actual_hash) = string.put(path_to, file, src)
-                if actual_hash != file:
-                    print(("%s has content key %s" % (path_to, actual_hash)))
-            else:
-                print(("not a proper leaf file name: " + path_to))
+        for entry in scandir(bottom_dir):
+            ok_ = False
+            if entry.is_file():
+                ok_ = True
+                name = entry.name
+                # leaf name names should be the file's SHA hash, its content
+                # key
+                if self._using_sha == QQQ.USING_SHA1:
+                    match = FILE_NAME_1_RE.match(name)
+                else:
+                    match = FILE_NAME_2_RE.match(name)
+                if match is not None:
+                    count += 1
+                    if self._verbose:
+                        print('      ' + entry.path)
+                    (_, actual_hash) = string.put(entry.path, name, src)
+                    if actual_hash != name:
+                        print(
+                            "%s has content key %s" %
+                            (entry.path, actual_hash))
+                else:
+                    ok_ = False
+            if not ok_:
+                print("not a proper leaf file: " + entry.path)
         self._count += count
 
     def import_sub_dir(self, sub_dir):
-        files = sorted(os.listdir(sub_dir))
-        for sub_sub in files:
-            path_to = os.path.join(sub_dir, sub_sub)
-            if DIR_NAME_RE.match(sub_sub):
-                if self._verbose:
-                    print(('    ' + path_to))
-                self.import_leaf_dir(path_to)
-            else:
-                print(("not a proper subsubdirectory: " + path_to))
+        for entry in scandir(sub_dir):
+            ok_ = False
+            if entry.is_dir():
+                ok_ = True
+                if DIR_NAME_RE.match(entry.name):
+                    if self._verbose:
+                        print(('    ' + entry.path))
+                    self.import_bottom_dir(entry.path)
+            if not ok_:
+                print(("not a proper subsubdirectory: " + entry.path))
 
     def do_import_u_dir(self):
         src_dir = self._src_dir
         dest_dir = self._dest_dir
         verbose = self._verbose
-        # os.umask(0222)       # CAN'T USE THIS
+        # os.umask(0o222)       # CAN'T USE THIS
 
         self._server = BlockingServer(dest_dir, self._using_sha)
         log = self._server.log
@@ -113,18 +126,21 @@ class Importer(object):
         if self._verbose:
             print(src_dir)
         try:
-            files = sorted(os.listdir(src_dir))
-            for sub_dir in files:
-                path_to = os.path.join(src_dir, sub_dir)
-                if DIR_NAME_RE.match(sub_dir):
-                    if self._verbose:
-                        print(('  ' + path_to))
-                    self.import_sub_dir(path_to)
-                elif    sub_dir != 'L'       and\
-                        sub_dir != 'in'      and\
-                        sub_dir != 'node_id'  and\
-                        sub_dir != 'tmp':
-                    print(("not a proper subdirectory: " + path_to))
+            for entry in scandir(src_dir):
+                sub_dir = entry.name
+                if sub_dir == 'L' or sub_dir == 'in' or \
+                        sub_dir == 'node_id' or sub_dir == 'tmp':
+                    continue
+                ok_ = False
+                if entry.is_dir():
+                    if DIR_NAME_RE.match(sub_dir):
+                        if self._verbose:
+                            print(('  ' + entry.name))
+                        ok_ = True
+                        self.import_sub_dir(entry.path)
+
+                if not ok_:
+                    print(("not a proper subdirectory: " + entry.name))
         finally:
             self._server.close()                                       # GEEP
 
@@ -206,10 +222,12 @@ class Server(object):
 
     # XXXthis is a reference to the actual log and so a major security risk
     @property
-    def log(self): return self._log
+    def log(self):
+        return self._log
 
     @property
-    def node_id(self): return self._node_id
+    def node_id(self):
+        return self._node_id
 
     def exists(self, key):
         return self._u_dir.exists(key)
