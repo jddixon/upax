@@ -15,8 +15,8 @@ from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
                         UDir)
 from upax.ftlog import BoundLog, FileReader, Reader
 
-__version__ = '0.8.4'
-__version_date__ = '2016-11-18'
+__version__ = '0.8.5'
+__version_date__ = '2016-11-26'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -50,24 +50,38 @@ class Importer(object):
 
     @property
     def src_dir(self):
+        """
+        Return the path to the source directory from which files are
+        being loaded.
+        """
         return self._src_dir
 
     def dest_dir(self):
+        """
+        Return the path to the destination directory into which files
+        will be copied.
+        """
         return self._dest_dir
 
     def pgm_name_and_version(self):
+        """ Return the name of the program loading the data. """
         return self._pgm_name_and_version
 
     def verbose(self):
+        """ Return whether to be chatty. """
         return self._verbose
 
     @staticmethod
     def create_importer(args):
+        """ Create an Importer given a set of command line options. """
         return Importer(args.src_dir, args.dest_dir,
                         args.pgm_name_and_version, args.using_sha,
                         args.verbose)
 
     def import_bottom_dir(self, bottom_dir):
+        """
+        Import the files in the bottom directory of a content-keyed store.
+        """
         src = self._pgm_name_and_version
         string = self._server
 
@@ -99,6 +113,7 @@ class Importer(object):
         self._count += count
 
     def import_sub_dir(self, sub_dir):
+        """ Import the files in a subdirectory of a content-keyed store. """
         for entry in scandir(sub_dir):
             ok_ = False
             if entry.is_dir():
@@ -111,6 +126,10 @@ class Importer(object):
                 print(("not a proper subsubdirectory: " + entry.path))
 
     def do_import_u_dir(self):
+        """
+        Importation files in the source directory, which is a content-keyed
+        store.
+        """
         src_dir = self._src_dir
         dest_dir = self._dest_dir
         verbose = self._verbose
@@ -146,28 +165,28 @@ class Importer(object):
 
 
 class Server(object):
+    """
+    The Upax Server controlling access to a content-keyed store.
 
-    #   __slots__ = ['_uPath', '_usingSHA', ]
+    We expect uDir to contain two subdirectories, in/ and tmp/, and
+    at least two files, L and nodeID.  L is the serialization of a
+    BoundLog.  nodeID contains a 40- or 64-byte sequence of hex digits
+    followed by a newline.  This should be unique.
+
+    A non-empty uDir is a DIR256x256 structure, and so it also contains
+    subdirectories whose names are two hex digits and each such
+    subdirectory will contain subdirectories whose names are two hex
+    digits.  Data is stored in these subdirectories; at this time
+    data files are named by their SHA1 content keys and so file names
+    consist of 40 or 64 hex digits.  The first two hex digits of the contena
+    key select the uDir subdirectory holding the data file and the
+    second two hex digits select the subsubdirectory.
+
+    All files in uDir should be owned by upax.upax and are (at least
+    at this time) world-readable but only owner-writeable.
+    """
 
     def __init__(self, u_path, using_sha=QQQ.USING_SHA2):
-        """
-        We expect uDir to contain two subdirectories, in/ and tmp/, and
-        at least two files, L and nodeID.  L is the serialization of a
-        BoundLog.  nodeID contains a 40- or 64-byte sequence of hex digits
-        followed by a newline.  This should be unique.
-
-        A non-empty uDir is a DIR256x256 structure, and so it also contains
-        subdirectories whose names are two hex digits and each such
-        subdirectory will contain subdirectories whose names are two hex
-        digits.  Data is stored in these subdirectories; at this time
-        data files are named by their SHA1 content keys and so file names
-        consist of 40 or 64 hex digits.  The first two hex digits of the contena
-        key select the uDir subdirectory holding the data file and the
-        second two hex digits select the subsubdirectory.
-
-        All files in uDir should be owned by upax.upax and are (at least
-        at this time) world-readable but only owner-writeable.
-        """
 
         check_using_sha(using_sha)
         _in_dir_path = os.path.join(u_path, 'in')
@@ -210,29 +229,39 @@ class Server(object):
 
     @property
     def u_dir(self):
+        """ Return the UDir object describing the content-keyed store. """
         return self._u_dir
 
     @property
     def u_path(self):
+        """ Return the path to the content-keyed store. """
         return self._u_path
 
     @property
     def using_sha(self):
+        """ Return the type of SHA hash used. """
         return self._using_sha
 
-    # XXXthis is a reference to the actual log and so a major security risk
     @property
     def log(self):
+        """ Return a reference to the Server's BoundLog."""
+
         return self._log
 
     @property
     def node_id(self):
+        """ Return the Server's NodeID. """
         return self._node_id
 
     def exists(self, key):
+        """ Return whehter uDir exists. """
         return self._u_dir.exists(key)
 
     def get(self, key):
+        """
+        Given a content key (SHA hash), return the contents of the
+        corresponding file.
+        """
         return self._u_dir.get_data(key)
 
     def put(self, path_to_file, key, source, logged_path=None):
@@ -286,16 +315,19 @@ class Server(object):
         return (len_, hash_)
 
     def close(self):
+        """ Shut down the server, closing any open files. """
         self._log.close()
 
 
 class BlockingServer(Server):
+    """ Single-threaded Upax server. """
 
     def __init__(self, u_dir, using_sha=QQQ.USING_SHA2):
         super().__init__(u_dir, using_sha)
 
 
 class NonBlockingServer(Server):
+    """ Multi-threaded or otherwise non-blocking Upax server. """
 
     def __init__(self, u_dir, using_sha=QQQ.USING_SHA2):
         super().__init__(u_dir, using_sha)

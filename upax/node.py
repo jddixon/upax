@@ -49,6 +49,8 @@ def check_hex_node_id_256(string):
 class Peer(object):
     """
     Specifications for an XLattice Peer, a Node with which we communicate.
+
+    The node_ndx used here is a 32-bit value unique to the object.
     """
 
     def __init__(self, node_id, rsa_pub_key, using_sha=QQQ.USING_SHA2):
@@ -65,14 +67,17 @@ class Peer(object):
 
     @property
     def node_id(self):
+        """ Return the 32-bit identifier unique to the Peer. """
         return self._node_id
 
     @property
     def rsa_pub_key(self):
+        """ Return the public part of the node's RSA key. """
         return self._rsa_pub_key
 
     @property
     def node_ndx(self):
+        """ Return 32-bit int index to this node. """
         return self._node_ndx
 
     @node_ndx.setter
@@ -87,6 +92,7 @@ class Peer(object):
 
     @property
     def using_sha(self):
+        """ Return the SHA hash type used by the object. """
         return self._using_sha
 
     @property
@@ -112,6 +118,7 @@ class Peer(object):
 
 
 class UpaxNode(Peer):
+    """ Upax version of the XLattice node. """
 
     def __init__(self, node_id=None, rsa_priv_key=None):
 
@@ -125,6 +132,16 @@ class UpaxNode(Peer):
         self._peers = {}    # nodeNdx (uInt32)    => Peer object
         self._l_hashes = {}  # nodeNdx + timestamp => LHash object
         self._l_map = {}    # L hash + timestamp  => text (bytearray)
+
+    @property
+    def peers(self):
+        """ Return a map of Peers. """
+        return self._peers
+
+    @property
+    def l_hashes(self):
+        """ Return a map of L-hashes. """
+        return self._l_hashes
 
 
 class LHash(object):
@@ -141,12 +158,15 @@ class LHash(object):
 
     @property
     def node_ndx(self):
+        """ Return node index attribute of the object. """
         return self._node_ndx
 
     @property
     def timestamp(self):
+        """ Return timestamp attribute of the object. """
         return self._timestamp
 
     @property
     def l_hash(self):
+        """ Return L_hash attribute of the object. """
         return self._hash
