@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-
 # ~/dev/py/upax/check_u_consistency
+
+""" Perform a upax consistency check. """
 
 import os
 import sys
@@ -13,9 +14,10 @@ from upax import __version__, __version_date__
 import upax.consistency
 
 
-def die_if_not_found(string):
-    if not os.path.exists(string):
-        print("cannot continue: %s does not exist" % string)
+def die_if_not_found(path):
+    """ Stop the program if the file does not exist. """
+    if not os.path.exists(path):
+        print("cannot continue: %s does not exist" % path)
         sys.exit(1)
 
 

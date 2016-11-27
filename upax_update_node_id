@@ -2,10 +2,8 @@
 
 # ~/dev/py/upax/upax_update_node_id
 
-import binascii
 import os
 import pwd
-import re
 import sys
 import time
 
@@ -13,7 +11,7 @@ from argparse import ArgumentParser
 
 import upax
 from xlattice import (u, QQQ, check_using_sha,
-                      parse_using_sha, fix_using_sha, show_using_sha, check_u_path)
+                      parse_using_sha, fix_using_sha, show_using_sha)
 
 # PATs AND REs ######################################################
 

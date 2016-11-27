@@ -1,5 +1,7 @@
 # dev/py/upax3/upax3/ftlog.py
 
+""" Fault-tolerant log for a Upax node. """
+
 import os
 import re
 # import sys
@@ -46,14 +48,11 @@ IGNORABLE_RE = re.compile(IGNORABLE_PAT)
 class Log(Container, Sized):
     """a fault-tolerant log"""
 
-    #__slots__ = ['_entries', '_index', '_timestamp',
-    #              '_prevHash', '_prevMaster', '_using_sha', ]
-
     def __init__(self, reader, using_sha):
         self._using_sha = using_sha
         (timestamp, prev_log_hash, prev_master, entries, index) = reader.read()
         self._timestamp = timestamp     # seconds from epoch
-        self._prev_hash = prev_log_hash   # SHA1/3 hash of previous log
+        self._prev_hash = prev_log_hash   # SHA1/3 hash of previous Log
         if using_sha == QQQ.USING_SHA1:
             check_hex_node_id_160(self._prev_hash)
         else:
@@ -68,9 +67,11 @@ class Log(Container, Sized):
         self._index = index         # a map, hash => entry
 
     def __contains__(self, key):
+        """ Return whether this key is in the Log. """
         return key in self._index
 
     def __len__(self):
+        """ Return the length of this Log. """
         return len(self._entries)
 
     def __str__(self):
@@ -89,6 +90,13 @@ class Log(Container, Sized):
         return ret
 
     def add_entry(self, tstamp, key, node_id, src, path):
+        """
+        Create a LogEntry with the given timestamp, key, nodeID, src, and path.
+
+        If the LogEntry is already present in the Log, return a reference to
+        the existing LogEntry.  Otherwise, add the LogEntry to the list and
+        index it by key.
+        """
         entry = LogEntry(tstamp, key, node_id, src, path)
         if key in self._index:
             existing = self._index[key]
@@ -99,6 +107,7 @@ class Log(Container, Sized):
         return entry
 
     def get_entry(self, key):
+        """ Given a key, return the corresponding LogEntry or None. """
         if not key in self._index:
             return None
         else:
@@ -106,28 +115,34 @@ class Log(Container, Sized):
 
     @property
     def entries(self):
+        """ Return the list of LogEntries. """
         return self._entries
 
     @property
     def index(self):
+        """ Return the index by key into the list of LogEntries. """
         return self._index
 
     @property
     def prev_hash(self):
+        """ Return the content hash of the previous Log. """
         return self._prev_hash
 
     @property
     def prev_master(self):
+        """
+        Return the ID of the master of the previous Log.
+        """
         return self._prev_master
 
     @property
     def timestamp(self):
+        """ Return the timestamp for this Log. """
         return self._timestamp
-
-# -------------------------------------------------------------------
 
 
 class BoundLog(Log):
+    """ A fult tolerant log bound to a file. """
 
     def __init__(self, reader, using_sha=QQQ.USING_SHA2,
                  u_path=None, base_name='L'):
@@ -170,16 +185,30 @@ class BoundLog(Log):
         return entry
 
     def flush(self):
+        """
+        Flush the log.
+
+        This should write the contents of any internal buffers to disk,
+        but no particular behavior is guaranteed.
+        """
         self.fd_.flush()
 
     def close(self):
+        """ Close the log. """
         self.fd_.close()
         self.is_open = False
 
 
 # -------------------------------------------------------------------
 class LogEntry():
+    """
+    The entry made upon adding a file to the Upax content-keyed data store.
 
+    This consists of a timestamp; an SHA content key, the hash of the
+    contents of the file, the NodeID identifying the contributor,
+    its source (which may be a program name, and a UNIX/POSIX path
+    associated with the file.  The path will normally be relative.
+    """
     __slots__ = ['_timestamp', '_key', '_node_id', '_src', '_path', ]
 
     def __init__(self,
@@ -210,26 +239,36 @@ class LogEntry():
 
     @property
     def key(self):
+        """
+        Return the 40- or 64-byte SHA hash associated with the entry.
+
+        This is an SHA content hash.
+        """
         return self._key
 
     @property
     def node_id(self):
+        """ Return the 40- or 64-byte NodeID associated with the entry. """
         return self._node_id
 
     @property
     def path(self):
+        """ Return the POSIX path associated with the LogEntry. """
         return self._path
 
     @property
     def src(self):
+        """ Return the 'src' associated with the LogEntry. """
         return self._src
 
     @property
     def timestamp(self):
+        """ Return the time at which the LogEntry was created. """
         return self._timestamp
 
     @property
     def using_sha(self):
+        """ XXX WRONG should return key length, allowing 64 or 40. """
         return len(self._key) == 40
 
     # used in serialization, so newlines are intended
@@ -261,18 +300,21 @@ class LogEntry():
 # -------------------------------------------------------------------
 # CLASS READER AND SUBCLASSES
 # -------------------------------------------------------------------
-# Would prefer to be able to handle this through something like a Java
-# Reader, so that we could test with a StringReader but then use a
-# FileReader in production.  If it is a file, file.readlines(sizeHint)
-# supposedly has very good preformance for larger sizeHint, say 100KB
-# It appears that lines returned need to be rstripped, which wastefully
-# requires copying
-#
-# For our purposes, string input can just be split on newlines, which
-# has the benefit of effectively chomping at the same time
 
 
 class Reader(object):
+    """
+    Would prefer to be able to handle this through something like a Java
+    Reader, so that we could test with a StringReader but then use a
+    FileReader in production.  If it is a file, file.readlines(sizeHint)
+    supposedly has very good preformance for larger sizeHint, say 100KB
+    It appears that lines returned need to be rstripped, which wastefully
+    requires copying
+
+    For our purposes, string input can just be split on newlines, which
+    has the benefit of effectively chomping at the same time
+    """
+
     #__slots__ = ['_entries', '_index', '_lines', '_using_sha',
     #             'FIRST_LINE_RE', ]
 
@@ -300,16 +342,18 @@ class Reader(object):
 
     @property
     def using_sha(self):
+        """ Return the type of SHA hash used. """
         return self._using_sha
 
     def read(self):
-
-        # The first line contains timestamp, hash, nodeID for previous log.
-        # Succeeding lines look like
-        #  timestamp hash nodeID src path
-        # In both cases timestamp is an unsigned int, the number of
-        # milliseconds since the epoch.  It can be printed with %13u.
-        # The current value (April 2011) is about 1.3 trillion (1301961973000).
+        """
+        The first line contains timestamp, hash, nodeID for previous Log.
+        Succeeding lines look like
+           timestamp hash nodeID src path
+        In both cases timestamp is an unsigned int, the number of
+        milliseconds since the epoch.  It can be printed with %13u.
+        The current value (April 2011) is about 1.3 trillion (1301961973000).
+        """
 
         first_line = None
         if self._lines and len(self._lines) > 0:
@@ -391,14 +435,17 @@ class FileReader(Reader):
 
     @property
     def base_name(self):
+        """ Return the base name of the log file. """
         return self._base_name
 
     @property
     def log_file(self):
+        """ Return the path to the log file. """
         return self._log_file
 
     @property
     def u_path(self):
+        """ Return the path to uDir, the content-keyed store. """
         return self._u_path
 
 # -------------------------------------------------------------------

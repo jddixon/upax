@@ -21,7 +21,7 @@ __all__ = ['check', ]
 
 def setup_server(options):
     """ Add server configuration info to the set of options. """
-    options.uServer = upax.BlockingServer(options.u_dir, options.using_sha)
+    options.uServer = upax.BlockingServer(options.u_path, options.using_sha)
 
 
 def shutdown_server(options):
@@ -39,7 +39,7 @@ def walk_u(options):
     www = UWalker(just_keys=options.just_keys,
                   limit=options.limit,
                   start_at=options.start_at,
-                  u_dir=options.u_dir,
+                  u_path=options.u_path,
                   using_sha=options.using_sha,
                   verbose=options.verbose)
     keys = www.walk()
@@ -88,7 +88,7 @@ def _do_server_shutdown(options):
     try:
         # LOG: keyed by hash, later entries with same hash should
         # overwrite earlier
-        options.reader = FileReader(options.u_dir, options.using_sha)
+        options.reader = FileReader(options.u_path, options.using_sha)
         options.log = BoundLog(options.reader, options.using_sha)
         log = options.log
 

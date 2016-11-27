@@ -1,5 +1,14 @@
 ~/dev/py:/upax/TODO
 
+2016-11-26
+    * Find a use for mistune or drop zz_mistune_test.py
+    * URGENT: upax/walker.py is only suitable for DIR256x256.
+        - Modify to support SHA{1,2,3} and DIR{_FLAT,16x16,256x256}
+            * that's nine combinations in all.
+    * URGENT: ftlog/LogEntry treats using_sha as a boolean: 
+        len(key)==40
+        - this is wrong, but we don't actually need to known
+            which SHA is being used, just its length
 2016-11-18
     * UWalker assumes using_sha is a boolean, but it should be 
         tri-valued

@@ -7,28 +7,28 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END PUBLIC KEY-----
-upax_py v0.8.4
-2016-11-18 21:48:45
+upax_py v0.8.5
+2016-11-27 02:38:15
 # BEGIN CONTENT #
 upax_py
  .dvcz
-  builds 7b93e521b302d75cce4453b222c27f415071bab3
+  builds 00f13a5845f5cdc1f3a519497dd31099c64f2400
   copyright 40a152c0598a7da436fc48b2286fb14b4f2e9101
-  lastBuildList e744d2c1debc98b68f91eaabfada8f04dc702933
+  lastBuildList d2e0cf4f33b1bb54fd43f31cbde89db004f42b02
   license 5977a55c75bb4612004451a56b0b4c22d9d3311d
   projCfg 387838116e423692c3db267de3492968b65f6f8a
   projCfg.local 3258109f937dfc30585f333131e112df4b244301
-  version f68631be11dee378c9f775c223554513f8b2fb9d
+  version cc60ba50a3013756ec06065972f7051e01a44c4d
  .gitignore 68242d00de0771dd19ca1f653d968539b2ef36ea
  .gitignore.local c2d10285e0ab23017eda564eb5cdeb1b28cbbee4
- CHANGES d714eefed02d35394bfc4b28d6509d2bb56c77db
+ CHANGES 3cdf2e3b58227d1bd7cb783c483d6d83f6b5f2db
  LICENSE-MIT.md 7ff8ae89c5e4489f22b3a360a03225241877bc8d
  MANIFEST.in 0af3cac075b23ed9ae22a2b0794ce15fcfefeb76
  README.md 722d325a5f7acae1025cef7387886cd0fd2bb85c
- TODO 724a0f590bf6d2ec14707bca5be44c6317d5eb50
+ TODO e15fec872c84ef07572de79a1fce226cacf0d63a
  bkp2U 249475490d0e41090e9a7e02c2abf09d26c471fa
  checkCoverage 39640510f8c9831dddfac488c63c7c2909d6b5c1
- check_u_consistency ce4dfd4d7930a2ec7ef8d1bbe5b2b39e9a670611
+ check_u_consistency 113b2bc4361b5aecd980260f464a6048823a0528
  countem 9dc5f30e2cb7aa5e27423c66278bac5d7932d330
  dist
   upax-0.1.0.tar.gz 41aa05d8ce38902d65d3206b8ed48573e6d12e51
@@ -66,6 +66,7 @@ upax_py
   upax_py-0.8.2.tar.gz ad622cc70289c6947b52ecacdea65d80823f473f
   upax_py-0.8.3.tar.gz 4c6f971bd81fe6b567377b24b761124cfae6f7ee
   upax_py-0.8.4.tar.gz cbe89476d7c1321a4024b5f8435e8aa6fd1725dc
+  upax_py-0.8.5.tar.gz 4c8eedc2777a3a6aed558bce4f7ac14ff95f2a33
  doPyLint d7b83e45e50ad3b90532aaed2f9da93cdbf9c49a
  ghpDoc
   css
@@ -95,21 +96,21 @@ upax_py
  test_bound_log.py ca470b50fcc160156220d905526323bb002f08ad
  test_importer.py 8239e99803b8d45d11d8770c88a58e8c6fc45ab3
  test_log.py b8b82dff9882cd4d6d895626856872af175545af
- test_log_entry.py c67057ba4d6909338ca21b51ea3c30bfa98018e3
+ test_log_entry.py 9591809d5d7e6f68cfab6b4a767ee25ab3dc2696
  test_log_reader.py 5b4ad1d7bd89c787945a8792fa6de68f58be2ce5
- test_u_walker.py 1a2387ac8593b82c745a958286711d57c1b94062
+ test_u_walker.py c26fadabaf4cd7a0d9846d82489308688d78af55
  test_upax_node.py 2c2ec8d88db4c1d91c899fa7542207585639db7d
  test_upax_server.py 9ceefcc116693646ac7c750cd86a9645908f6967
  test_zmq.py a64d2c511b208c3752f4d96383b8c96918091e73
  upax
-  __init__.py 53568305f31b32ba7791395a4c5af16e06df6e13
-  consistency.py 257b2b62960ca591dafb6cdce9c6488c67a1b379
-  ftlog.py a0f3941c69a8fd97c63f5736e9367344b5053238
-  node.py e7b94e49f482ae9930d635e885b39157473660ba
-  walker.py 729726d590732259eb545bd2a9c6f2901975dd1a
+  __init__.py 2dbc675c97a257fa449ffbad136e82063bb8e3b8
+  consistency.py d2e9c43af895bf5c3bdf51ede829a20bf07df548
+  ftlog.py b635ef46aaf4282429ca6ac12d1d7c75f8ffbc1d
+  node.py 0f661aa6b9ae6ef04fc492ccf5a2c48d7ca8202f
+  walker.py 09f3d9bb58b1eb8d302bba5e6b384c87d60954ce
  upax_bulk_poster 7881c805f13d84bf5512f6f32e7e36348c9e3ae9
- upax_update_node_id 3f5b6c4002b575725b724209b2b2a9c6e0eaa609
- zz_mistune_test.py 51fc3c13b4993a6974b1033f2364b75fd779034e
+ upax_update_node_id 107892d4e3deeddf2e5fceb7343aa83d68640c0f
+ zz_mistune_test.py 3fa213aada786f3baeea4db057878d2c00e9c661
 # END CONTENT #
 
-cUW0pV+RpmwgL4uh7Xf0t+XliJyLzvX6/HTVof5OBWvCi09Q+kXysAe9H06u2PuTZ9yhIH63Vgblas4PGDxDs+V5Mp/MsVa20TW4DGk0vB5mW//07U/DcgUHKsYcXyimgtXNRvAj9wsL4DVG4wUJ8tSnktETYKhztd/R10gldJlh9ZowH6kaQGWsD2WkObLhi7KaAEqxVtF96LArIngClY0PnO0bV2GdWjlN1UAA2uG1e7hSp3kQ3tcjZ1XNkDujZVVChuMNdrQ3vygurHshserP6Ce37RgEpJPs4l711Mi/WLeq7blaWZ1jRSdNX4MRj1cBpu8Z9MXc9SOAkGMz+w==
+A0Vb8DKpgKjE4+fSc/6vE/2PN9LxAYjszRguEYKekDehJO/qm7SSs7OTY2gxabaLAE9z3poteX85aUQv4OHqvO3kwPrl7Jzhl3S7TGaJii90qQxvdAMmHj5GAZ8heMzn2uxB63SGpzWVBTKPyJ+ZmbF7MiYC+32on/dQgNhJKTiQrzq4aW1n+JRqzx1zdmru7uaSEy0pNv3symfDEBleqBJ7yR3fxHNCDQHFLu56RQY9slKa0E4i0+IjxE+iCA+KXtFWjNfHSguDIodx/3JHmmuA2pE6486Tr1dxQNTiZ6SkumwynGx38crbAUgsLm8ukbRTkQeiWRzSNmG4+zsb6w==

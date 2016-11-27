@@ -26,27 +26,27 @@ class TestUWalker(unittest.TestCase):
 
     # actual unit tests #############################################
     def test_walking_empty_dir(self):
-        u_dir = 'uDir'
-        if not os.path.exists(u_dir):
-            os.makedirs(u_dir)
-        walker = UWalker(u_dir)
-        self.assertEqual(u_dir, walker.u_dir)
+        u_path = 'uDir'
+        if not os.path.exists(u_path):
+            os.makedirs(u_path)
+        walker = UWalker(u_path)
+        self.assertEqual(u_path, walker.u_path)
         self.assertEqual(0, walker.count)
 
     # ---------------------------------------------------------------
 
     def do_test_walking_real_dir(self, using_sha):
-        u_dir = '/var/U'
+        u_path = '/var/U'
         limit = 1000
         start_at = 'a0'
-        if not os.path.exists(u_dir):
-            os.makedirs(u_dir)
+        if not os.path.exists(u_path):
+            os.makedirs(u_path)
         walker = UWalker(
-            u_dir=u_dir,
+            u_path=u_path,
             limit=limit,
             start_at=start_at,
             using_sha=using_sha)
-        self.assertEqual(u_dir, walker.u_dir)
+        self.assertEqual(u_path, walker.u_path)
         self.assertEqual(0, walker.count)
         self.assertEqual(limit, walker.limit)
 
