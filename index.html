@@ -9,26 +9,21 @@
 </head>
 <body>
 <div class="content">
-<h1>
-<a id="user-content-upax_py" class="anchor" href="#upax_py" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>upax_py</h1>
+<h1 class="libTop">upax_py</h1>
 
 <p>This is a Python 3 implementation of the
 <a href="https://jddixon.github.io/xlattice/upax.html">Upax</a>
 distributed file system.</p>
 
-<h2>
-<a id="user-content-major-system-components" class="anchor" href="#major-system-components" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Major System Components</h2>
+<h2>Major System Components</h2>
 
 <p>A Upax implementation consists of at least</p>
 
 <ul>
-<li>a <a href="https://jddixon.github.io/xlattice/ftLog.html">fault-tolerant log</a>
-</li>
-<li>a <a href="https://jddixon.github.io/xlattice/upaxServer.html">Upax server</a>
-</li>
+<li>a <a href="https://jddixon.github.io/xlattice/ftLog.html">fault-tolerant log</a></li>
+<li>a <a href="https://jddixon.github.io/xlattice/upaxServer.html">Upax server</a></li>
 <li>a <a href="https://jddixon.github.io/xlattice/upaxClient.html">Upax client</a> and optionally</li>
-<li>a <a href="https://jddixon.github.io/xlattice/upaxMirror.html">Upax mirror</a>
-</li>
+<li>a <a href="https://jddixon.github.io/xlattice/upaxMirror.html">Upax mirror</a></li>
 </ul>
 
 <p>Servers involved use a
@@ -36,8 +31,7 @@ distributed file system.</p>
 to ensure that their pictures of the state of the distributed file system
 are consistent.</p>
 
-<h2>
-<a id="user-content-utilities" class="anchor" href="#utilities" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Utilities</h2>
+<h2>Utilities</h2>
 
 <p>These include</p>
 
@@ -47,8 +41,7 @@ are consistent.</p>
 <li>upaxUpdateNodeID</li>
 </ul>
 
-<h3>
-<a id="user-content-importudir" class="anchor" href="#importudir" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>importUDir</h3>
+<h3>importUDir</h3>
 
 <p>This utility imports all of the files in a content-keyed U directory into
 the Upax distribued file system.</p>
@@ -69,8 +62,7 @@ optional arguments:
   -v, --verbose         talk a lot
 </code></pre>
 
-<h3>
-<a id="user-content-upaxbulkposter" class="anchor" href="#upaxbulkposter" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>upaxBulkPoster</h3>
+<h3>upaxBulkPoster</h3>
 
 <p>Given a flat directory, imports any constituent files into the Upax
 distributd file system.</p>
@@ -95,11 +87,10 @@ optional arguments:
   -T, --testing         test run - write to ./testU
   -V, --showVersion     show version number and date
   -v, --verbose         talk a lot
-  -z, --noChanges       don't actually write anything to disk
+  -z, --noChanges       don&#39;t actually write anything to disk
 </code></pre>
 
-<h3>
-<a id="user-content-upaxupdatenodeid" class="anchor" href="#upaxupdatenodeid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>upaxUpdateNodeID</h3>
+<h3>upaxUpdateNodeID</h3>
 
 <p>The content-keyed store on a Upax system needs a unique ID, its <strong>nodeID</strong>.
 This utility writes a randomly chosen 20- or 32-byte value into a file
@@ -125,18 +116,16 @@ optional arguments:
   -T, --testing         test run - write to ./testU
   -V, --showVersion     show version number and date
   -v, --verbose         talk a lot
-  -z, --noChanges       don't actually write anything to disk
+  -z, --noChanges       don&#39;t actually write anything to disk
 </code></pre>
 
-<h2>
-<a id="user-content-dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependencies</h2>
+<h2>Dependencies</h2>
 
 <ul>
 <li>  <strong>xlattice_py</strong>, the collection of Python3 XLattice supporrt classes</li>
 </ul>
 
-<h2>
-<a id="user-content-project-status" class="anchor" href="#project-status" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Status</h2>
+<h2>Project Status</h2>
 
 <p>Incompletely specified, partially implemented.</p>
 
