@@ -12,7 +12,7 @@ import os
 import re
 import sys
 
-from xlattice import u, QQQ, check_using_sha
+from xlattice import u, HashTypes, check_hashtype
 
 HEX_DIR_PAT = '^[0-9a-fA-F]{2}$'
 HEX_DIR_RE = re.compile(HEX_DIR_PAT)
@@ -30,11 +30,11 @@ class UWalker(object):
     """
 
     def __init__(self, u_path='/var/U', limit=64, start_at='00',
-                 just_keys=False, using_sha=QQQ.USING_SHA2, verbose=False):
+                 just_keys=False, hashtype=HashTypes.SHA2, verbose=False):
         if not os.path.exists(u_path):
             raise ValueError("directory '%s' does not exist" % str(u_path))
 
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
         self._u_path = u_path
         self._count = 0
         if limit > 0:
@@ -48,7 +48,7 @@ class UWalker(object):
             sys.exit(-1)
         self._just_keys = just_keys
         self._start_at = start_at
-        self._using_sha = using_sha
+        self._hashtype = hashtype
         self._verbose = verbose
 
         self._keys = []
@@ -105,11 +105,11 @@ class UWalker(object):
                                 continue
 
                             path_to_file = os.path.join(mid_dir_path, file)
-                            if self._using_sha == QQQ.USING_SHA1:
+                            if self._hashtype == HashTypes.SHA1:
                                 content_key = u.file_sha1hex(path_to_file)
-                            elif self._using_sha == QQQ.USING_SHA2:
+                            elif self._hashtype == HashTypes.SHA2:
                                 content_key = u.file_sha2hex(path_to_file)
-                            elif self._using_sha == QQQ.USING_SHA3:
+                            elif self._hashtype == HashTypes.SHA3:
                                 content_key = u.file_sha3hex(path_to_file)
 
                             if file != content_key:

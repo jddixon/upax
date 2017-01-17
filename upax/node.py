@@ -10,7 +10,7 @@ byte arrays.  So get it right here and then backport to XLattice.
 import re
 
 from Crypto.PublicKey import RSA            # new 2016-11-10
-from xlattice import QQQ
+from xlattice import HashTypes
 
 NODE_ID_1_PAT = '^[A-Z0-9]{40}$'
 NODE_ID_1_RE = re.compile(NODE_ID_1_PAT, re.I)
@@ -18,13 +18,13 @@ NODE_ID_2_PAT = '^[A-Z0-9]{64}$'
 NODE_ID_2_RE = re.compile(NODE_ID_2_PAT, re.I)
 
 
-def check_node_id(b_val, using_sha):
+def check_node_id(b_val, hash_type):
     """ Verify that the nodeID is compatible with the SHA hash type. """
     if b_val is None:
         raise ValueError('nodeID may not be None')
     b_len = len(b_val)
-    if (using_sha == QQQ.USING_SHA1 and b_len != 20) or\
-            (using_sha != QQQ.USING_SHA1 and b_len != 32):
+    if (hash_type == HashTypes.SHA1 and b_len != 20) or\
+            (hash_type != HashTypes.SHA1 and b_len != 32):
         raise ValueError('invalid nodeID length %u' % b_len)
 
 
@@ -53,9 +53,9 @@ class Peer(object):
     The node_ndx used here is a 32-bit value unique to the object.
     """
 
-    def __init__(self, node_id, rsa_pub_key, using_sha=QQQ.USING_SHA2):
-        self._using_sha = using_sha
-        check_node_id(node_id, using_sha)
+    def __init__(self, node_id, rsa_pub_key, hash_type=HashTypes.SHA2):
+        self._hash_type = hash_type
+        check_node_id(node_id, hash_type)
         self._node_id = node_id     # fBytes20 or fBytes32
         # validate ?
         self._rsa_pub_key = rsa_pub_key
@@ -91,9 +91,9 @@ class Peer(object):
         self._node_ndx = value
 
     @property
-    def using_sha(self):
+    def hash_type(self):
         """ Return the SHA hash type used by the object. """
-        return self._using_sha
+        return self._hash_type
 
     @property
     def cnx(self):

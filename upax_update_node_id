@@ -10,8 +10,8 @@ import time
 from argparse import ArgumentParser
 
 import upax
-from xlattice import (u, QQQ, check_using_sha,
-                      parse_using_sha, fix_using_sha, show_using_sha)
+from xlattice import (u, HashTypes, check_hashtype,
+                      parse_hashtype_etc, fix_hashtype, show_hashtype_etc)
 
 # PATs AND REs ######################################################
 
@@ -19,15 +19,15 @@ from xlattice import (u, QQQ, check_using_sha,
 def do_whatever(args):
     no_changes = args.no_changes
     testing = args.testing
-    u_dir = args.u_dir
-    using_sha = args.using_sha
+    u_path = args.u_path
+    hashtype = args.hashtype
     verbose = args.verbose
 
-    server = upax.BlockingServer(u_dir, using_sha)
+    server = upax.BlockingServer(u_path, hashtype)
     log = server.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (
-            len(log), u_dir))
+            len(log), u_path))
 
     src = args.pgm_name_and_version
 
@@ -41,22 +41,22 @@ def do_whatever(args):
         server.close()
         return
 
-    if using_sha == QQQ.USING_SHA1:
+    if hashtype == HashTypes.SHA1:
         node_id = u.file_sha1hex(pubkey_path)
-    elif using_sha == QQQ.USING_SHA2:
+    elif hashtype == HashTypes.SHA2:
         node_id = u.file_sha2hex(pubkey_path)
-    elif using_sha == QQQ.USING_SHA3:
+    elif hashtype == HashTypes.SHA3:
         node_id = u.file_sha3hex(pubkey_path)
     if verbose:
         print("nodeID: " + node_id)
 
-    path_to_node_id = os.path.join(u_dir, 'node_id')
+    path_to_node_id = os.path.join(u_path, 'node_id')
     if os.path.exists(path_to_node_id):
         with open(path_to_node_id, 'r') as file:
             current_node_id = file.read()[:-1]
         if current_node_id == node_id:
             if verbose:
-                print('nodeID in %s is already correct' % u_dir)
+                print('nodeID in %s is already correct' % u_path)
                 server.close()
                 return
     with open(path_to_node_id, 'w') as file:
@@ -66,7 +66,7 @@ def do_whatever(args):
 
     if verbose:
         print("there are %7u files in %s at the end of the run" % (
-            len(log), u_dir))
+            len(log), u_path))
     server.close()
 
 
@@ -114,19 +114,19 @@ def main():
                         help="don't actually write anything to disk")
 
     # -1,-2,-3, usingSHA, -v/--verbose
-    parse_using_sha(parser)
+    parse_hashtype_etc(parser)
 
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
-    fix_using_sha(args)
+    fix_hashtype(args)
     args.pgm_name_and_version = pgm_name_and_version
     if args.testing:
         args.in_dir = 'testIn'
     args.timestamp = timestamp
 
     # -- sanity checks ----------------------------------------------
-    check_using_sha(args.using_sha)
+    check_hashtype(args.hashtype)
     if not os.path.exists(args.in_dir):
         print("input directory '%s' does not exist" % args.in_dir)
         sys.exit(1)
@@ -143,15 +143,15 @@ def main():
 
     # fixups --------------------------------------------------------
     args.pgm_name_and_version = pgm_name_and_version
-    if args.u_dir and args.u_dir[-1] == '/':
-        args.u_dir = args.u_dir[:-1]          # drop any trailing slash
+    if args.u_path and args.u_path[-1] == '/':
+        args.u_path = args.u_path[:-1]          # drop any trailing slash
 
     if args.testing:
-        args.u_dir = 'testU'
-    elif args.ec2_host:
-        args.u_dir = os.path.join('/vol', args.u_dir)
+        args.u_path = 'testU'
+    elif args.ec2host:
+        args.u_path = os.path.join('/vol', args.u_path)
     else:
-        args.u_dir = os.path.join('/var', args.u_dir)
+        args.u_path = os.path.join('/var', args.u_path)
 
     # -- do it ------------------------------------------------------
     if args.verbose or args.show_version or args.just_show:
@@ -162,7 +162,7 @@ def main():
         print()                               # there's a comma up there
 
     if args.just_show or args.verbose:
-        print('ec2host       = ' + str(args.ec2host))
+        print('ec2host          = ' + str(args.ec2host))
         print('hostmaster       = ' + str(args.hostmaster))
         print('in_dir           = ' + str(args.in_dir))
         print('just_show        = ' + str(args.just_show))
@@ -172,15 +172,15 @@ def main():
         print('show_version     = ' + str(args.show_version))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
-        show_using_sha(args)
+        show_hashtype_etc(args)
 
     if not args.just_show:
-        lock = u.ULock(args.u_dir)
+        lock = u.ULock(args.u_path)
         try:
             if lock.get_lock():
                 do_whatever(args)
             else:
-                print('could not get lock on %s' % args.u_dir)
+                print('could not get lock on %s' % args.u_path)
         finally:
             lock.release_lock()
 

@@ -10,13 +10,13 @@ except:
     from scandir import scandir
 
 import rnglib
-from xlattice import QQQ, check_using_sha
+from xlattice import HashTypes, check_hashtype
 from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
                         UDir)
 from upax.ftlog import BoundLog, FileReader, Reader
 
-__version__ = '0.8.5'
-__version_date__ = '2016-11-26'
+__version__ = '0.9.0'
+__version_date__ = '2017-01-17'
 
 __all__ = ['__version__', '__version_date__',
            'Importer',
@@ -39,12 +39,12 @@ FILE_NAME_2_RE = re.compile(FILE_NAME_2_PAT)
 class Importer(object):
 
     def __init__(self, src_dir, dest_dir, pgm_name_and_version,
-                 using_sha=QQQ.USING_SHA2, verbose=False):
+                 hashtype=HashTypes.SHA2, verbose=False):
         self._src_dir = src_dir
         self._dest_dir = dest_dir
         self._pgm_name_and_version = pgm_name_and_version
         self._server = None
-        self._using_sha = using_sha
+        self._hashtype = hashtype
         self._verbose = verbose
         self._count = 0
 
@@ -75,7 +75,7 @@ class Importer(object):
     def create_importer(args):
         """ Create an Importer given a set of command line options. """
         return Importer(args.src_dir, args.dest_dir,
-                        args.pgm_name_and_version, args.using_sha,
+                        args.pgm_name_and_version, args.hashtype,
                         args.verbose)
 
     def import_bottom_dir(self, bottom_dir):
@@ -93,7 +93,7 @@ class Importer(object):
                 name = entry.name
                 # leaf name names should be the file's SHA hash, its content
                 # key
-                if self._using_sha == QQQ.USING_SHA1:
+                if self._hashtype == HashTypes.SHA1:
                     match = FILE_NAME_1_RE.match(name)
                 else:
                     match = FILE_NAME_2_RE.match(name)
@@ -135,7 +135,7 @@ class Importer(object):
         verbose = self._verbose
         # os.umask(0o222)       # CAN'T USE THIS
 
-        self._server = BlockingServer(dest_dir, self._using_sha)
+        self._server = BlockingServer(dest_dir, self._hashtype)
         log = self._server.log
         if verbose:
             print(("there were %7u files in %s at the beginning of the run" % (
@@ -186,16 +186,16 @@ class Server(object):
     at this time) world-readable but only owner-writeable.
     """
 
-    def __init__(self, u_path, using_sha=QQQ.USING_SHA2):
+    def __init__(self, u_path, hashtype=HashTypes.SHA2):
 
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
         _in_dir_path = os.path.join(u_path, 'in')
         _log_file_path = os.path.join(u_path, 'L')
         _id_file_path = os.path.join(u_path, 'node_id')
         _tmp_dir_path = os.path.join(u_path, 'tmp')
 
-        self._using_sha = using_sha
-        u_dir = UDir.discover(u_path, UDir.DIR256x256, using_sha)
+        self._hashtype = hashtype
+        u_dir = UDir.discover(u_path, UDir.DIR256x256, hashtype)
 
         self._u_dir = u_dir
         self._u_path = u_path
@@ -205,7 +205,7 @@ class Server(object):
         if not os.path.exists(_tmp_dir_path):
             os.mkdir(_tmp_dir_path)
         if not os.path.exists(_id_file_path):
-            if self._using_sha == QQQ.USING_SHA1:
+            if self._hashtype == HashTypes.SHA1:
                 byte_id = bytearray(20)
             else:
                 byte_id = bytearray(32)
@@ -221,11 +221,11 @@ class Server(object):
                 self._node_id = file.read()[:-1]
 
         if os.path.exists(_log_file_path):
-            self._log = BoundLog(FileReader(u_path, self._using_sha),
-                                 self._using_sha, u_path)
+            self._log = BoundLog(FileReader(u_path, self._hashtype),
+                                 self._hashtype, u_path)
         else:
-            self._log = BoundLog(Reader([], self._using_sha),
-                                 self._using_sha, u_path)
+            self._log = BoundLog(Reader([], self._hashtype),
+                                 self._hashtype, u_path)
 
     @property
     def u_dir(self):
@@ -238,9 +238,9 @@ class Server(object):
         return self._u_path
 
     @property
-    def using_sha(self):
+    def hashtype(self):
         """ Return the type of SHA hash used. """
-        return self._using_sha
+        return self._hashtype
 
     @property
     def log(self):
@@ -275,11 +275,11 @@ class Server(object):
         if logged_path is None:
             logged_path = 'z@' + path_to_file
 
-        if self._using_sha == QQQ.USING_SHA1:
+        if self._hashtype == HashTypes.SHA1:
             actual_key = file_sha1hex(path_to_file)
-        elif self._using_sha == QQQ.USING_SHA2:
+        elif self._hashtype == HashTypes.SHA2:
             actual_key = file_sha2hex(path_to_file)
-        elif self._using_sha == QQQ.USING_SHA3:
+        elif self._hashtype == HashTypes.SHA3:
             actual_key = file_sha3hex(path_to_file)
         if actual_key != key:
             raise ValueError('actual hash %s, claimed hash %s' % (
@@ -322,12 +322,12 @@ class Server(object):
 class BlockingServer(Server):
     """ Single-threaded Upax server. """
 
-    def __init__(self, u_dir, using_sha=QQQ.USING_SHA2):
-        super().__init__(u_dir, using_sha)
+    def __init__(self, u_dir, hashtype=HashTypes.SHA2):
+        super().__init__(u_dir, hashtype)
 
 
 class NonBlockingServer(Server):
     """ Multi-threaded or otherwise non-blocking Upax server. """
 
-    def __init__(self, u_dir, using_sha=QQQ.USING_SHA2):
-        super().__init__(u_dir, using_sha)
+    def __init__(self, u_dir, hashtype=HashTypes.SHA2):
+        super().__init__(u_dir, hashtype)

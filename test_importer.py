@@ -6,7 +6,7 @@ import os
 import time
 import unittest
 import rnglib
-from xlattice import QQQ, check_using_sha
+from xlattice import HashTypes, check_hashtype
 from xlattice.u import file_sha1hex, file_sha2hex, file_sha3hex
 from upax import __version__, BlockingServer, Importer
 
@@ -24,7 +24,7 @@ class TestImporter(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_some_files(self, using_sha):
+    def make_some_files(self, hashtype):
         """ return a map: hash=>path """
 
         # create a random number of unique data files of random length
@@ -32,7 +32,7 @@ class TestImporter(unittest.TestCase):
         #   this to verify uniqueness; add hash to list (or use hash
         #   as key to map
 
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
         file_count = 17 + RNG.next_int16(128)
         files = {}             # a map hash->path
         for _ in range(file_count):
@@ -42,26 +42,26 @@ class TestImporter(unittest.TestCase):
             # perhaps more restrictions needed
             while '.' in d_path:
                 (_, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
-            if using_sha == QQQ.USING_SHA1:
+            if hashtype == HashTypes.SHA1:
                 d_key = file_sha1hex(d_path)
-            elif using_sha == QQQ.USING_SHA2:
+            elif hashtype == HashTypes.SHA2:
                 d_key = file_sha2hex(d_path)
-            elif using_sha == QQQ.USING_SHA3:
+            elif hashtype == HashTypes.SHA3:
                 d_key = file_sha3hex(d_path)
             files[d_key] = d_path
 
         self.assertEqual(file_count, len(files))
         return files
 
-    def construct_empty_u_dir(self, u_path, using_sha):
+    def construct_empty_u_dir(self, u_path, hashtype):
 
         # we are guaranteed that uPath does NOT exist
         self.assertFalse(os.path.exists(u_path))
 
-        string = BlockingServer(u_path, using_sha)
+        string = BlockingServer(u_path, hashtype)
         self.assertIsNotNone(string)
         self.assertTrue(os.path.exists(string.u_path))
-        self.assertEqual(string.using_sha, using_sha)
+        self.assertEqual(string.hashtype, hashtype)
 
         # subdirectories
         self.assertTrue(os.path.exists(os.path.join(u_path, 'in')))
@@ -72,7 +72,7 @@ class TestImporter(unittest.TestCase):
         self.assertTrue(os.path.exists(id_path))
         with open(id_path, 'r') as file:
             node_id = file.read()
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             self.assertEqual(41, len(node_id))
             self.assertEqual('\n', node_id[40])
         else:
@@ -83,7 +83,7 @@ class TestImporter(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))   # GEEP
         return string
 
-    def populate_empty(self, string, file_map, using_sha):
+    def populate_empty(self, string, file_map, hashtype):
 
         u_path = string.u_path
         file_count = len(file_map)
@@ -106,8 +106,8 @@ class TestImporter(unittest.TestCase):
             # STUB: shold examine properties of log entry
         self.assertTrue(os.path.exists(os.path.join(u_path, 'L')))   # GEEP
 
-    def do_test_import(self, using_sha):
-        check_using_sha(using_sha)
+    def do_test_import(self, hashtype):
+        check_hashtype(hashtype)
 
         src_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
         while os.path.exists(src_path):
@@ -118,30 +118,30 @@ class TestImporter(unittest.TestCase):
             dest_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
         # create a collection of data files
-        file_map = self.make_some_files(using_sha)
+        file_map = self.make_some_files(hashtype)
         file_count = len(file_map)
 
         # create an empty source directory, populate it, shut down the server
         try:
-            u_dir0 = self.construct_empty_u_dir(src_path, using_sha)
-            self.populate_empty(u_dir0, file_map, using_sha)
+            u_dir0 = self.construct_empty_u_dir(src_path, hashtype)
+            self.populate_empty(u_dir0, file_map, hashtype)
         finally:
             u_dir0.close()
 
         # create an empty destination dir
-        u_dir1 = self.construct_empty_u_dir(dest_path, using_sha)
+        u_dir1 = self.construct_empty_u_dir(dest_path, hashtype)
         u_dir1.close()
 
         # create and invoke the importer
         importer = Importer(src_path, dest_path,
-                            'testImport ' + __version__, using_sha)
+                            'testImport ' + __version__, hashtype)
         importer.do_import_u_dir()
 
         # verify that the files got there
-        server2 = BlockingServer(dest_path, using_sha)
+        server2 = BlockingServer(dest_path, hashtype)
         self.assertIsNotNone(server2)
         self.assertTrue(os.path.exists(server2.u_path))
-        self.assertEqual(server2.using_sha, using_sha)
+        self.assertEqual(server2.hashtype, hashtype)
         log = server2.log
 
         for key in file_map:
@@ -153,8 +153,9 @@ class TestImporter(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(dest_path, 'L')))
 
     def test_import(self):
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.do_test_import(using)
+        os.makedirs(DATA_PATH, exist_ok=True, mode=0o755)
+        for hashtype in HashTypes:
+            self.do_test_import(hashtype)
 
 if __name__ == '__main__':
     unittest.main()

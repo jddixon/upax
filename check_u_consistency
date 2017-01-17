@@ -8,8 +8,8 @@ import sys
 import time
 from argparse import ArgumentParser
 from xlattice import (
-    check_using_sha, parse_using_sha, fix_using_sha,
-    show_using_sha, check_u_path)
+    check_hashtype, parse_hashtype_etc, fix_hashtype,
+    show_hashtype_etc, check_u_path)
 from upax import __version__, __version_date__
 import upax.consistency
 
@@ -64,11 +64,11 @@ def main():
     parser.add_argument('-V', '--show_version', action='store_true',
                         help='show version number and date')
 
-    parse_using_sha(parser)
+    parse_hashtype_etc(parser)
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
-    fix_using_sha(args)
+    fix_hashtype(args)
     args.timestamp = int(time.time())
     if args.testing:
         args.u_path = 'myU'
@@ -78,7 +78,7 @@ def main():
         die_if_not_found(args.u_path)
 
     # -- sanity checks ----------------------------------------------
-    check_using_sha(args.using_sha)
+    check_hashtype(args.hashtype)
     check_u_path(parser, args, must_exist=True)
     args.myNodeID = None
     path_to_node_id = os.path.join(u_path, 'node_id')
@@ -111,7 +111,7 @@ def main():
         print('start_at        = ' + str(args.start_at))
         print('testing         = ' + str(args.testing))
         print('timestamp       = ' + str(args.timestamp))
-        show_using_sha(args)
+        show_hashtype_etc(args)
 
     if not args.just_show:
         upax.consistency.check(args)

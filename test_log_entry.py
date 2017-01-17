@@ -8,7 +8,7 @@ import unittest
 
 # confuson between module and class
 from upax.ftlog import LogEntry
-from xlattice import QQQ, check_using_sha
+from xlattice import HashTypes, check_hashtype
 
 
 class TestLogEntry(unittest.TestCase):
@@ -20,14 +20,14 @@ class TestLogEntry(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def get_keys(self, using_sha):
+    def get_keys(self, hashtype):
         """
         Return a pair of content keys useful in tests involving a specific
         SHA hash type.
         """
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
 
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             goodkey_1 = '0123456789012345678901234567890123456789'
             goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98'
         else:
@@ -36,11 +36,11 @@ class TestLogEntry(unittest.TestCase):
             goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
         return (goodkey_1, goodkey_2)
 
-    def do_test_consructor(self, using_sha):
+    def do_test_consructor(self, hashtype):
         """ Test the LogEntry constructor using a specific SHA hash type. """
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
 
-        (goodkey_1, goodkey_2) = self.get_keys(using_sha)
+        (goodkey_1, goodkey_2) = self.get_keys(hashtype)
 
         entry = LogEntry(time.time(), goodkey_1, goodkey_2, 'jdd', 'document1')
 
@@ -56,14 +56,14 @@ class TestLogEntry(unittest.TestCase):
         """
         Test the LogEntry constructor for the types of SHA hash supported.
         """
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.do_test_consructor(using)
+        for hashtype in HashTypes:
+            self.do_test_consructor(hashtype)
 
-    def do_test_to_string(self, using_sha):
+    def do_test_to_string(self, hashtype):
         """
         Test conversion of a LogEntry to string for a specific hash type.
         """
-        (goodkey_1, goodkey_2) = self.get_keys(using_sha)
+        (goodkey_1, goodkey_2) = self.get_keys(hashtype)
 
         now = time.time()
         entry = LogEntry(now, goodkey_1, goodkey_2, 'jdd', 'document1')
@@ -78,13 +78,13 @@ class TestLogEntry(unittest.TestCase):
         Test conversion of LogEntry to string form for the SHA hash
         types supported.
         """
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.do_test_to_string(using)
+        for hashtype in HashTypes:
+            self.do_test_to_string(hashtype)
 
-    def do_test_equals(self, using_sha):
+    def do_test_equals(self, hashtype):
         """ Test the LogEntry __eq__ function for a specific SHA hash type."""
-        check_using_sha(using_sha)
-        (goodkey_1, goodkey_2) = self.get_keys(using_sha)
+        check_hashtype(hashtype)
+        (goodkey_1, goodkey_2) = self.get_keys(hashtype)
 
         time1 = time.time() - 1000
         time2 = time1 + 500
@@ -102,8 +102,8 @@ class TestLogEntry(unittest.TestCase):
         Test the LogEntry __eq__ function for the various SHA hash types
         supported.
         """
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.do_test_equals(using)
+        for hashtype in HashTypes:
+            self.do_test_equals(hashtype)
 
 if __name__ == '__main__':
     unittest.main()
