@@ -5,7 +5,7 @@ import time
 import unittest
 
 from upax.ftlog import LogEntry, Reader, StringReader  # , FileReader
-from xlattice import QQQ, check_using_sha
+from xlattice import HashTypes, check_hashtype
 
 
 class TestLogReader(unittest.TestCase):
@@ -16,9 +16,9 @@ class TestLogReader(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def get_good(self, using_sha):
-        check_using_sha(using_sha)
-        if using_sha == QQQ.USING_SHA1:
+    def get_good(self, hashtype):
+        check_hashtype(hashtype)
+        if hashtype == HashTypes.SHA1:
             goodkey_1 = '0123456789012345678901234567890123456789'
             goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98'
             goodkey_3 = '1234567890123456789012345678901234567890'
@@ -40,11 +40,11 @@ class TestLogReader(unittest.TestCase):
         return (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
                 goodkey_5, goodkey_6, goodkey_7, goodkey_8,)
 
-    def do_test_string_reader(self, using_sha):
-        check_using_sha(using_sha)
+    def do_test_string_reader(self, hashtype):
+        check_hashtype(hashtype)
 
         (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
-         goodkey_5, goodkey_6, goodkey_7, goodkey_8,) = self.get_good(using_sha)
+         goodkey_5, goodkey_6, goodkey_7, goodkey_8,) = self.get_good(hashtype)
 
         time0 = int(time.time()) - 10000
         time1 = time0 + 100
@@ -54,7 +54,7 @@ class TestLogReader(unittest.TestCase):
         comment_line = "# This is a comment and can be ignored\n"
         empty_log = "%013u %s %s\n" % (time0, goodkey_1, goodkey_2)
         empty_log += comment_line
-        reader = StringReader(empty_log, using_sha)
+        reader = StringReader(empty_log, hashtype)
         assert reader is not None
         self.assertTrue(isinstance(reader, Reader))     # inheritance works
         self.assertTrue(isinstance(reader, StringReader))
@@ -72,7 +72,7 @@ class TestLogReader(unittest.TestCase):
         entry3 = LogEntry(time3, goodkey_7, goodkey_8, 'jdd', 'document1')
 
         test_log = empty_log + str(entry1) + str(entry2) + str(entry3)
-        reader = StringReader(test_log, using_sha)
+        reader = StringReader(test_log, hashtype)
         assert reader is not None
         self.assertTrue(isinstance(reader, Reader))
         self.assertTrue(isinstance(reader, StringReader))
@@ -84,8 +84,8 @@ class TestLogReader(unittest.TestCase):
         self.assertEqual(3, len(index))
 
     def test_string_reader(self):
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.do_test_string_reader(using)
+        for hashtype in HashTypes:
+            self.do_test_string_reader(hashtype)
 
     # ---------------------------------------------------------------
 

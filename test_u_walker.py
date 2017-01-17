@@ -9,7 +9,7 @@ import unittest
 
 from upax.walker import UWalker
 from rnglib import SimpleRNG
-# from xlattice import QQQ
+from xlattice import HashTypes
 
 RNG = SimpleRNG(time.time())
 
@@ -35,7 +35,7 @@ class TestUWalker(unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def do_test_walking_real_dir(self, using_sha):
+    def do_test_walking_real_dir(self, hashtype):
         u_path = '/var/U'
         limit = 1000
         start_at = 'a0'
@@ -45,7 +45,7 @@ class TestUWalker(unittest.TestCase):
             u_path=u_path,
             limit=limit,
             start_at=start_at,
-            using_sha=using_sha)
+            hashtype=hashtype)
         self.assertEqual(u_path, walker.u_path)
         self.assertEqual(0, walker.count)
         self.assertEqual(limit, walker.limit)
@@ -61,7 +61,7 @@ class TestUWalker(unittest.TestCase):
         #    print(('%s' % p))
 
     def test_walking_real_dir(self):
-        self.do_test_walking_real_dir(True)
+        self.do_test_walking_real_dir(HashTypes.SHA1)
         # the real directory used actually uses SHA1
         # self.doTestWalkingRealDir(False)
 

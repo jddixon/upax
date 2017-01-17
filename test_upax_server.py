@@ -8,7 +8,7 @@ import time
 import unittest
 import rnglib
 import upax
-from xlattice import u, QQQ, check_using_sha
+from xlattice import u, HashTypes, check_hashtype
 
 RNG = rnglib.SimpleRNG(time.time())
 
@@ -24,17 +24,17 @@ class TestUpaxServer(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def do_test_construct_from_nothing(self, using_sha):
+    def do_test_construct_from_nothing(self, hashtype):
         """ Test the constructor for a specific  SHA type. """
 
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
         # SETUP
         u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
         while os.path.exists(u_path):
             u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
         # we are guaranteed that uPath does _not_ exist
-        string = upax.BlockingServer(u_path, using_sha)
+        string = upax.BlockingServer(u_path, hashtype)
         try:
             self.assertIsNotNone(string)
             self.assertTrue(os.path.exists(string.u_path))
@@ -48,7 +48,7 @@ class TestUpaxServer(unittest.TestCase):
             self.assertTrue(os.path.exists(id_path))
             with open(id_path, 'rb') as file:
                 node_id = file.read()
-            if using_sha == QQQ.USING_SHA1:
+            if hashtype == HashTypes.SHA1:
                 self.assertEqual(41, len(node_id))
                 self.assertEqual(ord('\n'), node_id[40])
             else:
@@ -63,12 +63,12 @@ class TestUpaxServer(unittest.TestCase):
 
     def test_construct_from_nothing(self):
         """ Test the constructor for the various SHA types. """
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
-            self.do_test_construct_from_nothing(using)
+        for hashtype in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3]:
+            self.do_test_construct_from_nothing(hashtype)
 
 #   # ---------------------------------------------------------------
 
-    def make_some_files(self, using_sha):
+    def make_some_files(self, hashtype):
         """
         Create a random number of unique data files of random length
           in myData/.
@@ -79,7 +79,7 @@ class TestUpaxServer(unittest.TestCase):
         Return a map: hash -> path.
         """
 
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
 
         file_count = 3 + RNG.next_int16(16)
         files = {}             # a map hash->path
@@ -91,11 +91,11 @@ class TestUpaxServer(unittest.TestCase):
             # perhaps more restrictions needed
             while d_path.endswith('.'):
                 (_, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
-            if using_sha == QQQ.USING_SHA1:
+            if hashtype == HashTypes.SHA1:
                 d_key = u.file_sha1hex(d_path)
-            elif using_sha == QQQ.USING_SHA2:
+            elif hashtype == HashTypes.SHA2:
                 d_key = u.file_sha2hex(d_path)
-            elif using_sha == QQQ.USING_SHA3:
+            elif hashtype == HashTypes.SHA3:
                 d_key = u.file_sha3hex(d_path)
             files[d_key] = d_path
 
@@ -104,7 +104,7 @@ class TestUpaxServer(unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def do_test_put_to_empty(self, using_sha):
+    def do_test_put_to_empty(self, hashtype):
         """
         Test the put() function on what is initially an empty server
         using a specific hash type.
@@ -114,9 +114,9 @@ class TestUpaxServer(unittest.TestCase):
         while os.path.exists(u_path):
             u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
-        string = upax.BlockingServer(u_path, using_sha)
+        string = upax.BlockingServer(u_path, hashtype)
         try:
-            file_map = self.make_some_files(using_sha)
+            file_map = self.make_some_files(hashtype)
             file_count = len(file_map)
 
             for key in file_map:
@@ -144,12 +144,12 @@ class TestUpaxServer(unittest.TestCase):
         Test the put() function on what is initially an empty server
         using the various supported hash types.
         """
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
-            self.do_test_put_to_empty(using)
+        for hashtype in HashTypes:
+            self.do_test_put_to_empty(hashtype)
 
     # ---------------------------------------------------------------
 
-    def do_test_put_close_reopen_and_put(self, using_sha):
+    def do_test_put_close_reopen_and_put(self, hashtype):
         """
         Test put/close/reopen then put again to a previously empty
         upax server using a specific SHA types.
@@ -159,18 +159,18 @@ class TestUpaxServer(unittest.TestCase):
         while os.path.exists(u_path):
             u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
-        string = upax.BlockingServer(u_path, using_sha)
+        string = upax.BlockingServer(u_path, hashtype)
         try:
-            file_map1 = self.make_some_files(using_sha)
+            file_map1 = self.make_some_files(hashtype)
             file_count1 = len(file_map1)
             for key in file_map1:
                 string.put(file_map1[key], key, 'testPut ... first phase')
         finally:
             string.close()
 
-        string = upax.BlockingServer(u_path, using_sha)
+        string = upax.BlockingServer(u_path, hashtype)
         try:
-            file_map2 = self.make_some_files(using_sha)
+            file_map2 = self.make_some_files(hashtype)
             file_count2 = len(file_map2)
             for key in file_map2:
                 string.put(file_map2[key], key, 'testPut ... SECOND PHASE')
@@ -196,8 +196,8 @@ class TestUpaxServer(unittest.TestCase):
         Test put/close/reopen then put again to a previously empty
         upax server using the supported SHA types.
         """
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.do_test_put_close_reopen_and_put(using)          # GEEP
+        for hashtype in HashTypes:
+            self.do_test_put_close_reopen_and_put(hashtype)          # GEEP
 
 if __name__ == '__main__':
     unittest.main()

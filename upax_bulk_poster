@@ -15,8 +15,8 @@ except ImportError:
 
 from upax import __version__, __version_date__, BlockingServer
 
-from xlattice import (QQQ, u, check_using_sha, check_u_path,
-                      parse_using_sha, fix_using_sha, show_using_sha)
+from xlattice import (HashTypes, u, check_hashtype, check_u_path,
+                      parse_hashtype_etc, fix_hashtype, show_hashtype_etc)
 
 
 def do_whatever(args):
@@ -24,9 +24,9 @@ def do_whatever(args):
 
     no_changes = args.no_changes
     u_path = args.u_path
-    using_sha = args.using_sha
+    hashtype = args.hashtype
     verbose = args.verbose
-    server = BlockingServer(u_path, using_sha)
+    server = BlockingServer(u_path, hashtype)
     log = server.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (
@@ -36,11 +36,11 @@ def do_whatever(args):
 
     for entry in scandir(args.in_dir):
         # pylint: disable=redefined-variable-type
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             hash_ = u.file_sha1hex(entry.path)
-        elif using_sha == QQQ.USING_SHA2:
+        elif hashtype == HashTypes.SHA2:
             hash_ = u.file_sha2hex(entry.path)
-        elif using_sha == QQQ.USING_SHA3:
+        elif hashtype == HashTypes.SHA3:
             hash_ = u.file_sha3hex(entry.path)
         if no_changes:
             if verbose:
@@ -103,8 +103,8 @@ def get_args():
     parser.add_argument('-z', '--no_changes', action='store_true',
                         help="don't actually write anything to disk")
 
-    # -1,-2,-3, using_sha, -v/--verbose
-    parse_using_sha(parser)
+    # -1,-2,-3, hashtype, -v/--verbose
+    parse_hashtype_etc(parser)
 
     args = parser.parse_args()      # a Namespace object
     if args.show_version:
@@ -120,14 +120,14 @@ def check_args(parser, args):
     """ Check and sometimes modify the interpreted command line arguments. """
 
     # -- fixups -----------------------------------------------------
-    fix_using_sha(args)
+    fix_hashtype(args)
 
     if args.testing:
         args.in_dir = 'testIn'
 
     # -- sanity checks ----------------------------------------------
     if not args.just_show:
-        check_using_sha(args.using_sha)
+        check_hashtype(args.hashtype)
         if not os.path.exists(args.in_dir):
             print("input directory '%s' does not exist" % args.in_dir)
             sys.exit(1)
@@ -169,8 +169,8 @@ def show_args(args):
         print('show_timestamp   = ' + str(args.show_timestamp))
         print('testing          = ' + str(args.testing))
         print('timestamp        = ' + str(args.timestamp))
-        # using_sha, u_path, verbose
-        show_using_sha(args)
+        # hashtype, u_path, verbose
+        show_hashtype_etc(args)
 
 
 def main():

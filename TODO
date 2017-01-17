@@ -1,5 +1,16 @@
 ~/dev/py:/upax/TODO
 
+2017-01-17
+    * test_u_walker and upax/walker.py need to be modified to handle
+        SHA1 and SHA3 and then the various directory structures 
+        (DIR_FLAT etc)
+    * text_zmq.py should be more than just a stub
+    * check_u_consistency needs to be tested
+    * upax_bulk_poster needs testing
+    * upax_update_node_id needs testing
+        - needs better specification:
+            * ~/upax/.ssh must exist
+
 2016-11-26
     * Find a use for mistune or drop zz_mistune_test.py
     * URGENT: upax/walker.py is only suitable for DIR256x256.

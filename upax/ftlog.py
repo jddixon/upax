@@ -6,7 +6,7 @@ import os
 import re
 # import sys
 from collections import Container, Sized
-from xlattice import (QQQ, check_using_sha,     # u,
+from xlattice import (HashTypes, check_hashtype,     # u,
                       SHA1_HEX_NONE, SHA2_HEX_NONE, SHA3_HEX_NONE)
 from upax.node import check_hex_node_id_160, check_hex_node_id_256
 
@@ -48,17 +48,17 @@ IGNORABLE_RE = re.compile(IGNORABLE_PAT)
 class Log(Container, Sized):
     """a fault-tolerant log"""
 
-    def __init__(self, reader, using_sha):
-        self._using_sha = using_sha
+    def __init__(self, reader, hashtype):
+        self._hashtype = hashtype
         (timestamp, prev_log_hash, prev_master, entries, index) = reader.read()
         self._timestamp = timestamp     # seconds from epoch
         self._prev_hash = prev_log_hash   # SHA1/3 hash of previous Log
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             check_hex_node_id_160(self._prev_hash)
         else:
             check_hex_node_id_256(self._prev_hash)
         self._prev_master = prev_master    # nodeID of master writing prev log
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             check_hex_node_id_160(self._prev_master)
         else:
             check_hex_node_id_256(self._prev_master)
@@ -78,7 +78,7 @@ class Log(Container, Sized):
         """used for serialization, so includes newline"""
 
         # first line
-        if self._using_sha == QQQ.USING_SHA1:
+        if self._hashtype == HashTypes.SHA1:
             fmt = "%013u %40s %40s\n"
         else:
             fmt = "%013u %64s %64s\n"
@@ -144,9 +144,9 @@ class Log(Container, Sized):
 class BoundLog(Log):
     """ A fult tolerant log bound to a file. """
 
-    def __init__(self, reader, using_sha=QQQ.USING_SHA2,
+    def __init__(self, reader, hashtype=HashTypes.SHA2,
                  u_path=None, base_name='L'):
-        super(). __init__(reader, using_sha)
+        super(). __init__(reader, hashtype)
         self.fd_ = None
         self.is_open = False     # for appending
         overwriting = False
@@ -217,9 +217,9 @@ class LogEntry():
 
         if key is None:
             raise ValueError('LogEntry key may not be None')
-        using_sha = len(key) == 40
+        hashtype = len(key) == 40
         self._key = key              # 40 or 64 hex digits, content hash
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             check_hex_node_id_160(self._key)
         else:
             check_hex_node_id_256(self._key)
@@ -229,7 +229,7 @@ class LogEntry():
         self._node_id = node_id           # 40/64 digits, node providing entry
         # XXX This is questionable.  Why can't a node with a SHA1 id store
         # a datum with a SHA3 key?
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             check_hex_node_id_160(self._node_id)
         else:
             check_hex_node_id_256(self._node_id)
@@ -267,13 +267,13 @@ class LogEntry():
         return self._timestamp
 
     @property
-    def using_sha(self):
+    def hashtype(self):
         """ XXX WRONG should return key length, allowing 64 or 40. """
         return len(self._key) == 40
 
     # used in serialization, so newlines are intended
     def __str__(self):
-        if self.using_sha == QQQ.USING_SHA1:
+        if self.hashtype == HashTypes.SHA1:
             fmt = '%013u %40s %40s "%s" %s\n'
         else:
             fmt = '%013u %64s %64s "%s" %s\n'
@@ -315,13 +315,13 @@ class Reader(object):
     has the benefit of effectively chomping at the same time
     """
 
-    #__slots__ = ['_entries', '_index', '_lines', '_using_sha',
+    #__slots__ = ['_entries', '_index', '_lines', '_hashtype',
     #             'FIRST_LINE_RE', ]
 
-    def __init__(self, lines, using_sha):
-        check_using_sha(using_sha)
-        self._using_sha = using_sha
-        if using_sha == QQQ.USING_SHA1:
+    def __init__(self, lines, hashtype):
+        check_hashtype(hashtype)
+        self._hashtype = hashtype
+        if hashtype == HashTypes.SHA1:
             first_line_pat = r'^(\d{13}) ([0-9a-f]{40}) ([0-9a-f]{40})$'
         else:
             first_line_pat = r'^(\d{13}) ([0-9a-f]{64}) ([0-9a-f]{64})$'
@@ -341,9 +341,9 @@ class Reader(object):
         self._index = dict()        # mapping hash => entry
 
     @property
-    def using_sha(self):
+    def hashtype(self):
         """ Return the type of SHA hash used. """
-        return self._using_sha
+        return self._hashtype
 
     def read(self):
         """
@@ -361,7 +361,7 @@ class Reader(object):
         if first_line:
             match = re.match(self.first_line_re, first_line)
             if not match:
-                print("NO MATCH, FIRST LINE; using_sha = %s" % self.using_sha)
+                print("NO MATCH, FIRST LINE; hashtype = %s" % self.hashtype)
                 print(("  FIRST LINE: '%s'" % first_line))
                 raise ValueError("no match on first line; giving up")
             timestamp = int(match.group(1))
@@ -371,13 +371,13 @@ class Reader(object):
         else:
             # no first line
             timestamp = 0
-            if self._using_sha == QQQ.USING_SHA1:
+            if self._hashtype == HashTypes.SHA1:
                 prev_log_hash = SHA1_HEX_NONE
                 prev_master = SHA1_HEX_NONE
-            elif self._using_sha == QQQ.USING_SHA2:
+            elif self._hashtype == HashTypes.SHA2:
                 prev_log_hash = SHA2_HEX_NONE
                 prev_master = SHA2_HEX_NONE
-            elif self._using_sha == QQQ.USING_SHA3:
+            elif self._hashtype == HashTypes.SHA3:
                 prev_log_hash = SHA3_HEX_NONE
                 prev_master = SHA3_HEX_NONE
 
@@ -391,7 +391,7 @@ class Reader(object):
             match = re.match(IGNORABLE_RE, line)
             if match:
                 continue
-            if self._using_sha == QQQ.USING_SHA1:
+            if self._hashtype == HashTypes.SHA1:
                 match = re.match(BODY_LINE_1_RE, line)
             else:
                 match = re.match(BODY_LINE_256_RE, line)
@@ -422,7 +422,7 @@ class FileReader(Reader):
     __slots__ = ['_u_path', '_base_name', '_log_file', ]
 
     # XXX CHECK ORDER OF ARGUMENTS
-    def __init__(self, u_path, using_sha=False, base_name="L"):
+    def __init__(self, u_path, hashtype=False, base_name="L"):
         if not os.path.exists(u_path):
             raise RuntimeError("no such directory %s" % u_path)
         self._u_path = u_path
@@ -431,7 +431,7 @@ class FileReader(Reader):
         with open(self._log_file, 'r') as file:
             contents = file.read()
         lines = contents.split('\n')
-        super(FileReader, self).__init__(lines, using_sha)
+        super(FileReader, self).__init__(lines, hashtype)
 
     @property
     def base_name(self):
@@ -456,9 +456,9 @@ class StringReader(Reader):
     Accept a (big) string, convert to a string array, pass to Reader
     """
 
-    def __init__(self, bigString, using_sha=False):
+    def __init__(self, bigString, hashtype=False):
 
         # split on newlines
         lines = bigString.split('\n')
 
-        super().__init__(lines, using_sha)
+        super().__init__(lines, hashtype)
