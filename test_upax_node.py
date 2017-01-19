@@ -4,7 +4,9 @@
 import time
 import unittest
 from rnglib import SimpleRNG
+
 # from upax.ftlog import LogEntry
+from upax import UpaxError
 from upax.node import check_node_id, Peer
 from xlattice import HashTypes, check_hashtype
 
@@ -28,19 +30,19 @@ class TestUpaxNode(unittest.TestCase):
             if hashtype == HashTypes.SHA1 and count == 20:
                 try:
                     check_node_id(node_id, hashtype)
-                except ValueError as val_err:
+                except UpaxError as val_err:
                     self.fail('unexpected value error on %s' % node_id)
 
             elif (hashtype != HashTypes.SHA1) and count == 32:
                 try:
                     check_node_id(node_id, hashtype)
-                except ValueError as val_err:
+                except UpaxError as val_err:
                     self.fail('unexpected value error on %s' % node_id)
             else:
                 try:
                     check_node_id(node_id, hashtype)
                     self.fail('expected value error on %s' % node_id)
-                except ValueError as val_err:
+                except UpaxError as val_err:
                     pass
 
     def test_check_node_id(self):

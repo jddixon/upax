@@ -6,8 +6,9 @@
 import os
 import time
 import unittest
+
 import rnglib
-import upax
+from upax.server import BlockingServer
 from xlattice import u, HashTypes, check_hashtype
 
 RNG = rnglib.SimpleRNG(time.time())
@@ -34,7 +35,7 @@ class TestUpaxServer(unittest.TestCase):
             u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
         # we are guaranteed that uPath does _not_ exist
-        string = upax.BlockingServer(u_path, hashtype)
+        string = BlockingServer(u_path, hashtype)
         try:
             self.assertIsNotNone(string)
             self.assertTrue(os.path.exists(string.u_path))
@@ -114,7 +115,7 @@ class TestUpaxServer(unittest.TestCase):
         while os.path.exists(u_path):
             u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
-        string = upax.BlockingServer(u_path, hashtype)
+        string = BlockingServer(u_path, hashtype)
         try:
             file_map = self.make_some_files(hashtype)
             file_count = len(file_map)
@@ -159,7 +160,7 @@ class TestUpaxServer(unittest.TestCase):
         while os.path.exists(u_path):
             u_path = os.path.join(DATA_PATH, RNG.next_file_name(16))
 
-        string = upax.BlockingServer(u_path, hashtype)
+        string = BlockingServer(u_path, hashtype)
         try:
             file_map1 = self.make_some_files(hashtype)
             file_count1 = len(file_map1)
@@ -168,7 +169,7 @@ class TestUpaxServer(unittest.TestCase):
         finally:
             string.close()
 
-        string = upax.BlockingServer(u_path, hashtype)
+        string = BlockingServer(u_path, hashtype)
         try:
             file_map2 = self.make_some_files(hashtype)
             file_count2 = len(file_map2)

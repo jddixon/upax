@@ -12,7 +12,9 @@ import os
 import re
 import sys
 
-from xlattice import u, HashTypes, check_hashtype
+from upax import UpaxError
+from xlattice import HashTypes, check_hashtype
+from xlattice.u import DirStruc, file_sha1hex, file_sha2hex, file_sha3hex
 
 HEX_DIR_PAT = '^[0-9a-fA-F]{2}$'
 HEX_DIR_RE = re.compile(HEX_DIR_PAT)
@@ -29,10 +31,14 @@ class UWalker(object):
     handle the nine combinations of SHA{1,2,3} and DIR{_FLAT,16x16,256x256.
     """
 
-    def __init__(self, u_path='/var/U', limit=64, start_at='00',
-                 just_keys=False, hashtype=HashTypes.SHA2, verbose=False):
+    def __init__(
+            self, u_path='/var/U', limit=64,
+            start_at='00', just_keys=False,
+            hashtype=HashTypes.SHA2, dir_struc=DirStruc.DIR256x256,
+            verbose=False):
+
         if not os.path.exists(u_path):
-            raise ValueError("directory '%s' does not exist" % str(u_path))
+            raise UpaxError("directory '%s' does not exist" % str(u_path))
 
         check_hashtype(hashtype)
         self._u_path = u_path
@@ -106,11 +112,11 @@ class UWalker(object):
 
                             path_to_file = os.path.join(mid_dir_path, file)
                             if self._hashtype == HashTypes.SHA1:
-                                content_key = u.file_sha1hex(path_to_file)
+                                content_key = file_sha1hex(path_to_file)
                             elif self._hashtype == HashTypes.SHA2:
-                                content_key = u.file_sha2hex(path_to_file)
+                                content_key = file_sha2hex(path_to_file)
                             elif self._hashtype == HashTypes.SHA3:
-                                content_key = u.file_sha3hex(path_to_file)
+                                content_key = file_sha3hex(path_to_file)
 
                             if file != content_key:
                                 print('HASH MISMATCH: expected %s, actual %s ***'

@@ -10,6 +10,7 @@ byte arrays.  So get it right here and then backport to XLattice.
 import re
 
 from Crypto.PublicKey import RSA            # new 2016-11-10
+from upax import UpaxError
 from xlattice import HashTypes
 
 NODE_ID_1_PAT = '^[A-Z0-9]{40}$'
@@ -21,29 +22,29 @@ NODE_ID_2_RE = re.compile(NODE_ID_2_PAT, re.I)
 def check_node_id(b_val, hash_type):
     """ Verify that the nodeID is compatible with the SHA hash type. """
     if b_val is None:
-        raise ValueError('nodeID may not be None')
+        raise UpaxError('nodeID may not be None')
     b_len = len(b_val)
     if (hash_type == HashTypes.SHA1 and b_len != 20) or\
             (hash_type != HashTypes.SHA1 and b_len != 32):
-        raise ValueError('invalid nodeID length %u' % b_len)
+        raise UpaxError('invalid nodeID length %u' % b_len)
 
 
 def check_hex_node_id_160(string):
     """ Verify that the hex nodeID is appropriate for SHA1. """
     if string is None:
-        raise ValueError('nodeID may not be None')
+        raise UpaxError('nodeID may not be None')
     match = NODE_ID_1_RE.match(string)
     if match is None:
-        raise ValueError("not a valid 160-bit hex nodeID: ''%s'" % string)
+        raise UpaxError("not a valid 160-bit hex nodeID: ''%s'" % string)
 
 
 def check_hex_node_id_256(string):
     """ Verify that the hex nodeID is appropriate for SHA2 (256 bits). """
     if string is None:
-        raise ValueError('nodeID may not be None')
+        raise UpaxError('nodeID may not be None')
     match = NODE_ID_2_RE.match(string)
     if match is None:
-        raise ValueError("not a valid 256-bit hex nodeID: ''%s'" % string)
+        raise UpaxError("not a valid 256-bit hex nodeID: ''%s'" % string)
 
 
 class Peer(object):
@@ -83,11 +84,11 @@ class Peer(object):
     @node_ndx.setter
     def node_ndx(self, value):
         if self._node_ndx is not None:
-            raise RuntimeError('nodeID may only be set once')
+            raise UpaxError('nodeID may only be set once')
         if not isinstance(value, int):
-            raise ValueError('nodeID must be an integer')
+            raise UpaxError('nodeID must be an integer')
         if value < 0:
-            raise ValueError('nodeID cannot be a negative number')
+            raise UpaxError('nodeID cannot be a negative number')
         self._node_ndx = value
 
     @property

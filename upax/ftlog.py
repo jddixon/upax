@@ -8,6 +8,7 @@ import re
 from collections import Container, Sized
 from xlattice import (HashTypes, check_hashtype,     # u,
                       SHA1_HEX_NONE, SHA2_HEX_NONE, SHA3_HEX_NONE)
+from upax import UpaxError
 from upax.node import check_hex_node_id_160, check_hex_node_id_256
 
 __all__ = ['ATEXT', 'AT_FREE',
@@ -17,8 +18,8 @@ __all__ = ['ATEXT', 'AT_FREE',
 
            # classes
            'Log', 'BoundLog', 'LogEntry',
-           'Reader', 'FileReader', 'StringReader',
-           ]
+           'Reader', 'FileReader', 'StringReader', ]
+
 # -------------------------------------------------------------------
 # CLASS LOG AND SUBCLASSES
 # -------------------------------------------------------------------
@@ -161,7 +162,7 @@ class BoundLog(Log):
                 overwriting = False
             else:
                 msg = "no target uPath/baseName specified"
-                raise RuntimeError(msg)
+                raise UpaxError(msg)
         self.path_to_log = "%s/%s" % (self.u_path, self.base_name)
         if overwriting:
             with open(self.path_to_log, 'w') as file:
@@ -174,7 +175,7 @@ class BoundLog(Log):
     def add_entry(self, tstamp, key, node_id, src, path):
         if not self.is_open:
             msg = "log file %s is not open for appending" % self.path_to_log
-            raise RuntimeError(msg)
+            raise UpaxError(msg)
 
         # XXX NEED TO THINK ABOUT THE ORDER OF OPERATIONS HERE
         entry = super(
@@ -216,7 +217,7 @@ class LogEntry():
         self._timestamp = timestamp      # seconds from epoch
 
         if key is None:
-            raise ValueError('LogEntry key may not be None')
+            raise UpaxError('LogEntry key may not be None')
         hashtype = len(key) == 40
         self._key = key              # 40 or 64 hex digits, content hash
         if hashtype == HashTypes.SHA1:
@@ -225,7 +226,7 @@ class LogEntry():
             check_hex_node_id_256(self._key)
 
         if node_id is None:
-            raise ValueError('LogEntry nodeID may not be None')
+            raise UpaxError('LogEntry nodeID may not be None')
         self._node_id = node_id           # 40/64 digits, node providing entry
         # XXX This is questionable.  Why can't a node with a SHA1 id store
         # a datum with a SHA3 key?
@@ -363,7 +364,7 @@ class Reader(object):
             if not match:
                 print("NO MATCH, FIRST LINE; hashtype = %s" % self.hashtype)
                 print(("  FIRST LINE: '%s'" % first_line))
-                raise ValueError("no match on first line; giving up")
+                raise UpaxError("no match on first line; giving up")
             timestamp = int(match.group(1))
             prev_log_hash = match.group(2)
             prev_master = match.group(3)
@@ -407,7 +408,7 @@ class Reader(object):
                 index[key] = entry
             else:
                 msg = "not a valid log entry line: '%s'" % line
-                raise RuntimeError(msg)
+                raise UpaxError(msg)
 
         return (timestamp, prev_log_hash, prev_master, entries, index)
 
@@ -424,7 +425,7 @@ class FileReader(Reader):
     # XXX CHECK ORDER OF ARGUMENTS
     def __init__(self, u_path, hashtype=False, base_name="L"):
         if not os.path.exists(u_path):
-            raise RuntimeError("no such directory %s" % u_path)
+            raise UpaxError("no such directory %s" % u_path)
         self._u_path = u_path
         self._base_name = base_name
         self._log_file = "%s/%s" % (self._u_path, base_name)

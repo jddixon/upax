@@ -13,7 +13,8 @@ try:
 except ImportError:
     from scandir import scandir
 
-from upax import __version__, __version_date__, BlockingServer
+from upax import __version__, __version_date__
+from upax.server import BlockingServer
 
 from xlattice import (HashTypes, u, check_hashtype, check_u_path,
                       parse_hashtype_etc, fix_hashtype, show_hashtype_etc)

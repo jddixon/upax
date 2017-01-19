@@ -3,7 +3,7 @@
 """
 Stub.
 
-This package (mintune) is a pure Python markdown implementation used only
+This package (mistune) is a pure Python markdown implementation used only
 here.  Presumably an abandoned 2012 experiment.
 """
 

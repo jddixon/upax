@@ -1,11 +1,13 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.9.1
+    2017-01-19
+        * restructure to get rid of circular import(s)              SLOC 3038
 v0.9.0
     2017-01-17
         * drop redundant code files 
         * adapt to new xlattice API (HashTypes etc)                 SLOC 3023
-
 v0.8.5
     2016-11-26
         * further pyinting with minor bugfixes                      SLOC 3223
@@ -160,6 +162,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 
