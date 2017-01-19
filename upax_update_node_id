@@ -10,20 +10,18 @@ import time
 from argparse import ArgumentParser
 
 import upax
+from upax.server import BlockingServer
 from xlattice import (u, HashTypes, check_hashtype,
                       parse_hashtype_etc, fix_hashtype, show_hashtype_etc)
 
-# PATs AND REs ######################################################
-
 
 def do_whatever(args):
-    no_changes = args.no_changes
     testing = args.testing
     u_path = args.u_path
     hashtype = args.hashtype
     verbose = args.verbose
 
-    server = upax.BlockingServer(u_path, hashtype)
+    server = BlockingServer(u_path, hashtype)
     log = server.log
     if verbose:
         print("there were %7u files in %s at the beginning of the run" % (

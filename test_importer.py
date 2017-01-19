@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 # testImporter.py
 
 import os
@@ -8,7 +7,9 @@ import unittest
 import rnglib
 from xlattice import HashTypes, check_hashtype
 from xlattice.u import file_sha1hex, file_sha2hex, file_sha3hex
-from upax import __version__, BlockingServer, Importer
+from upax import __version__
+from upax.importer import Importer
+from upax.server import BlockingServer
 
 
 RNG = rnglib.SimpleRNG(time.time())

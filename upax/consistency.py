@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # ~/dev/py/upax/upax/consistency.py
 
-""" Funcions for verifying the internal cosistency of a upax server. """
+""" Funcions for verifying the internal consistency of a upax server. """
 
 #import os
 #import random
@@ -11,9 +11,10 @@
 #
 #import u
 
-import upax          # MUST LOCK uDir
-# from upax import *
+# import upax          # MUST LOCK uDir
+from upax import UpaxError
 from upax.ftlog import BoundLog, FileReader     # , LogEntry
+from upax.server import BlockingServer
 from upax.walker import UWalker
 
 __all__ = ['check', ]
@@ -21,7 +22,7 @@ __all__ = ['check', ]
 
 def setup_server(options):
     """ Add server configuration info to the set of options. """
-    options.uServer = upax.BlockingServer(options.u_path, options.using_sha)
+    options.uServer = BlockingServer(options.u_path, options.hashtype)
 
 
 def shutdown_server(options):
@@ -40,7 +41,7 @@ def walk_u(options):
                   limit=options.limit,
                   start_at=options.start_at,
                   u_path=options.u_path,
-                  using_sha=options.using_sha,
+                  hashtype=options.hashtype,
                   verbose=options.verbose)
     keys = www.walk()
     return keys
@@ -73,7 +74,7 @@ def check(options):
     options.uServer = None
     try:
         setup_server(options)       # gets locks on U and U0
-    except ValueError:
+    except UpaxError:
         if options.uServer is None:
             print("have you set usingSHA correctly?")
         else:
@@ -88,8 +89,8 @@ def _do_server_shutdown(options):
     try:
         # LOG: keyed by hash, later entries with same hash should
         # overwrite earlier
-        options.reader = FileReader(options.u_path, options.using_sha)
-        options.log = BoundLog(options.reader, options.using_sha)
+        options.reader = FileReader(options.u_path, options.hashtype)
+        options.log = BoundLog(options.reader, options.hashtype)
         log = options.log
 
         # U: sorted content keys

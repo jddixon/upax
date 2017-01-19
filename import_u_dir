@@ -53,7 +53,7 @@ def main():
 
     # -- sanity checks ----------------------------------------------
     check_using_sha(args.using_sha)
-    check_u_path(parser, args, mustExist=True)
+    check_u_path(parser, args, must_exist=True)
 
     if (args.dest_dir is None):
         print("you must specify a destination U directory")
