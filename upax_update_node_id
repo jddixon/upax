@@ -9,6 +9,7 @@ import time
 
 from argparse import ArgumentParser
 
+from optionz import dump_options
 import upax
 from upax.server import BlockingServer
 from xlattice import (u, HashTypes, check_hashtype,
@@ -160,17 +161,7 @@ def main():
         print()                               # there's a comma up there
 
     if args.just_show or args.verbose:
-        print('ec2host          = ' + str(args.ec2host))
-        print('hostmaster       = ' + str(args.hostmaster))
-        print('in_dir           = ' + str(args.in_dir))
-        print('just_show        = ' + str(args.just_show))
-        print('nameserver       = ' + str(args.nameserver))
-        print('no_changes       = ' + str(args.no_changes))
-        print('show_timestamp   = ' + str(args.show_timestamp))
-        print('show_version     = ' + str(args.show_version))
-        print('testing          = ' + str(args.testing))
-        print('timestamp        = ' + str(args.timestamp))
-        show_hashtype_etc(args)
+        print(dump_options(args))
 
     if not args.just_show:
         lock = u.ULock(args.u_path)

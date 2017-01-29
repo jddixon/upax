@@ -1,7 +1,7 @@
 # upax/__init__.py
 
-__version__ = '0.9.1'
-__version_date__ = '2017-01-19'
+__version__ = '0.9.2'
+__version_date__ = '2017-01-28'
 
 __all__ = ['__version__', '__version_date__', 'UpaxError', ]
 
