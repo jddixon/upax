@@ -8,8 +8,9 @@ import sys
 import time
 from argparse import ArgumentParser
 
-from xlattice import (u, QQQ, check_using_sha,
-                      parse_using_sha, fix_using_sha, show_using_sha, check_u_path)
+from optionz import dump_options
+from xlattice import (u, check_hashtype,
+                      parse_hashtype_etc, fix_hashtype, check_u_path)
 
 from upax import *
 
@@ -43,16 +44,16 @@ def main():
     parser.add_argument('-V', '--show_version', action='store_true',
                         help='show version number and date')
 
-    parse_using_sha(parser)
+    parse_hashtype_etc(parser)
     args = parser.parse_args()      # a Namespace object
 
     # -- fixups -----------------------------------------------------
-    fix_using_sha(args)
+    fix_hashtype(args)
     args.pgm_name_and_version = pgm_name_and_version
     args.timestamp = timestamp
 
     # -- sanity checks ----------------------------------------------
-    check_using_sha(args.using_sha)
+    check_hashtype(args.hashtype)
     check_u_path(parser, args, must_exist=True)
 
     if (args.dest_dir is None):
@@ -78,12 +79,7 @@ def main():
         print()                               # there's a comma up there
 
     if args.just_show or args.verbose:
-        print('dest_dir         = ' + str(args.dest_dir))
-        print('just_show        = ' + str(args.just_show))
-        print('show_timestamp   = ' + str(args.show_timestamp))
-        print('show_version     = ' + str(args.show_version))
-        print('timestamp        = ' + str(args.timestamp))
-        show_using_sha(args)
+        print(dump_options(args))
 
     if not args.just_show:
         lock = u.ULock(args.u_path)

@@ -7,9 +7,11 @@ import os
 import sys
 import time
 from argparse import ArgumentParser
+
+from optionz import dump_options
 from xlattice import (
     check_hashtype, parse_hashtype_etc, fix_hashtype,
-    show_hashtype_etc, check_u_path)
+    check_u_path)
 from upax import __version__, __version_date__
 import upax.consistency
 
@@ -101,17 +103,7 @@ def main():
         print("%s %s" % (args.app_name, __version_date__))
 
     if args.verbose or args.just_show:
-
-        print('app_name        = ' + str(args.app_name))
-        print('just_keys       = ' + str(args.just_keys))
-        print('just_show       = ' + str(args.just_show))
-        print('limit           = ' + str(args.limit))
-        print('repairing       = ' + str(args.repairing))
-        print('show_version    = ' + str(args.show_version))
-        print('start_at        = ' + str(args.start_at))
-        print('testing         = ' + str(args.testing))
-        print('timestamp       = ' + str(args.timestamp))
-        show_hashtype_etc(args)
+        print(dump_options(args))
 
     if not args.just_show:
         upax.consistency.check(args)

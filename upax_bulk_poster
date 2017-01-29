@@ -13,11 +13,12 @@ try:
 except ImportError:
     from scandir import scandir
 
+from optionz import dump_options
 from upax import __version__, __version_date__
 from upax.server import BlockingServer
 
 from xlattice import (HashTypes, u, check_hashtype, check_u_path,
-                      parse_hashtype_etc, fix_hashtype, show_hashtype_etc)
+                      parse_hashtype_etc, fix_hashtype)
 
 
 def do_whatever(args):
@@ -161,17 +162,7 @@ def show_args(args):
         print()                               # there's a comma up there
 
     if args.just_show or args.verbose:
-        print('ec2host          = ' + str(args.ec2host))
-        print('hostmaster       = ' + str(args.hostmaster))
-        print('in_dir           = ' + str(args.in_dir))
-        print('just_show        = ' + str(args.just_show))
-        print('nameserver       = ' + str(args.nameserver))
-        print('no_changes       = ' + str(args.no_changes))
-        print('show_timestamp   = ' + str(args.show_timestamp))
-        print('testing          = ' + str(args.testing))
-        print('timestamp        = ' + str(args.timestamp))
-        # hashtype, u_path, verbose
-        show_hashtype_etc(args)
+        print(dump_options(args))
 
 
 def main():
