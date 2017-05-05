@@ -173,5 +173,6 @@ def main():
         finally:
             lock.release_lock()
 
+
 if __name__ == '__main__':
     main()

@@ -282,11 +282,11 @@ class LogEntry():
                       self._node_id, self._src, self._path)
 
     def __eq__(self, other):
-        return isinstance(other, LogEntry)          and\
-            self._timestamp == other.timestamp  and\
-            self._key == other.key              and\
-            self._node_id == other.node_id      and\
-            self._src == other.src              and\
+        return isinstance(other, LogEntry) and\
+            self._timestamp == other.timestamp and\
+            self._key == other.key and\
+            self._node_id == other.node_id and\
+            self._src == other.src and\
             self._path == other.path
 
     def __ne__(self, other):

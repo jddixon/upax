@@ -113,5 +113,6 @@ class TestLogReader(unittest.TestCase):
     def test_reading_first_line(self):
         pass
 
+
 if __name__ == '__main__':
     unittest.main()

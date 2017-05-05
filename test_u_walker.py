@@ -65,5 +65,6 @@ class TestUWalker(unittest.TestCase):
         # the real directory used actually uses SHA1
         # self.doTestWalkingRealDir(False)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -206,5 +206,6 @@ class TestLog(unittest.TestCase):
         for hashtype in HashTypes:
             self.do_test_add_entry(hashtype)
 
+
 if __name__ == '__main__':
     unittest.main()

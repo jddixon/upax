@@ -7,69 +7,29 @@ Giaje1YAJPNVBt3dlOA5lhBp4GpSYBskJ9UR2Zyt3lgAGK3dEwxYETLMh9VWEV8i
 k2lyCIE/V/CDb9eVDYQgYSJYrnQ/JAPST7NbcY8aI+/0l7QVBhLBpmOCvmS6ofvz
 /QIDAQAB
 -----END PUBLIC KEY-----
-upax_py v0.9.2
-2017-01-29 01:12:51
+upax_py v0.9.3
+2017-05-05 19:26:09
 # BEGIN CONTENT #
 upax_py
  .dvcz
-  builds 78c0c4b81152b58dfbeef701c7a07f7e2b9d663e
-  copyright 40a152c0598a7da436fc48b2286fb14b4f2e9101
-  lastBuildList 049e30cf82f3abb3687d73b0b35434d699ae5628
+  builds e7da2f90aa2769fd7761494472ac732530a25c96
+  copyright 081f1eacc7bee6ce9cf06ffc957c1472faf9c994
+  lastBuildList 44f0f7087a316be4c641fcae112ce2362656f72b
   license 5977a55c75bb4612004451a56b0b4c22d9d3311d
   projCfg 387838116e423692c3db267de3492968b65f6f8a
   projCfg.local 3258109f937dfc30585f333131e112df4b244301
-  version bc800e63e1f8fcc13962607c3f54c6e67b79c71b
- .gitignore e3f00af63280247cc474f854b5de510daaf77fb9
+  version d0d773038687a64241de171f5fcda388cec3046e
+ .gitignore 897dfdc16f7825c51d94a9dd2500b995f3026826
  .gitignore.local c2d10285e0ab23017eda564eb5cdeb1b28cbbee4
- CHANGES 2b908cd0946b806bd46adab9a67060682864e77a
+ CHANGES d84c641b597ae5da7ee0df443480eafc35a6c72b
  LICENSE-MIT.md 7ff8ae89c5e4489f22b3a360a03225241877bc8d
  MANIFEST.in 0af3cac075b23ed9ae22a2b0794ce15fcfefeb76
  README.md 722d325a5f7acae1025cef7387886cd0fd2bb85c
  TODO 1ce72920d5fc9e2868111048780a66a946357fd7
  bkp2U 249475490d0e41090e9a7e02c2abf09d26c471fa
  checkCoverage 39640510f8c9831dddfac488c63c7c2909d6b5c1
- check_u_consistency c019995a218be2cbeda74609fee0a02ca37de21d
+ check_u_consistency 579443fae9325d5d867f0e4e60e64676d9d62d5f
  countem f17e1c624f78633d41cd59462cb0601b26d90a5f
- dist
-  upax-0.1.0.tar.gz 41aa05d8ce38902d65d3206b8ed48573e6d12e51
-  upax-0.2.1.tar.gz 472c1b5480c6bff867b86a6caa3c077823e540fc
-  upax-0.3.0.tar.gz 95654f12e6f9a0417cdae8d69d63587433f041c8
-  upax-0.3.1.tar.gz 52ee69756c9353e5fdeed4afb92f57cd8c6955a1
-  upax-0.3.2.tar.gz 3b618722bd60424fa51c48cc794b0fb2d8f866a5
-  upax-0.3.3.tar.gz 020569990ef159bc2cce335c87158f3f158071f6
-  upax-0.3.4.tar.gz 01932aabf9edd1da13d457fe240643999e987534
-  upax-0.3.5.tar.gz b5a9a8fa4603f62abb827206bec4c39122801bf5
-  upax-0.3.6.tar.gz afe119a436cce13ddd418a7ac37f09b98832b49a
-  upax-0.3.7.tar.gz 11bf07bdfbc4416a2fa9469ab7529647e6ea8323
-  upax-0.3.8.tar.gz 767ea5f6dc750e2813680f5e64882752938b00d7
-  upax-0.4.0.tar.gz 3c025f2d1de4ad9928edcbeb4377d8333fa469dc
-  upax-0.4.1.tar.gz d53a1534da23d1245c6a2661fe0ff445343c751c
-  upax-0.4.2.tar.gz bceae24711ddf5b30235472b6c545a3336112074
-  upax-0.4.3.tar.gz cb1bf55227c1c2f9dff7e88c28236445051f69b0
-  upax-0.5.0.tar.gz 128496057b6752a2cc246e5abcc899d8f257ee06
-  upax-0.5.1.tar.gz 98bcd487c3c83e079b65e79efb84548f9f565630
-  upax-0.6.0.tar.gz d8891855b17c1269f25c078cecbc95c8970d2b7d
-  upax-0.6.1.tar.gz 8aaada8062d2fa2efbda5ef1d2765e1fe33064ad
-  upax-0.6.3.tar.gz eebc7651e1cec69ff8ed5718b19f3d3168f7c6db
-  upax-0.6.4.tar.gz 9b1639cdd3877003c41f984c78979b0ab733faee
-  upax-0.6.5.tar.gz 7cba32be03cc397bd72cf10ac1d938276dac1b6b
-  upax-0.6.6.tar.gz c913e816672fb574a9bdf82542e33eff8df8cd40
-  upax-0.6.7.tar.gz 3be5c77f5d6ef50b9506053ab49e519a35a816d2
-  upax-0.6.8.tar.gz 2260a10a4720f7be90d84486f8450b61d9b1b28a
-  upax_py-0.6.9.tar.gz abaf4283d2155e320754e7360a25eee6197ff344
-  upax_py-0.7.0.tar.gz 17cbdf03550c64c891425a73758d5698c0cb80ea
-  upax_py-0.7.1.tar.gz c615b327691b7e3059699fedd3df4c755fac6e15
-  upax_py-0.7.2.tar.gz 7f2c007e2ebd1dd8cb3757bc8e4ac0409d7c212a
-  upax_py-0.7.3.tar.gz 142e3aaa9251fbfe6ebc8b336055622b6f1728d6
-  upax_py-0.8.0.tar.gz c1c919366cfb9288cfe6f3644457c0a816f7e756
-  upax_py-0.8.1.tar.gz 6ea93bec38c4415c54e5f578c683dc0036d423d2
-  upax_py-0.8.2.tar.gz ad622cc70289c6947b52ecacdea65d80823f473f
-  upax_py-0.8.3.tar.gz 4c6f971bd81fe6b567377b24b761124cfae6f7ee
-  upax_py-0.8.4.tar.gz cbe89476d7c1321a4024b5f8435e8aa6fd1725dc
-  upax_py-0.8.5.tar.gz 4c8eedc2777a3a6aed558bce4f7ac14ff95f2a33
-  upax_py-0.9.0.tar.gz 3958d8efd6be5d94068491101971a2c94f5d68aa
-  upax_py-0.9.1.tar.gz f7b944c29628415912af2c3c6ffbc283a50a7d1f
-  upax_py-0.9.2.tar.gz 052961e3c6346a1662178fc97410b324dfb41098
  doPyLint d7b83e45e50ad3b90532aaed2f9da93cdbf9c49a
  ghpDoc
   css
@@ -86,7 +46,7 @@ upax_py
    xl-registration.jpg 15cbf951f9db173a45428b32dcec87aca83bbdf0
    xlattice-2014.jpg f185aaad06db71acd9454f31054c62c56d36f37f
   index.md 968fac30e0873ee36376ee10029d737d024d2f18
- import_u_dir adca836300b842e68ea0dbcb621f9115eb7e7357
+ import_u_dir 8fb572f800e5414405765ca59f2d7cfbf17a23bf
  installit 1ec8b4ddd2f7ed830df362aa2c8fad0a29c61f3e
  name-pairs-local e0a9d389a7838d117b77a164df74f5f448d1ecc2
  name-pairs-local-0 08e655864e2fe4e1e5fdcb00a673b45b4b02a816
@@ -96,26 +56,26 @@ upax_py
  setup.py 5775dd4ea8b64b4ce4122fea82154fdd9848a038
  styleit ec21359b7d619a2b00a8b06f965e39a951f4c9f6
  test.all ef3c839a28f46f89fe2c0c305497ca9543591255
- test_bound_log.py 718f8b348b707b3423d7b3f4db415a14e1672a4f
- test_importer.py 97d0a39760428a75e64988a2de53a24629578fa9
- test_log.py 7809845907753d6fcfc6669d68df194bc36a6684
- test_log_entry.py 3ffbb963b478cac56404dcbee995692f01991dad
- test_log_reader.py a646d1a8aec5696e0d1ce09bdfc9e631328b5a41
- test_u_walker.py 673eabedb731bf226b9484328da698904283df2f
- test_upax_node.py 1f2c7b1b068116f20ff5b002f833c47b87f4bab7
- test_upax_server.py 9ab68e4d3b597f6c80cbbfe1f5fd06684ee62f09
- test_zmq.py a64d2c511b208c3752f4d96383b8c96918091e73
+ test_bound_log.py 2c993ebb22197ac21f2b6d05737b86c5d37098ba
+ test_importer.py 8c107adf9340c385ad1396a9fe86f06345b0e12f
+ test_log.py 0a4b6bb72937af1aed5247fc6b269d0d41ac79ec
+ test_log_entry.py c4c3a557836c9dd33de2edb635170d6793fa4e31
+ test_log_reader.py 6f3a57fa833c5a6921d54c22afd90784d796d806
+ test_u_walker.py e5d3259edb3a9089ed5c869b31479e369c2fbc8d
+ test_upax_node.py 83915503a029f38cfafe1a292187d1df7a34de6d
+ test_upax_server.py 2586662430a42c9395462107129dbd341f990e1b
+ test_zmq.py 77c222dca2604b07b6be04c595a176d26e29f728
  upax
-  __init__.py 71668210d3541a8b77794cee9efab5eb9f914243
+  __init__.py 0a888f8189cd7cc2d88ae9a015277415a8786c1a
   consistency.py 12d678267aa18b3ceced6c60f9ce9c97b6b710d3
-  ftlog.py 3cc7efff9efac09507047004829d6dbb98a68a02
-  importer.py fae53dfc3c990377994859e8e27f26ae66ab0725
+  ftlog.py dc9ed8fd10abab9ddc3ab12a0925bf07b2a16158
+  importer.py 88f72a8cff093e789562df9ccfdf689082e23b67
   node.py 4d02ef16c3cd8709798d93b7cfbcba891d91b55f
   server.py 6f73d476088bd4f45ba79e4a5cee8b2d236ce3fa
   walker.py df57994820f8bbd624dc44b363ec5ae74151726a
- upax_bulk_poster f258cee02522169bcb8dd4d63ff1a6d921a84924
- upax_update_node_id 0388b936b3fe23d8451336e97369e66979b75827
+ upax_bulk_poster 9cec836d29f06721239d90d97693380715295008
+ upax_update_node_id c0e27e79bb4feff8579551b0a792e2b363731bcf
  zz_mistune_test.py e5efd014a33e97549c978d7c3e53d001527ae201
 # END CONTENT #
 
-V+gEWqUhN87VsQszcFvNPtsYZr04igW1THp6Eel3j3nh4hWmFy/t64K9nV530qPOB3ke34kk9DTj6CwCOng9ftOH5j/P9FS/ogYidlOf/08w+mjWsJJzgUTmtCGxegt5PmU/Fm9Z3kkgRAW8Be1NkAdTzaGbeRCVRezGWWglVU6IhBaCh4s0yF8AuMeV4zrRLwgp3JBh2/AP4gPaFOSxKRuMc/HjPVxT8iRhwT13KH1Cq28JYqKOcnXZrJafExO3e0/k5cOhflhegcI7K13eNcLZdlE1DNvYB3FwHnLmQSuN+bGTE7MiuA+IJVYe7J7ayvP4s3jGejEOeUqQx8Ka1Q==
+IgcM3k2VYrg6eoc2whEZsOIcNppu6IegH3RMtBlSSVXZ5IZSnmJ2CTdlMy3VjfOy/dRUN2pUdBxyfMVPO2YNmQa4BxJYM4F5raPQuxtJeAA38tx/7wMet7ajoI/k2kLbDoaV301BHSpueyxLVGWDD0HEktT8eybmScITd2NrAZaCnZhaNxvf3QGX47hkhbL69hp76h2bSNrtTWae35Bwg6Rb5NB9314XjwMAXCz08ZX0FKVnfHnUP+iwrWtMBQOjb6o5Sator3XmhUrNViO96brVqYw8lLvI8McsZzgDpHdHm2iDnpJzeVRHR1Os7iDOWFjJRiqz9YOJLfbZv06NQw==

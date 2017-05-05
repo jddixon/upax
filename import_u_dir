@@ -96,5 +96,6 @@ def main():
                 print('releasing lock on ' + args.u_path)
             lock.release_lock()
 
+
 if __name__ == '__main__':
     main()

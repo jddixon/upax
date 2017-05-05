@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.9.3
+    2017-05-05
+        * drop dist/* from repos; plus minor edit                   SLOC 3187
 v0.9.2
     2017-01-28
         * add dump_options to simplify utilities                    SLOC 3009
@@ -165,6 +168,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

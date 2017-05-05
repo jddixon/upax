@@ -200,5 +200,6 @@ class TestUpaxServer(unittest.TestCase):
         for hashtype in HashTypes:
             self.do_test_put_close_reopen_and_put(hashtype)          # GEEP
 
+
 if __name__ == '__main__':
     unittest.main()

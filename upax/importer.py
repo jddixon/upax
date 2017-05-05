@@ -3,7 +3,7 @@
 import re
 try:
     from os.scandir import scandir
-except:
+except BaseException:
     from scandir import scandir
 
 from xlattice import HashTypes
