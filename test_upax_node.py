@@ -71,7 +71,7 @@ class TestUpaxNode(unittest.TestCase):
         try:
             peer.node_ndx = 43
             self.fail("changed existing nodeID")
-        except:
+        except BaseException:
             pass
         self.assertEqual(42, peer.node_ndx)
 
@@ -85,13 +85,13 @@ class TestUpaxNode(unittest.TestCase):
         try:
             peer2.node_ndx = 'sugar'
             self.fail('successfully set nodeNdx to string value')
-        except:
+        except BaseException:
             pass
         peer3 = Peer(node_id, pub_key, hashtype)
         try:
             peer3.node_ndx = -19
             self.fail('successfully set nodeNdx to negative number')
-        except:
+        except BaseException:
             pass
 
     def test_peer(self):
@@ -113,6 +113,7 @@ class TestUpaxNode(unittest.TestCase):
 
     def test_l_hash(self):
         pass
+
 
 if __name__ == '__main__':
     unittest.main()

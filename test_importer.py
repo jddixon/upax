@@ -158,5 +158,6 @@ class TestImporter(unittest.TestCase):
         for hashtype in HashTypes:
             self.do_test_import(hashtype)
 
+
 if __name__ == '__main__':
     unittest.main()

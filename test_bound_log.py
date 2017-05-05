@@ -237,5 +237,6 @@ class TestBoundLog(unittest.TestCase):
         for hashtype in HashTypes:
             self.do_test_with_opens_and_closes(hashtype)
 
+
 if __name__ == '__main__':
     unittest.main()
