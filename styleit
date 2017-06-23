@@ -4,7 +4,7 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/upax_py
   
-  autopep8 -ai -r upax check_u_consistency import_u_dir upax_bulk_poster upax_update_node_id *.py
+  autopep8 -air src tests
   echo "not styling dev0/ subdir"
   echo "not styling dev1/ subdir"
   echo "not styling dev2/ subdir"
