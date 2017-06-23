@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>upax</title>
+  <title>upax_py</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="css/main.css" />
   <link rel="stylesheet" type="text/css" href="css/normalize.css" />
@@ -9,20 +9,115 @@
 </head>
 <body>
 <div class="content">
-<h1 class="libTop">upax</h1>
+<h1 class="libTop">upax_py</h1>
 
-<p>Initial commit.</p>
+<p>This is a Python 3 implementation of the
+<a href="https://jddixon.github.io/xlattice/upax.html">Upax</a>
+distributed file system.</p>
+<h2>Major System Components</h2>
+<p>A Upax implementation consists of at least</p>
+<ul>
+<li>a <a href="https://jddixon.github.io/xlattice/ftLog.html">fault-tolerant log</a></li>
+<li>a <a href="https://jddixon.github.io/xlattice/upaxServer.html">Upax server</a></li>
+<li>a <a href="https://jddixon.github.io/xlattice/upaxClient.html">Upax client</a> and optionally</li>
+<li>a <a href="https://jddixon.github.io/xlattice/upaxMirror.html">Upax mirror</a></li>
+</ul>
+<p>Servers involved use a
+<a href="https://en.wikipedia.org/wiki/Consensus_%28computer_science%29">consensus algorithm</a>
+to ensure that their pictures of the state of the distributed file system
+are consistent.</p>
+<h2>Utilities</h2>
+<p>These include</p>
+<ul>
+<li>importUDir</li>
+<li>upaxBulkPoster</li>
+<li>upaxUpdateNodeID</li>
+</ul>
+<h3>importUDir</h3>
+<p>This utility imports all of the files in a content-keyed U directory into
+the Upax distribued file system.</p>
+<pre><code>usage: importUDir [-h] [-1] [-d DESTDIR] [-j] [-s SRCDIR] [-t] [-T] [-V] [-v]
 
+optional arguments:
+  -h, --help            show this help message and exit
+  -1, --usingSHA1       use SHA1, and so 160-bit keys
+  -d DESTDIR, --destDir DESTDIR
+                        base name of destination U/ directory
+  -j, --justShow        show args and exit
+  -s SRCDIR, --srcDir SRCDIR
+                        base name of source U/ directory
+  -t, --showTimestamp   show run timestamp
+  -T, --testing         test run - write to ./testU
+  -V, --showVersion     show version number and date
+  -v, --verbose         talk a lot
+</code></pre>
+<h3>upaxBulkPoster</h3>
+<p>Given a flat directory, imports any constituent files into the Upax
+distributd file system.</p>
+<pre><code>usage: post new files in a directory into Upax [-h] [-1] [-e] [-i INDIR] [-H]
+                                               [-j] [-N] [-t] [-u UDIR] [-T]
+                                               [-V] [-v] [-z]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -1, --usingSHA1       use SHA1, and so 160-bit keys
+  -e, --ec2Host         set if machine is in EC2
+  -i INDIR, --inDir INDIR
+                        path to input directory (forced to ./ testIn if
+                        testing)
+  -H, --hostmaster      set if machine runs bindMgr
+  -j, --justShow        show args and exit
+  -N, --nameserver      set if machine is a name server and so runs
+                        bindLocalMgr
+  -t, --showTimestamp   show run timestamp
+  -u UDIR, --uDir UDIR  base name of U/ directory, default to Upax
+  -T, --testing         test run - write to ./testU
+  -V, --showVersion     show version number and date
+  -v, --verbose         talk a lot
+  -z, --noChanges       don't actually write anything to disk
+</code></pre>
+<h3>upaxUpdateNodeID</h3>
+<p>The content-keyed store on a Upax system needs a unique ID, its <strong>nodeID</strong>.
+This utility writes a randomly chosen 20- or 32-byte value into a file
+called <em>nodeID</em>* at the top level of uDir, so at <code>uDir/nodeID</code>.  This is
+written as a 40- or 64-character hexadecimal value.</p>
+<pre><code>usage: post new files in a directory into Upax [-h] [-1] [-e] [-i INDIR] [-H]
+                                               [-j] [-N] [-t] [-u UDIR] [-T]
+                                               [-V] [-v] [-z]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -1, --usingSHA1       use SHA1, and so 160-bit keys
+  -e, --ec2Host         set if machine is in EC2
+  -i INDIR, --inDir INDIR
+                        path to .ssh/ (forced to ./ testIn if testing)
+  -H, --hostmaster      set if machine runs bindMgr
+  -j, --justShow        show args and exit
+  -N, --nameserver      set if machine is a name server and so runs
+                        bindLocalMgr
+  -t, --showTimestamp   show run timestamp
+  -u UDIR, --uDir UDIR  base name of U/ directory, default to Upax
+  -T, --testing         test run - write to ./testU
+  -V, --showVersion     show version number and date
+  -v, --verbose         talk a lot
+  -z, --noChanges       don't actually write anything to disk
+</code></pre>
+<h2>Dependencies</h2>
+<ul>
+<li><strong>xlattice_py</strong>, the collection of Python3 XLattice supporrt classes</li>
+</ul>
+<h2>Project Status</h2>
+<p>Incompletely specified, partially implemented.</p>
 <h2>Licensing</h2>
 <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />The material on this github.io website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
 <p>Project software is licensed under an MIT license.
 Follow the SOFTWARE LICENSE link below for more information on project software licensing.</p>  <div class="f">
     <hr />
     <div class="license">
-      <p><a href="LICENSE.html">SOFTWARE LICENSE</a></p>
+      <p><a href="LICENSE-MIT.html">SOFTWARE LICENSE</a></p>
     </div>
     <div class="project">
-      github <a href="https://github.com/jddixon/upax">      <img src="img/GitHub-Mark-32px.png" 
+      github <a href="https://github.com/jddixon/upax_py">      <img src="img/GitHub-Mark-32px.png" 
         alt="link to project"  
         style="display: inline-block; margin-left: 0 auto; margin-right: 0 auto">
        </a> project
