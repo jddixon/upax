@@ -6,7 +6,7 @@
 import re
 from distutils.core import setup
 __version__ = re.search(r"__version__\s*=\s*'(.*)'",
-                        open('upax/__init__.py').read()).group(1)
+                        open('src/upax/__init__.py').read()).group(1)
 
 # see http://docs.python.org/distutils/setupscript.html
 
@@ -21,11 +21,11 @@ setup(name='upax_py',
       #
       # ftlog is not a package because it doesn't have its own
       # subdir and __init__.py
-      packages=['upax', ],
+      packages=['src/upax', ],
       #
       # following could be in scripts/ subdir; SQuote
-      scripts=['check_u_consistency', 'import_u_dir',
-               'upax_bulk_poster', 'upax_update_node_id', ],
+      scripts=['src/check_u_consistency', 'src/import_u_dir',
+               'src/uspax_bulk_poster', 'src/upax_update_node_id', ],
       description='full-mesh ring of U store servers',
       url='https://jddixon/github.io/upax_py',
       classifiers=[
