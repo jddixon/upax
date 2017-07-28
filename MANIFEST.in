@@ -1,13 +1,10 @@
 # see http://docs.python.org/distutils/sourcedist.html
 
-include netDistrib.conf
-include CHANGES README* TODO MANIFEST.in
-include checkUConsistency importUDir upaxBulkPoster upaxUpdateNodeID
-include test*.py test.all countem installit
-
-recursive-include upax *.py
-
+include CHANGES LICENSE* MANIFEST.in README* TODO
+include bkp2U checkCoverage countem doPyLint installit pylintrc styleit test.all
+include setup.py
+recursive-include src *
+recursive-include tests *
+recursive-include ghpDoc *
 global-exclude junk* .*swp 
 prune   .svn
-
-

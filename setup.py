@@ -25,7 +25,7 @@ setup(name='upax_py',
       #
       # following could be in scripts/ subdir; SQuote
       scripts=['src/check_u_consistency', 'src/import_u_dir',
-               'src/uspax_bulk_poster', 'src/upax_update_node_id', ],
+               'src/upax_bulk_poster', 'src/upax_update_node_id', ],
       description='full-mesh ring of U store servers',
       url='https://jddixon/github.io/upax_py',
       classifiers=[
