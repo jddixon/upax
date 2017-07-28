@@ -5,12 +5,7 @@ then
   cd $DEV_BASE/py/upax_py
   
   autopep8 -air src tests
-  echo "not styling dev0/ subdir"
-  echo "not styling dev1/ subdir"
-  echo "not styling dev2/ subdir"
-  echo "not styling dev3/ subdir"
-  echo "not styling ndxPages/ subdir"
-  echo "not styling sequences/ subdir"
+  autopep8 -ai  setup.py
   
 else
   echo "DEV_BASE is not defined"
