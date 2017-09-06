@@ -119,7 +119,7 @@ class UWalker(object):
                                 content_key = file_sha3hex(path_to_file)
 
                             if file != content_key:
-                                print('HASH MISMATCH: expected %s, actual %s ***'
+                                print('HASH MISMATCH: expected %s, actual %s'
                                       % (file, content_key))
                             if not walking:
                                 break

@@ -29,14 +29,22 @@ class TestLogReader(unittest.TestCase):
             goodkey_8 = 'cba9876543210fedcba9876543210fedcba98fed'
         else:
             # 32-byte keys; values are arbitrary
-            goodkey_1 = '0123456789012345678901234567890123456789abcdef3330123456789abcde'
-            goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
-            goodkey_3 = '1234567890123456789012345678901234567890abcdef697698768696969696'
-            goodkey_4 = 'edcba9876543210fedcba9876543210fedcba98f012345678901234567890123'
-            goodkey_5 = '2345678901234567890123456789012345678901654654647645647654754757'
-            goodkey_6 = 'dcba9876543210fedcba9876543210fedcba98fe453254323243253274754777'
-            goodkey_7 = '3456789012345678901234567890123456789012abcdef696878687686999987'
-            goodkey_8 = 'cba9876543210fedcba9876543210fedcba98fedfedcab698687669676999988'
+            goodkey_1 = '0123456789012345678901234567890123' + \
+                '456789abcdef3330123456789abcde'
+            goodkey_2 = 'fedcba9876543210fedcba9876543210fe' + \
+                'dcba98012345678901234567890123'
+            goodkey_3 = '1234567890123456789012345678901234' + \
+                '567890abcdef697698768696969696'
+            goodkey_4 = 'edcba9876543210fedcba9876543210fed' + \
+                'cba98f012345678901234567890123'
+            goodkey_5 = '2345678901234567890123456789012345' + \
+                '678901654654647645647654754757'
+            goodkey_6 = 'dcba9876543210fedcba9876543210fedc' + \
+                'ba98fe453254323243253274754777'
+            goodkey_7 = '3456789012345678901234567890123456' + \
+                '789012abcdef696878687686999987'
+            goodkey_8 = 'cba9876543210fedcba9876543210fedcb' + \
+                'a98fedfedcab698687669676999988'
         return (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
                 goodkey_5, goodkey_6, goodkey_7, goodkey_8,)
 

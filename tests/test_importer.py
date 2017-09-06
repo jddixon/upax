@@ -120,7 +120,7 @@ class TestImporter(unittest.TestCase):
 
         # create a collection of data files
         file_map = self.make_some_files(hashtype)
-        file_count = len(file_map)
+        # file_count = len(file_map)
 
         # create an empty source directory, populate it, shut down the server
         try:

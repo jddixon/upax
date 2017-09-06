@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.9.6
+    2017-09-06
+        * add tox.ini, *requirements.txt; pep8                      SLOC 3191
 v0.9.5
     2017-07-28
         * rewrite setup.py, MANIFEST.in; minor edits to cfg files   SLOC 2996
@@ -174,6 +177,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

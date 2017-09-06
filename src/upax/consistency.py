@@ -3,15 +3,6 @@
 
 """ Funcions for verifying the internal consistency of a upax server. """
 
-#import os
-#import random
-#import re
-#import sys
-#import time
-#
-#import u
-
-# import upax          # MUST LOCK uDir
 from upax import UpaxError
 from upax.ftlog import BoundLog, FileReader     # , LogEntry
 from upax.server import BlockingServer
@@ -106,7 +97,8 @@ def _do_server_shutdown(options):
             else:
                 if repairing:
                     entry = log.add_entry(options.timestamp, key,
-                                          options.myNodeID, options.app_name, key)
+                                          options.myNodeID,
+                                          options.app_name, key)
                     if verbose:
                         print(("ADDED TO LOG: %s" % entry))
                 else:
