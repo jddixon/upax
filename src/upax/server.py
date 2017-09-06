@@ -126,9 +126,9 @@ class Server(object):
         returns (len, hash)
         """
 
-        #----------------------------------------------------
+        # ----------------------------------------------------
         # XXX THIS IS A HACK but perhaps suggests a way to go
-        #----------------------------------------------------
+        # ----------------------------------------------------
         if logged_path is None:
             logged_path = 'z@' + path_to_file
 

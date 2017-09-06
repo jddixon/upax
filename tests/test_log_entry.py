@@ -32,8 +32,10 @@ class TestLogEntry(unittest.TestCase):
             goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98'
         else:
             # dummy data good for either SHA2 or SHA3
-            goodkey_1 = '0123456789012345678901234567890123456789abcdefghi0123456789abcde'
-            goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98012345678901234567890123'
+            goodkey_1 = '0123456789012345678901234567890123' + \
+                '456789abcdefghi0123456789abcde'
+            goodkey_2 = 'fedcba9876543210fedcba9876543210fe' + \
+                'dcba98012345678901234567890123'
         return (goodkey_1, goodkey_2)
 
     def do_test_consructor(self, hashtype):

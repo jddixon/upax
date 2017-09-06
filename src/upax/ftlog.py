@@ -109,7 +109,7 @@ class Log(Container, Sized):
 
     def get_entry(self, key):
         """ Given a key, return the corresponding LogEntry or None. """
-        if not key in self._index:
+        if key not in self._index:
             return None
         else:
             return self._index[key]
@@ -316,7 +316,7 @@ class Reader(object):
     has the benefit of effectively chomping at the same time
     """
 
-    #__slots__ = ['_entries', '_index', '_lines', '_hashtype',
+    # __slots__ = ['_entries', '_index', '_lines', '_hashtype',
     #             'FIRST_LINE_RE', ]
 
     def __init__(self, lines, hashtype):

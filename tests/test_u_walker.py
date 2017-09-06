@@ -55,7 +55,7 @@ class TestUWalker(unittest.TestCase):
         self.assertEqual(count, walker.count)
         # print(("\nFOUND %u ENTRIES IN RANGE" % count))         # DEBUG
 
-        #print(("THE FIRST SIXTEEN KEYS IN %s FROM %s" % (uDir, startAt)))
+        # print(("THE FIRST SIXTEEN KEYS IN %s FROM %s" % (uDir, startAt)))
         # for i in range(16):
         #    p = w.keys[i]
         #    print(('%s' % p))

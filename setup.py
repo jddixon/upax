@@ -1,38 +1,40 @@
 #!/usr/bin/python3
-# ~/dev/py/upax_py/setup.py
+# upax_py/setup.py
 
-""" Set up distutils for upax_py. """
+""" Setuptools project configuration for upax_py. """
 
-import re
-from distutils.core import setup
-__version__ = re.search(r"__version__\s*=\s*'(.*)'",
-                        open('src/upax/__init__.py').read()).group(1)
+from os.path import exists
+from setuptools import setup
 
-# see http://docs.python.org/distutils/setupscript.html
+long_desc = None
+if exists('README.md'):
+    with open('README.md', 'r') as file:
+        long_desc = file.read()
 
 setup(name='upax_py',
-      version=__version__,
+      version='0.9.6',
       author='Jim Dixon',
       author_email='jddixon@gmail.com',
-      #
-      # wherever we have a .py file that will be imported, we
-      # list it here, without the .py extension but SQuoted
+      long_description=long_desc,
+      packages=['upax'],
+      package_dir={'': 'src'},
       py_modules=[],
-      #
-      # ftlog is not a package because it doesn't have its own
-      # subdir and __init__.py
-      packages=['src/upax', ],
-      #
-      # following could be in scripts/ subdir; SQuote
+      include_package_data=False,
+      zip_safe=False,
       scripts=['src/check_u_consistency', 'src/import_u_dir',
-               'src/upax_bulk_poster', 'src/upax_update_node_id', ],
+               'src/upax_bulk_poster', 'src/upax_update_node_id'],
       description='full-mesh ring of U store servers',
-      url='https://jddixon/github.io/upax_py',
+      url='https://jddixon.github.io/upax_py',
       classifiers=[
           'Development Status :: 2 - Pre-Alpha',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
           'Natural Language :: English',
-          'Programming Language :: Python 3',
+          'Programming Language :: Python 2.7',
+          'Programming Language :: Python 3.3',
+          'Programming Language :: Python 3.4',
+          'Programming Language :: Python 3.5',
+          'Programming Language :: Python 3.6',
+          'Programming Language :: Python 3.7',
           'Topic :: Software Development :: Libraries :: Python Modules',
       ],)
