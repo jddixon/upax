@@ -1,0 +1,38 @@
+# projConfig.toml for upax_py
+
+[meta]
+    version= '0.1.0'
+
+[project]
+    name = 'upax_py'             # external name = distribution name
+    package = 'upax'             # internal name
+    main_lang = 'py'
+    version = '0.9.7'
+    version_date = '2017-09-28'
+    author = 'Jim Dixon'
+    author_email = 'jdd@gmail.com'
+    description='full-mesh ring of U store servers'
+    copyright = '2012-2017'
+    dev_status = 'pre-alpha'
+    license = 'mit'
+    relpath = 'py/upax_py'
+    state = 'shared'
+    url = 'https://jddixon.github.io/upax_py'
+
+[py]
+    packages = ['upax']
+    package_dir = ['src']
+    test_dir = 'tests'
+    py_modules = []
+    scripts=['src/check_u_consistency', 'src/import_u_dir',
+               'src/upax_bulk_poster', 'src/upax_update_node_id']
+    ext_modules = []
+
+    # sdReq output
+    distshare = ['optionz','rnglib','xlattice_py']
+    requirements=['pycrypt','scandir','setuptools']
+    test_requirements=['pyzmq']
+
+    # trove stuff is TBD
+
+

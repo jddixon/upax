@@ -1,4 +1,4 @@
 # upax_py/requirements.txt
 pycrypto
 scandir
-
+setuptools

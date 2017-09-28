@@ -12,7 +12,7 @@ if exists('README.md'):
         long_desc = file.read()
 
 setup(name='upax_py',
-      version='0.9.6',
+      version='0.9.7',
       author='Jim Dixon',
       author_email='jddixon@gmail.com',
       long_description=long_desc,
