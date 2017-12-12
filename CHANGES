@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.9.8
+    2017-12-11
+        * general cleanup; some pylinting; minor bug fixes          SLOC 3221
 v0.9.7
     2017-09-28
         * add projConfig.toml                                       SLOC 3228
@@ -180,6 +183,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

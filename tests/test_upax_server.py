@@ -25,7 +25,7 @@ class TestUpaxServer(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def do_test_construct_from_nothing(self, hashtype):
+    def _construct_from_nothing(self, hashtype):
         """ Test the constructor for a specific  SHA type. """
 
         check_hashtype(hashtype)
@@ -65,7 +65,7 @@ class TestUpaxServer(unittest.TestCase):
     def test_construct_from_nothing(self):
         """ Test the constructor for the various SHA types. """
         for hashtype in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3]:
-            self.do_test_construct_from_nothing(hashtype)
+            self._construct_from_nothing(hashtype)
 
 #   # ---------------------------------------------------------------
 
@@ -105,7 +105,7 @@ class TestUpaxServer(unittest.TestCase):
 
     # ---------------------------------------------------------------
 
-    def do_test_put_to_empty(self, hashtype):
+    def _put_to_empty(self, hashtype):
         """
         Test the put() function on what is initially an empty server
         using a specific hash type.
@@ -146,11 +146,11 @@ class TestUpaxServer(unittest.TestCase):
         using the various supported hash types.
         """
         for hashtype in HashTypes:
-            self.do_test_put_to_empty(hashtype)
+            self._put_to_empty(hashtype)
 
     # ---------------------------------------------------------------
 
-    def do_test_put_close_reopen_and_put(self, hashtype):
+    def _put_close_reopen_and_put(self, hashtype):
         """
         Test put/close/reopen then put again to a previously empty
         upax server using a specific SHA types.
@@ -198,7 +198,7 @@ class TestUpaxServer(unittest.TestCase):
         upax server using the supported SHA types.
         """
         for hashtype in HashTypes:
-            self.do_test_put_close_reopen_and_put(hashtype)          # GEEP
+            self._put_close_reopen_and_put(hashtype)          # GEEP
 
 
 if __name__ == '__main__':

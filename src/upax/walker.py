@@ -37,6 +37,8 @@ class UWalker(object):
             hashtype=HashTypes.SHA2, dir_struc=DirStruc.DIR256x256,
             verbose=False):
 
+        _ = dir_struc   # UNUSED, SUPPRESS WARNING
+
         if not os.path.exists(u_path):
             raise UpaxError("directory '%s' does not exist" % str(u_path))
 

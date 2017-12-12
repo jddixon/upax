@@ -180,6 +180,7 @@ class BlockingServer(Server):
     """ Single-threaded Upax server. """
 
     def __init__(self, u_dir, hashtype=HashTypes.SHA2):
+        #pylint: disable=useless-super-delegation
         super().__init__(u_dir, hashtype)
 
 
@@ -187,4 +188,5 @@ class NonBlockingServer(Server):
     """ Multi-threaded or otherwise non-blocking Upax server. """
 
     def __init__(self, u_dir, hashtype=HashTypes.SHA2):
+        #pylint: disable=useless-super-delegation
         super().__init__(u_dir, hashtype)

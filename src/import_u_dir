@@ -3,7 +3,7 @@
 # ~/dev/py/upax/importUDir
 
 import os
-import re
+# import re
 import sys
 import time
 from argparse import ArgumentParser
@@ -12,7 +12,8 @@ from optionz import dump_options
 from xlattice import (u, check_hashtype,
                       parse_hashtype_etc, fix_hashtype, check_u_path)
 
-from upax import *
+from upax import __version__
+from upax.importer import Importer
 
 
 def main():
@@ -56,7 +57,7 @@ def main():
     check_hashtype(args.hashtype)
     check_u_path(parser, args, must_exist=True)
 
-    if (args.dest_dir is None):
+    if args.dest_dir is None:
         print("you must specify a destination U directory")
         sys.exit(1)
     if not os.path.exists(args.dest_dir):

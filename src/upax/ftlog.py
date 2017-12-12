@@ -111,8 +111,7 @@ class Log(Container, Sized):
         """ Given a key, return the corresponding LogEntry or None. """
         if key not in self._index:
             return None
-        else:
-            return self._index[key]
+        return self._index[key]
 
     @property
     def entries(self):
@@ -357,7 +356,7 @@ class Reader(object):
         """
 
         first_line = None
-        if self._lines and len(self._lines) > 0:
+        if self._lines:
             first_line = self._lines[0]
         if first_line:
             match = re.match(self.first_line_re, first_line)
