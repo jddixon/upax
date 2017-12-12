@@ -55,8 +55,7 @@ class TestBoundLog(unittest.TestCase):
     def do_test_log_without_entries(self, hashtype):
 
         check_hashtype(hashtype)
-        (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
-         goodkey_5, goodkey_6, goodkey_7, goodkey_8,) = self.get_good(hashtype)
+        (goodkey_1, goodkey_2, _, _, _, _, _, _) = self.get_good(hashtype)
 
         time0 = 1000 * (int(time.time()) - 10000)
         # the first line of an otherwise empty log file
@@ -112,11 +111,11 @@ class TestBoundLog(unittest.TestCase):
     def do_test_multi_entry_log(self, hashtype):
         check_hashtype(hashtype)
 
-        (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
-         goodkey_5, goodkey_6, goodkey_7, goodkey_8,) = self.get_good(hashtype)
+        (goodkey_1, goodkey_2, goodkey_3, _,
+         goodkey_5, _, goodkey_7, _,) = self.get_good(hashtype)
 
-        (time0, time1, time2, time3, entry1, entry2, entry3, empty_log,
-            log_w_three) = self.setup_the_server(hashtype)
+        (time0, time1, _, _, entry1, entry2, entry3, _,
+         log_w_three) = self.setup_the_server(hashtype)
         reader = StringReader(log_w_three, hashtype)
         log = BoundLog(reader, hashtype, self.u_dir, 'L')
         assert log is not None
@@ -153,7 +152,7 @@ class TestBoundLog(unittest.TestCase):
          goodkey_5, goodkey_6, goodkey_7, goodkey_8,) = self.get_good(hashtype)
 
         (time0, time1, time2, time3, entry1, entry2, entry3, empty_log,
-            log_w_three) = self.setup_the_server(hashtype)
+         log_w_three) = self.setup_the_server(hashtype)
         reader = StringReader(empty_log, hashtype)
         log = BoundLog(reader, hashtype, self.u_dir, 'L')
         assert log is not None
@@ -199,7 +198,7 @@ class TestBoundLog(unittest.TestCase):
          goodkey_5, goodkey_6, goodkey_7, goodkey_8,) = self.get_good(hashtype)
 
         (time0, time1, time2, time3, entry1, entry2, entry3, empty_log,
-            log_w_three) = self.setup_the_server(hashtype)
+         log_w_three) = self.setup_the_server(hashtype)
         reader = StringReader(empty_log, hashtype)
         log = BoundLog(reader, hashtype, self.u_dir)
         assert log is not None

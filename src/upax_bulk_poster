@@ -37,7 +37,6 @@ def do_whatever(args):
     src = args.app_name
 
     for entry in scandir(args.in_dir):
-        # pylint: disable=redefined-variable-type
         if hashtype == HashTypes.SHA1:
             hash_ = u.file_sha1hex(entry.path)
         elif hashtype == HashTypes.SHA2:

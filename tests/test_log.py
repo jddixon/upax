@@ -55,8 +55,7 @@ class TestLog(unittest.TestCase):
         """
         check_hashtype(hashtype)
 
-        (goodkey_1, goodkey_2, goodkey_3, goodkey_4,
-         goodkey_5, goodkey_6, goodkey_7, goodkey_8,) = self.get_good(hashtype)
+        (goodkey_1, goodkey_2, _, _, _, _, _, _) = self.get_good(hashtype)
 
         time0 = int(time.time()) - 10000
         empty_log = "%013u %s %s\n" % (time0, goodkey_1, goodkey_2)
