@@ -54,7 +54,7 @@ class TestUpaxServer(unittest.TestCase):
                 self.assertEqual(ord('\n'), node_id[40])
             else:
                 # we only look at the hash length, so this is ok for
-                # both SHA2 and SHA3
+                # any of SHA2, SHA3, BLAKE2B
                 self.assertEqual(65, len(node_id))
                 self.assertEqual(ord('\n'), node_id[64])
             node_id = node_id[:-1]
@@ -64,7 +64,7 @@ class TestUpaxServer(unittest.TestCase):
 
     def test_construct_from_nothing(self):
         """ Test the constructor for the various SHA types. """
-        for hashtype in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3]:
+        for hashtype in HashTypes:
             self._construct_from_nothing(hashtype)
 
 #   # ---------------------------------------------------------------
@@ -98,6 +98,10 @@ class TestUpaxServer(unittest.TestCase):
                 d_key = u.file_sha2hex(d_path)
             elif hashtype == HashTypes.SHA3:
                 d_key = u.file_sha3hex(d_path)
+            elif hashtype == HashTypes.BLAKE2B:
+                d_key = u.file_blake2b_hex(d_path)
+            else:
+                raise NotImplementedError
             files[d_key] = d_path
 
         self.assertEqual(file_count, len(files))

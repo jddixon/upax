@@ -88,7 +88,7 @@ class TestBoundLog(unittest.TestCase):
         log.close()
 
     def test_log_without_entries(self):
-        for using in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3, ]:
+        for using in HashTypes:
             self.do_test_log_without_entries(using)
 
     def setup_the_server(self, hashtype):
@@ -142,7 +142,7 @@ class TestBoundLog(unittest.TestCase):
         log.close()
 
     def test_multi_entry_log(self):
-        for using in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3, ]:
+        for using in HashTypes:
             self.do_test_multi_entry_log(using)
 
     def do_test_add_entry(self, hashtype):
@@ -187,7 +187,7 @@ class TestBoundLog(unittest.TestCase):
         self.assertEqual(log_w_three, log_contents)
 
     def test_add_entry(self):
-        for using in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3, ]:
+        for using in HashTypes:
             self.do_test_add_entry(using)
 
     def do_test_with_opens_and_closes(self, hashtype):

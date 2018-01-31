@@ -11,7 +11,7 @@ import os
 import rnglib
 from xlattice import HashTypes, check_hashtype
 from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
-                        DirStruc, UDir)
+                        file_blake2b_hex, DirStruc, UDir)
 from upax.ftlog import BoundLog, FileReader, Reader
 
 from upax import UpaxError
@@ -138,6 +138,10 @@ class Server(object):
             actual_key = file_sha2hex(path_to_file)
         elif self._hashtype == HashTypes.SHA3:
             actual_key = file_sha3hex(path_to_file)
+        elif self._hashtype == HashTypes.BLAKE2B:
+            actual_key = file_blake2b_hex(path_to_file)
+        else:
+            raise NotImplementedError
         if actual_key != key:
             raise UpaxError('actual hash %s, claimed hash %s' % (
                 actual_key, key))

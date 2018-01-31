@@ -7,7 +7,8 @@ import re
 # import sys
 from collections import Container, Sized
 from xlattice import (HashTypes, check_hashtype,     # u,
-                      SHA1_HEX_NONE, SHA2_HEX_NONE, SHA3_HEX_NONE)
+                      SHA1_HEX_NONE, SHA2_HEX_NONE, SHA3_HEX_NONE,
+                      BLAKE2B_HEX_NONE)
 from upax import UpaxError
 from upax.node import check_hex_node_id_160, check_hex_node_id_256
 
@@ -380,6 +381,11 @@ class Reader(object):
             elif self._hashtype == HashTypes.SHA3:
                 prev_log_hash = SHA3_HEX_NONE
                 prev_master = SHA3_HEX_NONE
+            elif self._hashtype == HashTypes.BLAKE2B:
+                prev_log_hash = BLAKE2B_HEX_NONE
+                prev_master = BLAKE2B_HEX_NONE
+            else:
+                raise NotImplementedError
 
         entries = []
         index = dict()

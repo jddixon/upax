@@ -6,7 +6,8 @@ import time
 import unittest
 import rnglib
 from xlattice import HashTypes, check_hashtype
-from xlattice.u import file_sha1hex, file_sha2hex, file_sha3hex
+from xlattice.u import(file_sha1hex, file_sha2hex, file_sha3hex,
+                       file_blake2b_hex)
 from upax import __version__
 from upax.importer import Importer
 from upax.server import BlockingServer
@@ -49,6 +50,10 @@ class TestImporter(unittest.TestCase):
                 d_key = file_sha2hex(d_path)
             elif hashtype == HashTypes.SHA3:
                 d_key = file_sha3hex(d_path)
+            elif hashtype == HashTypes.BLAKE2B:
+                d_key = file_blake2b_hex(d_path)
+            else:
+                raise NotImplementedError
             files[d_key] = d_path
 
         self.assertEqual(file_count, len(files))

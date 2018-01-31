@@ -46,6 +46,10 @@ def do_whatever(args):
         node_id = u.file_sha2hex(pubkey_path)
     elif hashtype == HashTypes.SHA3:
         node_id = u.file_sha3hex(pubkey_path)
+    elif hashtype == HashTypes.BLAKE2B:
+        node_id = u.file_blake2b_hex(pubkey_path)
+    else:
+        raise NotImplementedError
     if verbose:
         print("nodeID: " + node_id)
 

@@ -43,6 +43,10 @@ def do_whatever(args):
             hash_ = u.file_sha2hex(entry.path)
         elif hashtype == HashTypes.SHA3:
             hash_ = u.file_sha3hex(entry.path)
+        elif hashtype == HashTypes.BLAKE2B:
+            hash_ = u.file_blake2b_hex(entry.path)
+        else:
+            raise NotImplementedError
         if no_changes:
             if verbose:
                 print('would add %s %s' % (hash_, entry.path))

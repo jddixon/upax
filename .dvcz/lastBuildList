@@ -8,7 +8,7 @@ k2lyCIE/V/CDb9eVDYQgYSJYrnQ/JAPST7NbcY8aI+/0l7QVBhLBpmOCvmS6ofvz
 /QIDAQAB
 -----END PUBLIC KEY-----
 upax_py
-2017-12-12 03:46:43
+2018-01-31 19:40:47
 # BEGIN CONTENT #
 upax_py
  .cache
@@ -16,14 +16,14 @@ upax_py
    cache
     lastfailed bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f
  .dvcz
-  builds 70fd2cadcb0217296616d749f27c2d526b4776ca
-  lastBuildList c2e54c3b455c7273a6e711964d5c7af658f15fa4
+  builds 1fa8c891c29b4b353da9059c454d24ce019ea2f8
+  lastBuildList a055511d6e2c58a03652d0d8bc143b49a8409aa3
   projCfg 9e2a439bf3333289093692f16bf2e573891fe838
   projCfg.local 3258109f937dfc30585f333131e112df4b244301
-  projConfig.toml 9d66c6a1b3596e9403bd68cd52021855addfeaa1
+  projConfig.toml b72f980883ea660f1dbb84344c634e291d7673fa
  .gitignore c760833925eceb43666f962d3d708cb54ab19f4b
  .gitignore.local c2d10285e0ab23017eda564eb5cdeb1b28cbbee4
- CHANGES bddb11f339f0b1122205a65b7be1b94b495ba635
+ CHANGES 108b6dcf3ece83cfa8aec47b9b7e35a1dd5daefe
  LICENSE-MIT.md ce4053c54849d1033bd67b6cab7bdedc03de2b97
  MANIFEST.in ee87ecf6928c0c4c69376734eba9cf532ce748b1
  README.md 722d325a5f7acae1025cef7387886cd0fd2bb85c
@@ -50,34 +50,34 @@ upax_py
  installit 1ec8b4ddd2f7ed830df362aa2c8fad0a29c61f3e
  pylintrc dd234fda24a547a9071f1e4608a3c1f3b7de9aa0
  requirements.txt fe9dedced43a5c624409aa80f363dd676b94392c
- setup.py 7f1184728f054fa698653f5fc60637a7d1f5699e
+ setup.py 8246319181c620463948e456b3d2aa2aba956184
  src
   check_u_consistency 579443fae9325d5d867f0e4e60e64676d9d62d5f
   import_u_dir 35949b5ecbd752b8932c1a92da01067ad791902f
   upax
-   __init__.py 9c71a7e3cb7f23ffb374d02d7f411847b41a08aa
+   __init__.py 2c5ee7155f887d1bcd1a87089f84c32bbbbf43e6
    consistency.py ad1301f7286fb13c774d0a265c761f63f4e99a5a
-   ftlog.py a431251d686ee3495a91a43adbe235d25b477e02
+   ftlog.py d23f8fa497450906f52ad6c6ed31e6be9815a1b2
    importer.py 88f72a8cff093e789562df9ccfdf689082e23b67
    node.py 4d02ef16c3cd8709798d93b7cfbcba891d91b55f
-   server.py cb80bceb4b59a87a1fe488360768b5d18284831b
+   server.py 0efa245a87cbf1491d24e6b0711cbd435cc67130
    walker.py f90f3767d155523e4a0a1f6564d36fb842515141
-  upax_bulk_poster 83e0b9be7947cbc749c816600dd4ea37ff8cba7e
-  upax_update_node_id c0e27e79bb4feff8579551b0a792e2b363731bcf
+  upax_bulk_poster 4c650bae430a593bee02788fe4bb57d4ee13b21a
+  upax_update_node_id 973299300ab7a0b1cc07c161342cfbf2c96e3839
  styleit ba8b057a35927cdfceaa80c625ec773e86147149
  test.all ed943d063e5d8543b7d5823ef246c31ab060d428
  test_requirements.txt 6e7a49f03f5ddae0042540d8a5af2c9d3c26773e
  tests
-  test_bound_log.py d6d24f3a0e91c120dbd2a5401857cbb8c317b44f
-  test_importer.py e6d5e32691595b43db6886767434d09a82e6b352
-  test_log.py 52b26e44ce407ffdeca006e5aea0640720561e45
-  test_log_entry.py 08983178c917e0a37d9a4b9f494fd82f59d6f4a9
+  test_bound_log.py 80fb2565d0699df0b13d16774c765828790692ed
+  test_importer.py 73afc37d304ac72419aa63ba11ad0bd52d1b2f00
+  test_log.py 506e4815c6ac4e8e700f2359ff2490befd7d1e67
+  test_log_entry.py d963da72387a79011e770c27d1ac760aac24aaa6
   test_log_reader.py 1cb20166e0f183a7d94671db6fe2c5a2c2252bf7
   test_u_walker.py 90226f1ad944431c70ec335147cc995e92a138d7
-  test_upax_node.py 83915503a029f38cfafe1a292187d1df7a34de6d
-  test_upax_server.py eed1e9a853fced9f8de2daa07a238662ee598f8a
+  test_upax_node.py 7dac92799795828676ca7b6bda039139e44c8354
+  test_upax_server.py 34080ab2583c9b0fc74bb4b88cd4de7ddbeb4b8f
   test_zmq.py 77c222dca2604b07b6be04c595a176d26e29f728
  tox.ini cb72ea215e90cb3b3c8676cc0a6e3b79b3c1e780
 # END CONTENT #
 
-Qm64gi15sq6kxtDeB+z7o8BA2+FXS73EFsYBkH51VuqsPpIKux5G778MfWDBdS8ZpQJjJz+Q6FbSPX4hA5qRytr4YE1oP4a+4oEa/jl4R5pvb5mPLAjBBWYfCSHUwGrglEMoy+HXikx4FQ1swcVcm4yRzeSl05vY721HKvhwmQn/L0YDa7WZxeWqkJT54y8hKLvlOHM0/rYi1yTJhGp6hmgjSHV4lom/YAFQJs9tLM4TXe6PdpmXY8qZ6xK4Os34r225DTHpFst4ypGPZz9qBtZuq593lkJYEIM7s3A493/R0MWjBVLPUPOG5vV/GpR2BOUk5Rn06INMa7LTdQLK8w==
+La4rd6jDlCPQ6qTZdY27UzHLWuROBZQi/hxJwBsNKo9jerv2AqkHiFkaCnvuwxnP628A/NCY5gUr/gQRS4NfmEbX+Pmg+Yp0xx4Lq9GoRo3mUZ5LCWU5kGkLtrYXKPxBYRligztfIcQaIueX+T0i3AwWpxO0OXoM1/gTlDkWTU3bWm4G0KJfPh/oJ1n3b7ETyJ+QmS5vwcU8skcAMTL58Yvi8upCJS1YBd9SFJ1zbudjQBaa5J8MPIUGjx0uO9OrrrSvk5Emm0dOH9cSBFBmtvbJW//gCW7NPBn5/PRVIvjEXs4iZ56bMoT6gAsr8PzAQ1j8bdYeQ2yIyDJX6uIEcw==
