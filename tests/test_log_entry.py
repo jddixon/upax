@@ -31,7 +31,7 @@ class TestLogEntry(unittest.TestCase):
             goodkey_1 = '0123456789012345678901234567890123456789'
             goodkey_2 = 'fedcba9876543210fedcba9876543210fedcba98'
         else:
-            # dummy data good for either SHA2 or SHA3
+            # dummy data good for any of SHA2, SHA3, BLAKE2B
             goodkey_1 = '0123456789012345678901234567890123' + \
                 '456789abcdefghi0123456789abcde'
             goodkey_2 = 'fedcba9876543210fedcba9876543210fe' + \

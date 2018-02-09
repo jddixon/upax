@@ -46,7 +46,7 @@ class TestUpaxNode(unittest.TestCase):
                     pass
 
     def test_check_node_id(self):
-        for using in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3, ]:
+        for using in HashTypes:
             self.do_test_check_node_id(using)
 
     # ---------------------------------------------------------------
@@ -95,7 +95,7 @@ class TestUpaxNode(unittest.TestCase):
             pass
 
     def test_peer(self):
-        for using in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3, ]:
+        for using in HashTypes:
             self.do_test_peer(using)
 
     # ---------------------------------------------------------------

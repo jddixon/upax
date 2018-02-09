@@ -77,7 +77,7 @@ class TestLog(unittest.TestCase):
         Test writing log entries using supported hash types to an initially
         empty string.
         """
-        for using in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3, ]:
+        for using in HashTypes:
             self.do_test_to_string_without_entries(using)
 
     # ---------------------------------------------------------------
@@ -158,7 +158,7 @@ class TestLog(unittest.TestCase):
 
     def test_multi_entry_log(self):
         """ Test adding multiple entries to log with supported types. """
-        for using in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3]:
+        for using in HashTypes:
             self.do_test_multi_entry_log(using)
 
     # ---------------------------------------------------------------
