@@ -10,8 +10,8 @@ import os
 
 import rnglib
 from xlattice import HashTypes, check_hashtype
-from xlattice.u import (file_sha1hex, file_sha2hex, file_sha3hex,
-                        file_blake2b_hex, DirStruc, UDir)
+from xlu import (file_sha1hex, file_sha2hex, file_sha3hex, file_blake2b_hex,
+                 DirStruc, UDir)
 from upax.ftlog import BoundLog, FileReader, Reader
 
 from upax import UpaxError
