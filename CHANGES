@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.10.1
+    2018-02-15
+        * import from xlu rather than xlattice.u                    SLOC 3251
 v0.10.0
     2018-01-31
         * add blake2b support                                       SLOC 3250
@@ -186,6 +189,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 

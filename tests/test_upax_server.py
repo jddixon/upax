@@ -9,7 +9,8 @@ import unittest
 
 import rnglib
 from upax.server import BlockingServer
-from xlattice import u, HashTypes, check_hashtype
+from xlattice import HashTypes, check_hashtype
+from xlu import file_sha1hex, file_sha2hex, file_sha3hex, file_blake2b_hex
 
 RNG = rnglib.SimpleRNG(time.time())
 
@@ -93,13 +94,13 @@ class TestUpaxServer(unittest.TestCase):
             while d_path.endswith('.'):
                 (_, d_path) = RNG.next_data_file(DATA_PATH, 16 * 1024, 1)
             if hashtype == HashTypes.SHA1:
-                d_key = u.file_sha1hex(d_path)
+                d_key = file_sha1hex(d_path)
             elif hashtype == HashTypes.SHA2:
-                d_key = u.file_sha2hex(d_path)
+                d_key = file_sha2hex(d_path)
             elif hashtype == HashTypes.SHA3:
-                d_key = u.file_sha3hex(d_path)
+                d_key = file_sha3hex(d_path)
             elif hashtype == HashTypes.BLAKE2B:
-                d_key = u.file_blake2b_hex(d_path)
+                d_key = file_blake2b_hex(d_path)
             else:
                 raise NotImplementedError
             files[d_key] = d_path

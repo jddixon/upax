@@ -14,7 +14,7 @@ import sys
 
 from upax import UpaxError
 from xlattice import HashTypes, check_hashtype
-from xlattice.u import DirStruc, file_sha1hex, file_sha2hex, file_sha3hex
+from xlu import DirStruc, file_sha1hex, file_sha2hex, file_sha3hex
 
 HEX_DIR_PAT = '^[0-9a-fA-F]{2}$'
 HEX_DIR_RE = re.compile(HEX_DIR_PAT)
