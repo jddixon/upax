@@ -1,6 +1,9 @@
 ~/dev/py/upax/CHANGES
 
 
+v0.10.2
+    2018-02-28
+        * fix setup.py, tox config files                            SLOC 3248
 v0.10.1
     2018-02-15
         * import from xlu rather than xlattice.u                    SLOC 3251
@@ -189,6 +192,7 @@ v0.3.0
 v0.2.1
     2012-02-24 
         * fixed xlattice.core.NodeID, then changed this to match
+
 
 
 
